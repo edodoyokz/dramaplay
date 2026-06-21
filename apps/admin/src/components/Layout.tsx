@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from "react-router-dom";
+import type { ReactNode } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { clearSession } from "../lib/supabase";
 
 const NAV = [
   { to: "/", label: "Dashboard" },
@@ -9,12 +11,19 @@ const NAV = [
   { to: "/reports", label: "Reports" },
 ];
 
-export default function Layout() {
+export default function Layout({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    clearSession();
+    navigate("/login", { replace: true });
+  }
+
   return (
     <div className="flex min-h-screen">
-      <aside className="w-56 border-r border-slate-200 bg-white p-4">
+      <aside className="flex w-56 flex-col border-r border-slate-200 bg-white p-4">
         <div className="mb-6 text-xl font-bold text-slate-900">Dramaplay</div>
-        <nav className="space-y-1">
+        <nav className="flex-1 space-y-1">
           {NAV.map((n) => (
             <NavLink
               key={n.to}
@@ -32,10 +41,14 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
+        <button
+          onClick={handleLogout}
+          className="mt-4 rounded-lg px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-100"
+        >
+          Keluar
+        </button>
       </aside>
-      <main className="flex-1 bg-slate-50 p-6">
-        <Outlet />
-      </main>
+      <main className="flex-1 bg-slate-50 p-6">{children}</main>
     </div>
   );
 }

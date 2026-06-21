@@ -5,6 +5,7 @@ import DramaDetail from "./pages/DramaDetail";
 import Watch from "./pages/Watch";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 
 const qc = new QueryClient();
 
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/drama/:slug/episode/:n" element={<Watch />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

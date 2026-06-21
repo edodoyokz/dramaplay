@@ -1,11 +1,20 @@
 import { Hono } from "hono";
-import { createDb, providers, dramas, episodes } from "@dramaplay/db";
+import { createDb, providers, dramas, episodes, profiles } from "@dramaplay/db";
 import { eq } from "drizzle-orm";
 import type { Env } from "../env";
 import { authMiddleware } from "../middleware/auth";
 import { adminMiddleware } from "../middleware/admin";
 
-export const admin = new Hono<{ Bindings: Env }>();
+export const admin = new Hono<{ Bindings: Env; Variables: { user: { id: string } } }>();
+
+// /me needs only auth (not admin) so the admin panel login page can check the user role
+admin.get("/me", authMiddleware, async (c) => {
+  const userId = c.get("user").id;
+  const db = createDb(c.env.DATABASE_URL);
+  const [profile] = await db.select().from(profiles).where(eq(profiles.id, userId));
+  return c.json({ role: profile?.role ?? "user" });
+});
+
 admin.use("*", authMiddleware, adminMiddleware);
 
 admin.get("/providers", async (c) => {
@@ -29,7 +38,6 @@ admin.get("/dramas", async (c) => {
 });
 
 admin.get("/users", async (c) => {
-  const { profiles } = await import("@dramaplay/db");
   const db = createDb(c.env.DATABASE_URL);
   const rows = await db.select().from(profiles).limit(50);
   return c.json({ items: rows });

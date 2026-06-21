@@ -28,9 +28,14 @@ export default function Home() {
     <div className="min-h-screen bg-slate-950 px-4 py-6">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-yellow-400">Dramaplay</h1>
-        <Link to="/profile" className="text-sm text-slate-300">
-          Akun
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link to="/search" className="text-sm text-slate-300">
+            🔍
+          </Link>
+          <Link to="/profile" className="text-sm text-slate-300">
+            Akun
+          </Link>
+        </div>
       </header>
 
       <Section title="Trending" items={trending} />
