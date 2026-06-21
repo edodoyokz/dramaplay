@@ -1,0 +1,24 @@
+{
+  "name": "@dramaplay/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dramaplay/db": "workspace:*",
+    "@dramaplay/shared": "workspace:*",
+    "hono": "^4.6.5",
+    "@supabase/supabase-js": "^2.45.4",
+    "drizzle-orm": "^0.36.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241011.0",
+    "wrangler": "^3.80.0",
+    "vitest": "^2.1.3"
+  }
+}
