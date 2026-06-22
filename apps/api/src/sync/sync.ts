@@ -116,6 +116,12 @@ export async function syncProvider(
               )
               .onConflictDoNothing();
           }
+          // Keep dramas.episodeCount in sync with the episodes table so catalog
+          // cards/shelves show real counts without a per-row subquery.
+          await db
+            .update(dramas)
+            .set({ episodeCount: have.size + toInsert.length, updatedAt: new Date() })
+            .where(eq(dramas.id, dramaId));
         }
       } catch {
         result.errorCount++;

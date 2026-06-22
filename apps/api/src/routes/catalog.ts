@@ -79,12 +79,38 @@ catalog.get("/home", async (c) => {
 
     if (rows.length === 0) continue;
 
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(dramas)
+      .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+      .where(
+        and(
+          eq(dramaProviders.providerId, p.id),
+          eq(dramas.isPublished, true),
+          eq(dramas.visibility, "public"),
+          eq(dramaProviders.isPrimary, true),
+        ),
+      );
+
+    const [{ totalEps }] = await db
+      .select({ totalEps: sql<number>`coalesce(sum(${dramas.episodeCount}),0)::int` })
+      .from(dramas)
+      .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+      .where(
+        and(
+          eq(dramaProviders.providerId, p.id),
+          eq(dramas.isPublished, true),
+          eq(dramas.visibility, "public"),
+          eq(dramaProviders.isPrimary, true),
+        ),
+      );
+
     shelves.push({
       code: p.code,
       name: p.name,
       logoUrl: typeof p.config?.logoUrl === "string" ? p.config.logoUrl : null,
-      dramaCount: rows.length, // ponytail: exact count can wait; sample count is enough for v1
-      episodeCount: rows.reduce((sum, r) => sum + (r.episodeCount ?? 0), 0),
+      dramaCount: count,
+      episodeCount: totalEps,
       items: rows.map(withBadge),
     });
   }
