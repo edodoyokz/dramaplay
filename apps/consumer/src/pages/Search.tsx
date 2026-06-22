@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
+import { posterSrc } from "../lib/img";
 
 interface Drama {
   id: string;
@@ -241,7 +242,7 @@ function DramaCard({ drama: d }: { drama: Drama }) {
     <Link key={d.id} to={`/drama/${d.slug}`} className="block group">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80 shadow-md group-hover:border-rose-500/30 transition-all duration-300">
         {d.posterUrl ? (
-          <img src={d.posterUrl} alt={d.title} className="h-full w-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+          <img src={posterSrc(d.posterUrl)} alt={d.title} className="h-full w-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center">
             <span className="text-[10px] text-zinc-500">No Image</span>

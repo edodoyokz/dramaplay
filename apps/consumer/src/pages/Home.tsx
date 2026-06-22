@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
+import { posterSrc } from "../lib/img";
 
 interface Drama {
   id: string;
@@ -132,7 +133,7 @@ export default function Home() {
                 <div className="aspect-[16/9] w-full relative bg-zinc-900">
                   {progress.posterUrl && (
                     <img
-                      src={progress.posterUrl}
+                      src={posterSrc(progress.posterUrl)}
                       alt={progress.title}
                       className="w-full h-full object-cover object-center"
                     />
@@ -229,7 +230,7 @@ function DramaCard({ drama: d }: { drama: Drama }) {
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80 shadow-md group-hover:border-rose-500/30 transition-all duration-300">
         {d.posterUrl ? (
           <img
-            src={d.posterUrl}
+            src={posterSrc(d.posterUrl)}
             alt={d.title}
             className="h-full w-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-500"
             loading="lazy"

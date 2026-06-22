@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
+import { posterSrc } from "../lib/img";
 
 interface Episode {
   id: string;
@@ -76,7 +77,7 @@ export default function DramaDetail() {
         {/* Blurred Backdrop */}
         <div className="absolute inset-0 filter blur-xl opacity-30 scale-110">
           <img 
-            src={drama.posterUrl || ""} 
+            src={posterSrc(drama.posterUrl)} 
             alt="" 
             className="w-full h-full object-cover" 
           />
@@ -99,7 +100,7 @@ export default function DramaDetail() {
         <div className="absolute bottom-4 left-0 w-full px-4 z-20 flex gap-4 items-end">
           <div className="w-24 shrink-0 aspect-[2/3] rounded-lg overflow-hidden border border-zinc-800 shadow-xl bg-zinc-900">
             <img 
-              src={drama.posterUrl || ""} 
+              src={posterSrc(drama.posterUrl)} 
               alt={drama.title} 
               className="w-full h-full object-cover"
             />

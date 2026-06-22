@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
+import { posterSrc } from "../lib/img";
 
 type Drama = {
   id: string;
@@ -115,7 +116,7 @@ function DramaCard({ drama: d }: { drama: Drama }) {
   return (
     <Link to={`/drama/${d.slug}`} className="block group">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80">
-        {d.posterUrl ? <img src={d.posterUrl} alt={d.title} className="h-full w-full object-cover" loading="lazy" /> : null}
+        {d.posterUrl ? <img src={posterSrc(d.posterUrl)} alt={d.title} className="h-full w-full object-cover" loading="lazy" /> : null}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
         <div className="absolute bottom-1.5 left-1.5">
           <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 text-rose-400 border border-rose-500/20">

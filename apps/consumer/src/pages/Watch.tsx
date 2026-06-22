@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
+import { posterSrc } from "../lib/img";
 import VerticalShortPlayer from "../components/VerticalShortPlayer";
 import PricingModal from "../components/PricingModal";
 
@@ -265,7 +266,7 @@ export default function Watch() {
             streamUrl: playableUrl(data),
             streamType: data.streamType === "other" ? "mp4" : data.streamType,
           }}
-          poster={data.posterUrl}
+          poster={posterSrc(data.posterUrl)}
           subtitleUrl={data.subtitleUrl}
           onEnded={() => {
             updateWatchProgress(data, 100);
@@ -288,7 +289,7 @@ export default function Watch() {
             className="w-11 h-11 rounded-full border-2 border-zinc-300 overflow-hidden shadow-lg animate-spin-slow bg-zinc-900 group"
           >
             <img 
-              src={data.posterUrl || ""} 
+              src={posterSrc(data.posterUrl)} 
               alt={data.dramaTitle} 
               className="w-full h-full object-cover" 
             />
