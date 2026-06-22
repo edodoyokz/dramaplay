@@ -24,15 +24,18 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       play: "/dramawave/api/v1/dramas/{id}/play/{ep}?lang=id-ID",
     }),
 
-    // dramaboxbaru: upstream currently 500 (server down). Paths ready for when it recovers.
+    // dramaboxbaru: uses lang=in (Bahasa Indonesia), not id. Feed via /api/search
+    // (home/rank sections also work). Play /api/stream returns raw m3u8 behind
+    // auth → rawStream proxy. Fields: name/bookId/cover/chapterCount/chapterList.
     dramaboxbaru: mk("dramaboxbaru", {
-      trending: "/dramaboxbaru/api/rank?lang=id",
-      latest: "/dramaboxbaru/api/home?lang=id",
-      vip: "/dramaboxbaru/api/recommend/book?lang=id",
-      foryou: "/dramaboxbaru/api/home?lang=id",
-      search: "/dramaboxbaru/api/search?keyword={q}&lang=id",
-      detail: "/dramaboxbaru/api/drama/{id}?lang=id",
-      play: "/dramaboxbaru/api/stream?bookId={id}&episode={ep}&lang=id",
+      trending: "/dramaboxbaru/api/search?keyword=cinta&lang=in",
+      latest: "/dramaboxbaru/api/search?keyword=raja&lang=in",
+      vip: "/dramaboxbaru/api/search?keyword=a&lang=in",
+      foryou: "/dramaboxbaru/api/search?keyword=cinta&lang=in",
+      search: "/dramaboxbaru/api/search?keyword={q}&lang=in",
+      detail: "/dramaboxbaru/api/drama/{id}?lang=in",
+      play: "/dramaboxbaru/api/stream?bookId={id}&episode={ep}&lang=in",
+      rawStream: true,
     }),
 
     // dramanova: /dramas (flat rows), /recommend (module-wrapped); detail 500s (auth).
@@ -57,15 +60,17 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       play: "/netshort/api/v1/episode/{id}/{ep}",
     }),
 
-    // pinedrama: dramas live in /search (data.collections); /center returns categories only.
+    // pinedrama: dramas in /search (data.collections); detail/play use
+    // collection_id + language=id + region=ID (NOT dramaId/lang). Play returns
+    // data.playUrl (tiktokcdn mp4/m3u8) — public, no proxy needed.
     pinedrama: mk("pinedrama", {
       trending: "/pinedrama/api/drama/search?keyword=love&lang=id",
       latest: "/pinedrama/api/drama/search?keyword=romance&lang=id",
       vip: "/pinedrama/api/drama/search?keyword=boss&lang=id",
       foryou: "/pinedrama/api/drama/search?keyword=love&lang=id",
       search: "/pinedrama/api/drama/search?keyword={q}&lang=id",
-      detail: "/pinedrama/api/drama/detail?dramaId={id}&lang=id",
-      play: "/pinedrama/api/drama/play?dramaId={id}&episode={ep}&lang=id",
+      detail: "/pinedrama/api/drama/detail?collection_id={id}&language=id&region=ID",
+      play: "/pinedrama/api/drama/play?collection_id={id}&episode={ep}&language=id&region=ID",
     }),
 
     // reelshort: /feed/0 has data.lists (books); /search has data.lists; play /book/:id/chapter/:ch/video

@@ -157,12 +157,12 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
 // ponytail: field mappings learned from live probe (probe-sapimu.ts);
 // covers all observed field-name variants across batch-1 providers.
 const WRAPPER_KEYS = ["items", "dramas", "books", "list", "chapters", "episodes", "videos", "rows", "data", "lists"];
-const TOP_KEYS = ["data", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists"];
+const TOP_KEYS = ["data", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists", "bookList"];
 const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id", "t_book_id", "collectionId", "collection_id", "seriesId", "series_id"];
 const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title"];
-const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover"];
+const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover", "coverWap"];
 const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc"];
-const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters"];
+const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters", "totalChapterNum"];
 
 function pickString(row: Row, fields: string[]): string | undefined {
   for (const f of fields) {
@@ -191,7 +191,7 @@ function pickGenres(row: Row): string[] | undefined {
 }
 
 const EP_ID_FIELDS = ["episodeId", "episode_id", "chapterId", "chapter_id", "videoId", "video_id", "fileId", "file_id"];
-const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "chapterNo", "chapter_no", "chapter"];
+const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter"];
 
 /** Find the first object that looks like a drama row (has both a title and an id). */
 function findDetailRow(data: unknown): Row | null {
@@ -238,6 +238,13 @@ export interface SapimuAdapterConfig {
   episodesFromDetail?: boolean;
   /** Episode play path. Use {id} and {ep}. */
   play: string;
+  /**
+   * If true, the play endpoint returns a raw stream manifest (e.g. m3u8 text)
+   * that requires Authorization and cannot be fetched by a browser player.
+   * The resolver returns a proxy URL (/proxy/sapimu-stream?path=...) that the
+   * Worker serves with the token; the manifest's segments are public.
+   */
+  rawStream?: boolean;
 }
 
 function rowToSummary(row: Row): ProviderDramaSummary {
@@ -330,7 +337,16 @@ export function createSapimuAdapter(
 
     async resolveStream(episodeId: string): Promise<ProviderStreamSource | null> {
       const [id, ep = "1"] = episodeId.split(":");
-      const data = await this.get<unknown>(cfg.play.replace("{id}", q(id)).replace("{ep}", q(ep)));
+      const playPath = cfg.play.replace("{id}", q(id)).replace("{ep}", q(ep));
+      if (cfg.rawStream) {
+        // Play endpoint returns a raw m3u8 manifest behind auth; expose it via
+        // the Worker proxy so a browser player can play it. Segments are public.
+        return {
+          streamUrl: `/proxy/sapimu-stream?path=${encodeURIComponent(playPath)}`,
+          streamType: "m3u8",
+        };
+      }
+      const data = await this.get<unknown>(playPath);
       const url = findStreamUrl(data);
       if (!url) return null;
       return { streamUrl: url, streamType: streamTypeFromUrl(url) };
