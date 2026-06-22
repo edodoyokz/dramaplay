@@ -62,9 +62,9 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       play: "/netshort/api/v1/episode/{id}/{ep}",
     }),
 
-    // pinedrama: dramas in /search (data.collections); detail/play use
-    // collection_id + language=id + region=ID (NOT dramaId/lang). Play returns
-    // data.playUrl (tiktokcdn mp4/m3u8) — public, no proxy needed.
+    // pinedrama: dramas in /search (data.collections); detail uses id locale,
+    // but play must use language=in: language=id returns HEVC mp4 that Chrome
+    // cannot decode; language=in returns browser-playable H264.
     pinedrama: mk("pinedrama", {
       trending: "/pinedrama/api/drama/search?keyword=love&lang=id",
       latest: "/pinedrama/api/drama/search?keyword=romance&lang=id",
@@ -72,7 +72,7 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       foryou: "/pinedrama/api/drama/search?keyword=love&lang=id",
       search: "/pinedrama/api/drama/search?keyword={q}&lang=id",
       detail: "/pinedrama/api/drama/detail?collection_id={id}&language=id&region=ID",
-      play: "/pinedrama/api/drama/play?collection_id={id}&episode={ep}&language=id&region=ID",
+      play: "/pinedrama/api/drama/play?collection_id={id}&episode={ep}&language=in&region=ID",
     }),
 
     // reelshort: /feed/0 data.lists (books); chapters at /book/:id/chapters
