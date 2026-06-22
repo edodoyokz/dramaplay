@@ -15,10 +15,11 @@ This is okay with a few providers, but it does not scale well when Dramaplay has
 
 ## Recommendation
 
-Use a **provider-shelf homepage**.
+Use a **provider-shelf homepage** with visible provider logos.
 
 Homepage shows enabled providers as sections. Each section contains:
 
+- Provider logo from `providers.config.logoUrl` (fallback: generated provider initial badge so logo space is never empty)
 - Provider name and badge/code
 - Optional drama/episode counts
 - 3 sample dramas from that provider
@@ -54,6 +55,12 @@ DramaNova
 [Drama A] [Drama B] [Drama C]   Lihat Semua
 ```
 
+## Provider logos
+
+Use `providers.config.logoUrl` for v1. This avoids a DB migration and lets us add/replace logos from seed/admin scripts later.
+
+If a provider has no official logo URL yet, the frontend still renders a generated initials badge in the logo slot. This keeps the layout consistent and avoids blocking the redesign on logo asset collection.
+
 ## Backend API
 
 Add two endpoints.
@@ -68,6 +75,7 @@ Returns provider shelves. Keep response small.
     {
       "code": "reelshort",
       "name": "ReelShort",
+      "logoUrl": "https://.../reelshort.png",
       "dramaCount": 31,
       "episodeCount": 2150,
       "items": [
@@ -209,7 +217,8 @@ Frontend checks:
 - Personalized provider ranking
 - Genre filters per provider
 - Infinite scroll
-- Provider logos/artwork
+- Admin upload UI for provider logos (v1 reads `providers.config.logoUrl`)
+- Provider hero/banner artwork
 - Admin UI for pinned providers beyond existing `providers.priority`
 
 Add these only after real usage shows the need.

@@ -2,11 +2,47 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Replace the mixed homepage with provider shelves and add a provider-specific drama list page.
+**Goal:** Replace the mixed homepage with provider shelves (including provider logos) and add a provider-specific drama list page.
 
-**Architecture:** Add two cached catalog endpoints: `/catalog/home` for provider shelves and `/catalog/providers/:code/dramas` for provider detail lists. Update the consumer app to fetch `/catalog/home`, render provider sections with 3 sample dramas, and route `/provider/:code` to a paginated provider drama grid.
+**Architecture:** Add two cached catalog endpoints: `/catalog/home` for provider shelves and `/catalog/providers/:code/dramas` for provider detail lists. Provider logos are read from `providers.config.logoUrl` (no DB migration). Update the consumer app to fetch `/catalog/home`, render provider sections with logo + 3 sample dramas, and route `/provider/:code` to a paginated provider drama grid.
 
 **Tech Stack:** Cloudflare Workers + Hono + Drizzle/Postgres API; React + Vite + React Router consumer app; Vitest for API tests.
+
+---
+
+### Task 0: Add provider logo config to seed data
+
+**Files:**
+- Modify: `packages/db/src/seed.ts`
+
+**Step 1: Add `logoUrl` in provider config where official/logo asset URLs are available**
+
+Use existing provider `config` JSON. Do not add a migration.
+
+Example shape:
+
+```ts
+{
+  code: "reelshort",
+  name: "ReelShort",
+  priority: 20,
+  isEnabled: false,
+  config: { logoUrl: "https://.../reelshort.png" },
+}
+```
+
+If official URLs are not available yet, leave `logoUrl` unset. The frontend must render generated initials in the logo slot, so the redesign is not blocked.
+
+**Step 2: Run seed only when ready for the target DB**
+
+For production, do not run seed blindly if it may reset data. If seed uses upsert, run the existing seed command. Otherwise, add/update logos with a small SQL update script.
+
+**Step 3: Commit**
+
+```bash
+git add packages/db/src/seed.ts
+git commit -m "chore(db): add provider logo config"
+```
 
 ---
 
@@ -29,6 +65,7 @@ function buildHomeShelves(rows: any[], limit = 3) {
       grouped.set(key, {
         code: r.providerCode,
         name: r.providerName,
+        logoUrl: r.providerLogoUrl ?? null,
         priority: r.providerPriority,
         dramaCount: 0,
         episodeCount: 0,
@@ -157,6 +194,7 @@ catalog.get("/home", async (c) => {
       code: providers.code,
       name: providers.name,
       priority: providers.priority,
+      config: providers.config,
     })
     .from(providers)
     .where(eq(providers.isEnabled, true))
@@ -199,6 +237,7 @@ catalog.get("/home", async (c) => {
     shelves.push({
       code: p.code,
       name: p.name,
+      logoUrl: typeof p.config?.logoUrl === "string" ? p.config.logoUrl : null,
       dramaCount: rows.length, // ponytail: exact count can wait; sample count is enough for v1
       episodeCount: rows.reduce((sum, r) => sum + (r.episodeCount ?? 0), 0),
       items: rows.map(withBadge),
@@ -262,7 +301,7 @@ catalog.get("/providers/:code/dramas", async (c) => {
 
   const db = createDb(c.env.DATABASE_URL);
   const [provider] = await db
-    .select({ id: providers.id, code: providers.code, name: providers.name })
+    .select({ id: providers.id, code: providers.code, name: providers.name, config: providers.config })
     .from(providers)
     .where(and(eq(providers.code, code), eq(providers.isEnabled, true)));
 
@@ -300,7 +339,11 @@ catalog.get("/providers/:code/dramas", async (c) => {
     .offset((page - 1) * limit);
 
   const body = {
-    provider: { code: provider.code, name: provider.name },
+    provider: {
+      code: provider.code,
+      name: provider.name,
+      logoUrl: typeof provider.config?.logoUrl === "string" ? provider.config.logoUrl : null,
+    },
     items: rows.slice(0, limit).map(withBadge),
     page,
     limit,
@@ -364,7 +407,7 @@ type Drama = {
 };
 
 type ProviderResponse = {
-  provider: { code: string; name: string };
+  provider: { code: string; name: string; logoUrl?: string | null };
   items: Drama[];
   page: number;
   limit: number;
@@ -409,6 +452,7 @@ export default function ProviderDramas() {
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-300 hover:text-white" aria-label="Kembali">
           ←
         </button>
+        <ProviderLogo name={provider?.name ?? code} logoUrl={provider?.logoUrl} />
         <div>
           <p className="text-[10px] uppercase tracking-widest text-rose-400 font-bold">Provider</p>
           <h1 className="text-lg font-extrabold">{provider?.name ?? code}</h1>
@@ -442,6 +486,18 @@ export default function ProviderDramas() {
           </button>
         ) : null}
       </main>
+    </div>
+  );
+}
+
+function ProviderLogo({ name, logoUrl }: { name: string; logoUrl?: string | null }) {
+  return (
+    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+      {logoUrl ? (
+        <img src={logoUrl} alt={name} className="h-full w-full object-cover" />
+      ) : (
+        <span className="text-xs font-extrabold text-rose-400">{name.slice(0, 2).toUpperCase()}</span>
+      )}
     </div>
   );
 }
@@ -515,6 +571,7 @@ Add shelf type:
 interface ProviderShelf {
   code: string;
   name: string;
+  logoUrl?: string | null;
   dramaCount: number;
   episodeCount: number;
   items: Drama[];
@@ -609,11 +666,14 @@ function ProviderSection({ shelf }: { shelf: ProviderShelf }) {
   return (
     <section className="mb-4">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-md font-bold text-white tracking-wide">{shelf.name}</h3>
-          <p className="text-[10px] text-zinc-500">
-            {shelf.dramaCount} drama • {shelf.episodeCount} episode
-          </p>
+        <div className="flex items-center gap-2">
+          <ProviderLogo name={shelf.name} logoUrl={shelf.logoUrl} />
+          <div>
+            <h3 className="text-md font-bold text-white tracking-wide">{shelf.name}</h3>
+            <p className="text-[10px] text-zinc-500">
+              {shelf.dramaCount} drama • {shelf.episodeCount} episode
+            </p>
+          </div>
         </div>
         <Link to={`/provider/${shelf.code}`} className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">
           Lihat Semua
@@ -630,7 +690,7 @@ function ProviderSection({ shelf }: { shelf: ProviderShelf }) {
 }
 ```
 
-Extract existing card JSX into `DramaCard` so `ProviderDramas.tsx` can optionally duplicate or later share it. Do not over-abstract into a components folder yet unless duplicate code becomes painful.
+Add the same small `ProviderLogo` helper used in `ProviderDramas.tsx` above the section component. Extract existing card JSX into `DramaCard` so `ProviderDramas.tsx` can optionally duplicate or later share it. Do not over-abstract into a components folder yet unless duplicate code becomes painful.
 
 **Step 7: Run consumer typecheck**
 
