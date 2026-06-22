@@ -1,0 +1,7256 @@
+[
+  {
+    "slug": "bilitv",
+    "apiId": "bilitv",
+    "base": "/bilitv",
+    "endpointCount": 8,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/recommend",
+        "desc": "Recommended dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1881"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/episode/:ep",
+        "desc": "Episode video URL (480/720/1080)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1881"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "quality",
+            "required": false,
+            "default": "720",
+            "example": "720"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/subtitle/:shortId/:episode",
+        "desc": "Episode subtitle with auto-translate",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "shortId",
+            "required": true,
+            "default": "",
+            "example": "1881"
+          },
+          {
+            "name": "episode",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "format",
+            "required": false,
+            "default": "json",
+            "example": "json|vtt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "cashdrama",
+    "apiId": "cashdrama",
+    "base": "/cashdrama",
+    "endpointCount": 9,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "Supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Home feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "blockId",
+            "required": false,
+            "default": "5",
+            "example": "5"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/blocks",
+        "desc": "Categories/blocks",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/tags",
+        "desc": "Tags list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/drama/:vid",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "vid",
+            "required": true,
+            "default": "",
+            "example": "15201"
+          },
+          {
+            "name": "ep",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/drama/:vid/episodes",
+        "desc": "Episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "vid",
+            "required": true,
+            "default": "",
+            "example": "15201"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/tags/search",
+        "desc": "Search by tag",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "tagId",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/play/:vid/:ep",
+        "desc": "Video URL (Tencent VOD)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "vid",
+            "required": true,
+            "default": "",
+            "example": "15201"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "cubetv",
+    "apiId": "cubetv",
+    "base": "/cubetv",
+    "endpointCount": 11,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/languages",
+        "desc": "List of 13 languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/shows",
+        "desc": "Katalog lengkap 999 drama",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/home/recommendations",
+        "desc": "Beranda / Rekomendasi",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/home/trending",
+        "desc": "Baru & Trending",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/home/romance",
+        "desc": "Emosi / Romance",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/home/shows",
+        "desc": "Katalog Shows",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/coming-soon",
+        "desc": "Drama segera hadir",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/search",
+        "desc": "Browse / cari drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "keyword",
+            "required": false,
+            "default": "",
+            "example": "a"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "50",
+            "example": "50"
+          },
+          {
+            "name": "moduleid",
+            "required": false,
+            "default": "",
+            "example": "PaEpZ7"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/search/:videoid/episodes",
+        "desc": "Drama detail",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "videoid",
+            "required": true,
+            "default": "",
+            "example": "5ZMAoZ"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/episode/:videoid/list",
+        "desc": "List of all episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "videoid",
+            "required": true,
+            "default": "",
+            "example": "5ZMAoZ"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "method": "GET",
+        "path": "/stream/:videoid/:episodeid",
+        "desc": "URL Video M3U8 + subtitle",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "videoid",
+            "required": true,
+            "default": "",
+            "example": "5ZMAoZ"
+          },
+          {
+            "name": "episodeid",
+            "required": true,
+            "default": "",
+            "example": "ax6pNv"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dotdrama",
+    "apiId": "dotdrama",
+    "base": "/dotdrama",
+    "endpointCount": 4,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "50",
+            "example": "50"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/collections",
+        "desc": "Collections (hot, for you, etc)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/categories",
+        "desc": "Category list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "1000",
+            "example": "1000"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id",
+        "desc": "Drama detail + episodes with video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2008052547485241345"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dramabite",
+    "apiId": "dramabite",
+    "base": "/dramabite",
+    "endpointCount": 9,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/foryou",
+        "desc": "For You recommendations",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/hot",
+        "desc": "Hot/trending keywords",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "14923"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/likes",
+        "desc": "Drama like count",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "14923"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/episode/:ep",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "14923"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "quality",
+            "required": false,
+            "default": "default",
+            "example": "default"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama (gRPC server-side)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/recommend",
+        "desc": "Homepage recommendations",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dramaboxbaru",
+    "apiId": "dramaboxbaru",
+    "base": "/dramaboxbaru",
+    "endpointCount": 10,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "Daftar bahasa",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/home",
+        "desc": "Home/discovery (banners + sections)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/rank",
+        "desc": "Trending/ranking",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/recommend/book",
+        "desc": "Must-sees/rekomendasi",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/hidden-gems",
+        "desc": "Hidden gems",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/categories",
+        "desc": "Daftar kategori/genre",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/browse",
+        "desc": "Browse per kategori",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          },
+          {
+            "name": "type",
+            "required": false,
+            "default": "",
+            "example": "534"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/search",
+        "desc": "Cari drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "keyword",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/drama/:bookId",
+        "desc": "Detail drama + daftar episode",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "42000010883"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/stream",
+        "desc": "HLS m3u8 stream",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "42000010883"
+          },
+          {
+            "name": "episode",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dramanova",
+    "apiId": "dramanova",
+    "base": "/dramanova",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2016071217226772480"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/video",
+        "desc": "Get video streaming URL using fileId obtained from drama episodes in /api/v1/drama/:id response",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "v1830bg00000d5tg6fn3ksl47jhrvcj0"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama (202 dramas)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/modules",
+        "desc": "List all recommendation categories",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/recommend",
+        "desc": "Recommended dramas by category (17 categories). Use categoryKey to get specific category",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          },
+          {
+            "name": "categoryKey",
+            "required": false,
+            "default": "",
+            "example": "dramanova_hot"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "5",
+            "example": "5"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "6",
+            "example": "6"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dramapops",
+    "apiId": "dramapops",
+    "base": "/dramapops",
+    "endpointCount": 9,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/config",
+        "desc": "App config (homepage layout, movies order)",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/homepage",
+        "desc": "Homepage sections with movies",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/dramas/trending",
+        "desc": "Trending dramas (by watch count)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/dramas/popular",
+        "desc": "Popular dramas (by added to list)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "act_like_you_love_me"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/episode/:ep/video",
+        "desc": "Episode video URL (multi-quality)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "24622"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "quality",
+            "required": false,
+            "default": "",
+            "example": "720p"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dramarush",
+    "apiId": "dramarush",
+    "base": "/dramarush",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/config",
+        "desc": "App config",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/ranking",
+        "desc": "Search ranking",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/tabs/:id",
+        "desc": "Tab home data",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "12094"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/search/:q",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/play/:id",
+        "desc": "Get episodes with video URLs (paginated)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "12094"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/play/:id/:ep",
+        "desc": "Get single episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "12094"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dramawave",
+    "apiId": "dramawave",
+    "base": "/dramawave",
+    "endpointCount": 5,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/feed/:tab",
+        "desc": "Feed by tab (popular/free/female/new/male/vip/exclusive/dubbing/coming-soon/recommend)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "tab",
+            "required": true,
+            "default": "",
+            "example": "popular"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "quv2y2O9gA"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/play/:ep",
+        "desc": "Episode video URL",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "quv2y2O9gA"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "Supported languages (20 languages)",
+        "rateLimit": null,
+        "params": []
+      }
+    ]
+  },
+  {
+    "slug": "flextv",
+    "apiId": "flextv",
+    "base": "/flextv",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/tabs",
+        "desc": "Get tabs/categories",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/tabs/:id",
+        "desc": "Get dramas by tab (id: 1=Popular/Fokus, 2=New/Baru, 3=Chart/Peringkat, 6=Original+, 7=For Her/Wanita, 8=For Him/Pria, 11=Anime)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search dramas",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/series/:id",
+        "desc": "Series detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "5510"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/series/:id/episodes",
+        "desc": "Episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "5510"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/play/:series_id/:section_id",
+        "desc": "Video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "series_id",
+            "required": true,
+            "default": "",
+            "example": "5510"
+          },
+          {
+            "name": "section_id",
+            "required": true,
+            "default": "",
+            "example": "385380"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "flickshort",
+    "apiId": "flickshort",
+    "base": "/flickshort",
+    "endpointCount": 5,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "Supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "30",
+            "example": "30"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/recommend",
+        "desc": "Recommended dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "30",
+            "example": "30"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "origin",
+            "required": false,
+            "default": "auto",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "3702"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/episode/:ep",
+        "desc": "Episode video URL with subtitles",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "3702"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "freereels",
+    "apiId": "freereels",
+    "base": "/freereels",
+    "endpointCount": 12,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/foryou",
+        "desc": "For You feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "5"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/popular",
+        "desc": "Drama populer",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/new",
+        "desc": "Drama baru",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/female",
+        "desc": "Dramas for women",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/male",
+        "desc": "Dramas for men",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/anime",
+        "desc": "Anime",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/dubbing",
+        "desc": "Drama dubbing",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "cinta"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "50"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "KsuTN1GuYp"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/episodes",
+        "desc": "Episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "KsuTN1GuYp"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/play/:ep",
+        "desc": "Episode video URL",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "KsuTN1GuYp"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "method": "GET",
+        "path": "/api/v1/coming-soon",
+        "desc": "Coming soon dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id-ID",
+            "example": "id-ID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "fundrama",
+    "apiId": "fundrama",
+    "base": "/fundrama",
+    "endpointCount": 6,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "50",
+            "example": "50"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2014226264979845122"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/episodes",
+        "desc": "Episode list with video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2014226264979845122"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/drama/:id/episode/:ep",
+        "desc": "Single episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2014226264979845122"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "quality",
+            "required": false,
+            "default": "720P",
+            "example": "720P"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "goodshort",
+    "apiId": "goodshort",
+    "base": "/goodshort",
+    "endpointCount": 8,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage dramas (562=ID, 564=PT, 565=KR, 568=TH)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "channelId",
+            "required": false,
+            "default": "562",
+            "example": "562"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "12",
+            "example": "12"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/book/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "31001107002"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/chapters/:bookId",
+        "desc": "Chapter list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "31001107002"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/play/:bookId/:chapterId",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "31001107002"
+          },
+          {
+            "name": "chapterId",
+            "required": true,
+            "default": "",
+            "example": "13912781"
+          },
+          {
+            "name": "q",
+            "required": false,
+            "default": "720p",
+            "example": "720p"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/unlock/:bookId",
+        "desc": "Unlock all episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "31001107002"
+          },
+          {
+            "name": "q",
+            "required": false,
+            "default": "720p",
+            "example": "720p"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/segments",
+        "desc": "Proxy segment/m3u8",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "default": "",
+            "example": "https://acfs1.goodreels.com/ets/books/002/31001107002/536865/dnbhx4dffv/720p/w5gvs4kfgr_720p.m3u8"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/key",
+        "desc": "Get decryption key",
+        "rateLimit": null,
+        "params": []
+      }
+    ]
+  },
+  {
+    "slug": "hishort",
+    "apiId": "hishort",
+    "base": "/hishort",
+    "endpointCount": 4,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage popular dramas",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/search/:q",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail + episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "3688"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/episode/:slug",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "slug",
+            "required": true,
+            "default": "",
+            "example": "3688_1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "idrama",
+    "apiId": "idrama",
+    "base": "/idrama",
+    "endpointCount": 9,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search dramas by keyword (lang: id, en, ja, ko, es, pt, th)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/popular",
+        "desc": "Popular dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/ranking/trending",
+        "desc": "Trending dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/ranking/hits",
+        "desc": "New hits dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/latest",
+        "desc": "Latest dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/genres",
+        "desc": "Get all available genres",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/genre/:id",
+        "desc": "Dramas by genre",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "section_476014f5"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "160000640162"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "POST",
+        "path": "/api/v1/unlock/:dramaId",
+        "desc": "Unlock episodes and get video URLs (720p)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "dramaId",
+            "required": true,
+            "default": "",
+            "example": "160000640162"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "melolo",
+    "apiId": "melolo",
+    "base": "/melolo",
+    "endpointCount": 8,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List 56 supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "50",
+            "example": "50"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/search/suggest",
+        "desc": "Search suggestions",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/bookmall",
+        "desc": "Bookmall home content",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/bookmall/tabs",
+        "desc": "Bookmall tabs (0=all, 1=male, 2=female)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "gender",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/book",
+        "desc": "Book/drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "7602461581250661429"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/series",
+        "desc": "Series detail + all episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "7602461581250661429"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/multi-video",
+        "desc": "Get all video URLs from series (cached 30 min)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "7602461581250661429"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "en"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "meloshort",
+    "apiId": "meloshort",
+    "base": "/meloshort",
+    "endpointCount": 6,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/drama/all",
+        "desc": "Drama list (lang: en, ja, id, th, zh-TW, ms, ko, es, pt, de, tr, fr, ar)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas/discover",
+        "desc": "Discover dramas (lang: en, ja, id, th, zh-TW, ms, ko, es, pt, de, tr, fr, ar)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dramas/top",
+        "desc": "Top ranked dramas (lang: en, ja, id, th, zh-TW, ms, ko, es, pt, de, tr, fr, ar)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas/search",
+        "desc": "Search drama (lang: en, ja, id, th, zh-TW, ms, ko, es, pt, de, tr, fr, ar)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/episodes",
+        "desc": "Episode list (lang: en, ja, id, th, zh-TW, ms, ko, es, pt, de, tr, fr, ar)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "67fcc11e6227713935f4d63c"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "100",
+            "example": "100"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/episodes/:chapter",
+        "desc": "Episode video URL (lang: en, ja, id, th, zh-TW, ms, ko, es, pt, de, tr, fr, ar)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "67fcc11e6227713935f4d63c"
+          },
+          {
+            "name": "chapter",
+            "required": true,
+            "default": "",
+            "example": "67fcc1206227713935f4d63d"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "th"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "microdrama",
+    "apiId": "microdrama",
+    "base": "/microdrama",
+    "endpointCount": 4,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "50",
+            "example": "50"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dramas/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id",
+        "desc": "Drama detail + episodes with video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2008052547485241345"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "minutedrama",
+    "apiId": "minutedrama",
+    "base": "/minutedrama",
+    "endpointCount": 3,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/popular",
+        "desc": "Popular videos",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/videos/:id",
+        "desc": "Video detail + episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "438"
+          },
+          {
+            "name": "source",
+            "required": false,
+            "default": "1001",
+            "example": "1001"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search videos",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "moboreels",
+    "apiId": "moboreels",
+    "base": "/moboreels",
+    "endpointCount": 10,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "List 19 supported languages (langId mapping)",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/channelList",
+        "desc": "List of main channels/categories",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/channelDetail",
+        "desc": "Channel detail + series list per section",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "schemeId",
+            "required": true,
+            "default": "",
+            "example": "33850170630471777"
+          },
+          {
+            "name": "channelId",
+            "required": true,
+            "default": "",
+            "example": "162979468352028714"
+          },
+          {
+            "name": "skipSeries",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/hotList",
+        "desc": "List of hot/trending dramas (10=Trending, 11=Latest)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "listId",
+            "required": true,
+            "default": "",
+            "example": "10"
+          },
+          {
+            "name": "skipSeries",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "schemeId",
+            "required": false,
+            "default": "",
+            "example": "33850170630471777"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/seriesDetail",
+        "desc": "Drama detail (title, cover, genre, episodes, status)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "seriesId",
+            "required": true,
+            "default": "",
+            "example": "42517322"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/seriesPage",
+        "desc": "All series episodes (auto-paginate from seriesDetail)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "seriesId",
+            "required": true,
+            "default": "",
+            "example": "42517322"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/guessYouLike",
+        "desc": "Drama rekomendasi serupa",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "seriesId",
+            "required": true,
+            "default": "",
+            "example": "42517322"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/video",
+        "desc": "Episode video URL (auto-unlock). Referer: https://www.cdreader.com/",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "seriesId",
+            "required": true,
+            "default": "",
+            "example": "42517322"
+          },
+          {
+            "name": "episNum",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/proxy/subtitle",
+        "desc": "Proxy subtitle",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "episId",
+            "required": true,
+            "default": "",
+            "example": "194010993662543603"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/search",
+        "desc": "Search drama by keyword (pagination support)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "searchKey",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "pageNo",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "langId",
+            "required": false,
+            "default": "3",
+            "example": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "netshort",
+    "apiId": "netshort",
+    "base": "/netshort",
+    "endpointCount": 15,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "Available languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/tabs",
+        "desc": "List tabs with ID (for custom tab access)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/tab/:tabId/:page",
+        "desc": "Custom tab content by ID (get ID from /tabs endpoint)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "tabId",
+            "required": true,
+            "default": "",
+            "example": "1894702358019043329"
+          },
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/feed/:page",
+        "desc": "Feed rekomendasi",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/explore/:page",
+        "desc": "Jelajahi",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/new/:page",
+        "desc": "Drama baru",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/dubbing/:page",
+        "desc": "Drama dubbing",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/vip/:page",
+        "desc": "VIP dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/search/:keyword/:page",
+        "desc": "Cari drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "keyword",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/v1/search-hint",
+        "desc": "Search hint/suggestions",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "method": "GET",
+        "path": "/api/v1/categories",
+        "desc": "Categories list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "method": "GET",
+        "path": "/api/v1/category/:page",
+        "desc": "Category dramas. region: 0=All, 1=Local, 2=Asia, 3=Western. audio: 0=All, 1=Subtitle, 2=Dubbed. tagId: from /categories cascadeTag level 3",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "audio",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "tagId",
+            "required": false,
+            "default": "",
+            "example": "1983832175469740041"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "method": "GET",
+        "path": "/api/v1/detail/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1994614483446874114"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "method": "GET",
+        "path": "/api/v1/similar/:id",
+        "desc": "Similar dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1994614483446874114"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "method": "GET",
+        "path": "/api/v1/episode/:id/:episodeNo",
+        "desc": "Episode detail",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1994614483446874114"
+          },
+          {
+            "name": "episodeNo",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_ID",
+            "example": "id_ID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "pinedrama",
+    "apiId": "pinedrama",
+    "base": "/pinedrama",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "Daftar 16 bahasa yang didukung",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/drama/categories",
+        "desc": "Daftar genre/scenes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "language",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "ID",
+            "example": "ID"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/drama/center",
+        "desc": "Katalog drama (browse by category)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "scene",
+            "required": false,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "category_id",
+            "required": false,
+            "default": "",
+            "example": "0"
+          },
+          {
+            "name": "count",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "language",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "ID",
+            "example": "ID"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/drama/search",
+        "desc": "Search drama by title",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "keyword",
+            "required": true,
+            "default": "",
+            "example": "cinta"
+          },
+          {
+            "name": "language",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "ID",
+            "example": "ID"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/drama/detail",
+        "desc": "Detail drama",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "collection_id",
+            "required": true,
+            "default": "",
+            "example": "7633642976383783953"
+          },
+          {
+            "name": "language",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "ID",
+            "example": "ID"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/drama/episodes",
+        "desc": "Daftar episode",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "collection_id",
+            "required": true,
+            "default": "",
+            "example": "7633642976383783953"
+          },
+          {
+            "name": "language",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "ID",
+            "example": "ID"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/drama/play",
+        "desc": "Play URL + subtitle",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "collection_id",
+            "required": true,
+            "default": "",
+            "example": "7633642976383783953"
+          },
+          {
+            "name": "episode",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "language",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "region",
+            "required": false,
+            "default": "ID",
+            "example": "ID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "radreels",
+    "apiId": "radreels",
+    "base": "/radreels",
+    "endpointCount": 9,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List available languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/tab/:id",
+        "desc": "Tab content",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "26"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/search/:query",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "query",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/drama/:keyword",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "keyword",
+            "required": true,
+            "default": "",
+            "example": "contract-love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/episodes/:fakeId",
+        "desc": "All episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "fakeId",
+            "required": true,
+            "default": "",
+            "example": "xBq"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/video/:videoFakeId/:episodicDramaId",
+        "desc": "Video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "videoFakeId",
+            "required": true,
+            "default": "",
+            "example": "pxkO"
+          },
+          {
+            "name": "episodicDramaId",
+            "required": true,
+            "default": "",
+            "example": "1079"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/ranking",
+        "desc": "Ranking",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/foryou",
+        "desc": "For You feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "en"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "rapidtv",
+    "apiId": "rapidtv",
+    "base": "/rapidtv",
+    "endpointCount": 4,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "List dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id",
+        "desc": "Drama detail + episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2008052217783586817"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/episodes",
+        "desc": "All episodes with video URLs",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2008052217783586817"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "reelala",
+    "apiId": "reelala",
+    "base": "/reelala",
+    "endpointCount": 6,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "Supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/home",
+        "desc": "Homepage feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/for-you",
+        "desc": "For you recommendations",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/chapters",
+        "desc": "Drama chapters/episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "playlet_id",
+            "required": true,
+            "default": "",
+            "example": "489"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "keyword",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/search/hot",
+        "desc": "Hot/trending search",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "reelife",
+    "apiId": "reelife",
+    "base": "/reelife",
+    "endpointCount": 8,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Drama list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "tab",
+            "required": false,
+            "default": "0",
+            "example": "0"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "42000003903"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dramas/:id/chapters",
+        "desc": "Chapter list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "42000003903"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas/:bookId/episodes/:chapterId",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "42000003903"
+          },
+          {
+            "name": "chapterId",
+            "required": true,
+            "default": "",
+            "example": "15"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/foryou",
+        "desc": "For You feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "30",
+            "example": "30"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/search/suggest",
+        "desc": "Search suggestions",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/ranking",
+        "desc": "Drama ranking",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "rankId",
+            "required": false,
+            "default": "18",
+            "example": "18"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "reelshort",
+    "apiId": "reelshort",
+    "base": "/reelshort",
+    "endpointCount": 11,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/foryou",
+        "desc": "For You feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/new",
+        "desc": "New releases",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/completed",
+        "desc": "Completed series",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/romance",
+        "desc": "Romance category",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/drama",
+        "desc": "Drama category",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/feed/:tabId",
+        "desc": "Feed by tab ID",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "tabId",
+            "required": true,
+            "default": "",
+            "example": "42954"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/search/suggestions",
+        "desc": "Search suggestions",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/book/:id",
+        "desc": "Book detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "69d8729ecc72400a320dab60"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/v1/book/:id/chapters",
+        "desc": "Chapter list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "69d8729ecc72400a320dab60"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "in",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "method": "GET",
+        "path": "/api/v1/book/:id/chapter/:chapterId/video",
+        "desc": "Episode video (auto-unlock)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "69d8729ecc72400a320dab60"
+          },
+          {
+            "name": "chapterId",
+            "required": true,
+            "default": "",
+            "example": "4m4o6mh49t"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "sarostv",
+    "apiId": "sarostv",
+    "base": "/sarostv",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "List 13 supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/theater",
+        "desc": "Homepage theater/feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en_US",
+            "example": "en_US"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/recommend",
+        "desc": "Recommended dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en_US",
+            "example": "en_US"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/types",
+        "desc": "Drama categories/types",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en_US",
+            "example": "en_US"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/series/search",
+        "desc": "Search series",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/series",
+        "desc": "Series detail + episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "100"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en_US",
+            "example": "en_US"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/series/episode",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "100"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en_US",
+            "example": "en_US"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "sereal",
+    "apiId": "sereal",
+    "base": "/sereal",
+    "endpointCount": 9,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "Supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/index/home/:page",
+        "desc": "Homepage feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/index/for-you/:page",
+        "desc": "For You feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/index/search/:q",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "cinta"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/index/trending",
+        "desc": "Trending dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/index/content-search/:contentId/:page",
+        "desc": "Content search by ID",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "contentId",
+            "required": true,
+            "default": "",
+            "example": "184745566088204320"
+          },
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/content/detail",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "contentId",
+            "required": true,
+            "default": "",
+            "example": "179663844862607360"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/content/recommend-smart/:page",
+        "desc": "Smart recommendations",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/watch/:contentId/:ep",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "contentId",
+            "required": true,
+            "default": "",
+            "example": "179663844862607360"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "shortbox",
+    "apiId": "shortbox",
+    "base": "/shortbox",
+    "endpointCount": 10,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "Daftar bahasa tersedia",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/categories",
+        "desc": "Daftar kategori drama",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/list",
+        "desc": "Browse drama (ShortBox)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "streamable",
+            "required": false,
+            "default": "true",
+            "example": "true"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/new-list",
+        "desc": "Drama terbaru (PSSDK)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/recommend",
+        "desc": "Rekomendasi home",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "streamable",
+            "required": false,
+            "default": "true",
+            "example": "true"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/for-you",
+        "desc": "Feed For You (paginasi lokal)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "streamable",
+            "required": false,
+            "default": "true",
+            "example": "true"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/hot-search",
+        "desc": "Drama populer/trending",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/search",
+        "desc": "Cari drama (alias: query, keyword)",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "cinta"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/info/:id",
+        "desc": "Detail drama + daftar episode",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "7009"
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "languages",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/stream/:id/:ep",
+        "desc": "Stream URL (m3u8/DRM)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "6451"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "quality",
+            "required": false,
+            "default": "720",
+            "example": "720"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "shorten",
+    "apiId": "shorten",
+    "base": "/shorten",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/editors",
+        "desc": "Editor picks",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "perPage",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/exclusive",
+        "desc": "Exclusive dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "perPage",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dubbed",
+        "desc": "Dubbed dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "perPage",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/releases",
+        "desc": "New releases",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "perPage",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/categories",
+        "desc": "Categories list",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/explore",
+        "desc": "Explore page",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/series/:slug",
+        "desc": "Series detail + episodes (video hash included)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "slug",
+            "required": true,
+            "default": "",
+            "example": "runaway-billionaire-becomes-my-groom-dubbing"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "shortmax",
+    "apiId": "shortmax",
+    "base": "/shortmax",
+    "endpointCount": 13,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage by tab",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "tab",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/feed/recommend",
+        "desc": "Tab Rekomendasi",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/feed/vip",
+        "desc": "Tab VIP",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/feed/new",
+        "desc": "Tab Baru",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/feed/ranked",
+        "desc": "Tab Peringkat (3 section)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/feed/war",
+        "desc": "Tab Dewa Perang",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/feed/epic",
+        "desc": "Tab Dunia Epic",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/feed/romance",
+        "desc": "Tab Romantis",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/v1/foryou",
+        "desc": "For You feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "method": "GET",
+        "path": "/api/v1/detail/:code",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "code",
+            "required": true,
+            "default": "",
+            "example": "843852"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "method": "GET",
+        "path": "/api/v1/play/:code",
+        "desc": "Episode video URL (VIP)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "code",
+            "required": true,
+            "default": "",
+            "example": "843852"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "Supported languages",
+        "rateLimit": null,
+        "params": []
+      }
+    ]
+  },
+  {
+    "slug": "shortsky",
+    "apiId": "shortsky",
+    "base": "/shortsky",
+    "endpointCount": 6,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "Supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/home",
+        "desc": "Homepage feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_id",
+            "example": "id_id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/recommend",
+        "desc": "Recommended dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_id",
+            "example": "id_id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_id",
+            "example": "id_id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/drama/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "692"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_id",
+            "example": "id_id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/drama/:id/episode/:ep",
+        "desc": "Episode video URLs (480/720/1080)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "692"
+          },
+          {
+            "name": "ep",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id_id",
+            "example": "id_id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "shortwave",
+    "apiId": "shortwave",
+    "base": "/shortwave",
+    "endpointCount": 8,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/set-lang/:lang",
+        "desc": "Set language. Title, tags, content change accordingly",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": true,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/top",
+        "desc": "Drama trending",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/all",
+        "desc": "All dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/more",
+        "desc": "Dramas with pagination",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/rankings",
+        "desc": "Ranking drama",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/search/:query",
+        "desc": "Cari drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "query",
+            "required": true,
+            "default": "",
+            "example": "cinta"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/drama/:dramaId",
+        "desc": "Drama detail + all episodes + cover per episode",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "dramaId",
+            "required": true,
+            "default": "",
+            "example": "694a475a5f4a5417dbedc27c"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/stream/:dramaId/:chapterId",
+        "desc": "Stream URL (M3U8) + subtitle (WebVTT). Auto unlock jika locked",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "dramaId",
+            "required": true,
+            "default": "",
+            "example": "694a475a5f4a5417dbedc27c"
+          },
+          {
+            "name": "chapterId",
+            "required": true,
+            "default": "",
+            "example": "694a475b5f4a5417dbedc27d"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "",
+            "example": "in"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "shotshort",
+    "apiId": "shotshort",
+    "base": "/shotshort",
+    "endpointCount": 8,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/languages",
+        "desc": "List of 13 supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/popular",
+        "desc": "Popular dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/search",
+        "desc": "Search dramas",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/book/:id",
+        "desc": "Drama detail with episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1558"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/book/:id/episodes",
+        "desc": "List all episodes with chapterId",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1558"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/book/:bookId/chapter/:chapterId",
+        "desc": "Chapter video URL with auto-fetch subtitles",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "1558"
+          },
+          {
+            "name": "chapterId",
+            "required": true,
+            "default": "",
+            "example": "31830"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/category/list",
+        "desc": "Category list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/category",
+        "desc": "Category content (case-sensitive: Romance, Urban, Mafia)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "category",
+            "required": false,
+            "default": "",
+            "example": "Romance"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "snackshort",
+    "apiId": "snackshort",
+    "base": "/snackshort",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/tabs",
+        "desc": "Drama tabs",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/browsing",
+        "desc": "Browse dramas",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama by keyword (q), or get search terms if no q",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": false,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/book/:bookId",
+        "desc": "Book/drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "123"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/book/:bookId/chapters",
+        "desc": "Chapter list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "123"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/book/:bookId/episode/:chapterId",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "bookId",
+            "required": true,
+            "default": "",
+            "example": "123"
+          },
+          {
+            "name": "chapterId",
+            "required": true,
+            "default": "",
+            "example": "9150"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "Indonesian",
+            "example": "Indonesian"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "sodareels",
+    "apiId": "sodareels",
+    "base": "/sodareels",
+    "endpointCount": 6,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/home",
+        "desc": "Homepage feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "count",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Episode video URLs (use ewash from /info)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2008415452123893762"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/info/:id",
+        "desc": "Drama info + episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "2008052547485241345"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/category",
+        "desc": "Category list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "cat",
+            "required": false,
+            "default": "",
+            "example": ""
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "count",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/episodes",
+        "desc": "Episode video URLs (use ewash from /info)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "ids",
+            "required": true,
+            "default": "",
+            "example": "2008415452123893762"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "stardusttv",
+    "apiId": "stardusttv",
+    "base": "/stardusttv",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/homepage",
+        "desc": "Homepage feed",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/categories",
+        "desc": "Category list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/category/:id",
+        "desc": "Videos by category with pagination",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "th"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "2"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "20",
+            "example": "10"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search drama with pagination",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "th"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "2"
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "default": "20",
+            "example": "10"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/video/:id",
+        "desc": "Video detail + all episodes",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "15172"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "th"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/video/:id/episode/:episode",
+        "desc": "Episode stream URL (H264/H265)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "15172"
+          },
+          {
+            "name": "episode",
+            "required": true,
+            "default": "",
+            "example": "1"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "th"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "starshort",
+    "apiId": "starshort",
+    "base": "/starshort",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "List supported languages (returns id:name mapping)",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/dramas",
+        "desc": "Popular dramas (lang: 3=English, 4=Indonesian)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "4",
+            "example": "4"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/dramas/new",
+        "desc": "New releases",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "4",
+            "example": "4"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/dramas/search",
+        "desc": "Search drama",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "4",
+            "example": "4"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/dramas/:dramaId",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "dramaId",
+            "required": true,
+            "default": "",
+            "example": "Gaen"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "4",
+            "example": "4"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/dramas/:dramaId/episodes",
+        "desc": "Episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "dramaId",
+            "required": true,
+            "default": "",
+            "example": "Gaen"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "4",
+            "example": "4"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/dramas/:dramaId/episodes/:epNum",
+        "desc": "Episode video URL",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "dramaId",
+            "required": true,
+            "default": "",
+            "example": "Gaen"
+          },
+          {
+            "name": "epNum",
+            "required": true,
+            "default": "",
+            "example": "15"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "4",
+            "example": "4"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "velolo",
+    "apiId": "velolo",
+    "base": "/velolo",
+    "endpointCount": 7,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/languages",
+        "desc": "List available languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/hot",
+        "desc": "Drama trending/hot chart",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/new",
+        "desc": "New releases",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/labels",
+        "desc": "List categories (for labelId in /dramas)",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/dramas",
+        "desc": "Browse/search drama",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "q",
+            "required": false,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "labelId",
+            "required": false,
+            "default": "",
+            "example": ""
+          },
+          {
+            "name": "page",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "10",
+            "example": "10"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/detail/:id",
+        "desc": "Drama detail + all episode URLs",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "1959825426474463232"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "id",
+            "example": "id"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/stream",
+        "desc": "Extract .ts segments from m3u8",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "default": "",
+            "example": "https://velolo-bunny.b-cdn.net/hls/xxx/01.m3u8"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "vigloo",
+    "apiId": "vigloo",
+    "base": "/vigloo",
+    "endpointCount": 12,
+    "endpoints": [
+      {
+        "id": 0,
+        "method": "GET",
+        "path": "/api/v1/languages",
+        "desc": "Available languages",
+        "rateLimit": null,
+        "params": []
+      },
+      {
+        "id": 1,
+        "method": "GET",
+        "path": "/api/v1/tabs",
+        "desc": "Home tabs",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "method": "GET",
+        "path": "/api/v1/tabs/:id",
+        "desc": "Tab content",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "15000101"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "default": "",
+            "example": ""
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "method": "GET",
+        "path": "/api/v1/bundles/:id",
+        "desc": "Public bundle",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "15001213"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "method": "GET",
+        "path": "/api/v1/browse",
+        "desc": "Browse programs",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "sort",
+            "required": false,
+            "default": "POPULAR",
+            "example": "POPULAR"
+          },
+          {
+            "name": "genre",
+            "required": false,
+            "default": "",
+            "example": ""
+          },
+          {
+            "name": "country",
+            "required": false,
+            "default": "",
+            "example": ""
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "30",
+            "example": "30"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "method": "GET",
+        "path": "/api/v1/search",
+        "desc": "Search dramas",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "default": "",
+            "example": "love"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "default": "20",
+            "example": "20"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "method": "GET",
+        "path": "/api/v1/rank",
+        "desc": "Ranking",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "method": "GET",
+        "path": "/api/v1/genres",
+        "desc": "Genre list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "method": "GET",
+        "path": "/api/v1/drama/:id",
+        "desc": "Drama detail",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "id",
+            "required": true,
+            "default": "",
+            "example": "15000287"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "method": "GET",
+        "path": "/api/v1/drama/:programId/season/:seasonId/episodes",
+        "desc": "Episode list",
+        "rateLimit": null,
+        "params": [
+          {
+            "name": "programId",
+            "required": true,
+            "default": "",
+            "example": "15000468"
+          },
+          {
+            "name": "seasonId",
+            "required": true,
+            "default": "",
+            "example": "15000463"
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "default": "en",
+            "example": "en"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "method": "GET",
+        "path": "/api/v1/play",
+        "desc": "Get video URL + cookies",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "seasonId",
+            "required": true,
+            "default": "",
+            "example": "15000046"
+          },
+          {
+            "name": "ep",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "method": "GET",
+        "path": "/api/v1/stream",
+        "desc": "HLS stream with embedded cookies",
+        "rateLimit": 100,
+        "params": [
+          {
+            "name": "seasonId",
+            "required": true,
+            "default": "",
+            "example": "15000046"
+          },
+          {
+            "name": "ep",
+            "required": false,
+            "default": "1",
+            "example": "1"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>API Docs - Drama API Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --bg:#050203;
+  --bg2:rgba(0,0,0,.3);
+  --card:rgba(12,6,4,.55);
+  --card-hover:rgba(18,10,6,.7);
+  --border:rgba(255,160,100,.08);
+  --border-hover:rgba(255,130,60,.22);
+  --accent:#ff7a35;
+  --accent2:#e63c12;
+  --accent-dark:#c42a0a;
+  --accent-glow:rgba(230,60,18,.08);
+  --accent-glow2:rgba(255,122,53,.06);
+  --text:#ffffff;
+  --text-sec:rgba(255,255,255,.72);
+  --text-muted:#6b5847;
+  --danger:#f87171;
+  --danger-bg:rgba(166,27,27,.1);
+  --success:#86efac;
+  --warning:#f5a623;
+  --gradient:linear-gradient(135deg,#e63c12 0%,#ff7a35 55%,#f5a623 100%);
+  --gradient-subtle:linear-gradient(135deg,rgba(230,60,18,.05) 0%,rgba(245,166,35,.03) 100%);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.4);
+  --shadow-md:0 8px 30px rgba(0,0,0,.45);
+  --shadow-glow:0 0 40px rgba(230,60,18,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 70% 60% at 15% 0%,rgba(196,42,10,.18),transparent 55%),radial-gradient(ellipse 60% 50% at 85% 100%,rgba(122,19,16,.14),transparent 60%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,160,100,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,160,100,.025) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 100% 70% at 50% 0%,black,transparent 75%);opacity:.6}
+.container{max-width:960px;margin:0 auto;padding:20px;position:relative;z-index:1}
+@media(max-width:640px){.container{padding:14px}}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0 24px;position:sticky;top:0;z-index:50;border-bottom:1px solid transparent;transition:border-color .3s}
+.nav::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:100vw;height:calc(100% + 150px);background:linear-gradient(180deg,rgba(5,2,3,.92) 0%,rgba(5,2,3,.92) 75%,rgba(5,2,3,.65) 88%,rgba(5,2,3,0) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);mask-image:linear-gradient(to bottom,black 75%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,black 75%,transparent 100%);pointer-events:none;z-index:-1}
+.nav.scrolled{border-bottom-color:transparent}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-brand h1{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.nav-brand h1 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+.nav-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 8px rgba(134,239,172,.35);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.btn{padding:10px 18px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s ease;display:inline-flex;align-items:center;gap:7px;text-decoration:none;position:relative;overflow:hidden;white-space:nowrap}
+.btn-primary{background:var(--gradient);color:#1a0606;font-weight:700;box-shadow:0 4px 14px rgba(230,60,18,.2),inset 0 1px 0 rgba(255,255,255,.15)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(230,60,18,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn-outline{background:var(--card);border:1px solid var(--border);color:var(--text-sec);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.btn-outline:hover{border-color:var(--border-hover);color:var(--accent);background:var(--card-hover)}
+.btn-danger{background:var(--danger-bg);border:1px solid rgba(166,27,27,.22);color:var(--danger)}
+.btn-danger:hover{background:rgba(166,27,27,.16);border-color:rgba(166,27,27,.4)}
+.btn svg{width:16px;height:16px;flex-shrink:0}
+.hero{text-align:center;padding:32px 0 40px}
+.hero h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:2.1rem;font-weight:700;letter-spacing:-.035em;margin-bottom:10px;line-height:1.15;color:var(--text)}
+.hero h2 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 4px 20px rgba(230,60,18,.18))}
+.hero p{color:var(--text-sec);font-size:15px;max-width:480px;margin:0 auto}
+@media(max-width:640px){.hero h2{font-size:1.5rem}.hero p{font-size:13px}.hero{padding:20px 0 28px}}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+@media(max-width:640px){.stats-row{grid-template-columns:repeat(3,1fr);gap:8px}}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;transition:all .3s cubic-bezier(.2,.8,.2,1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.stat:hover{border-color:var(--border-hover);background:var(--card-hover);transform:translateY(-2px)}
+.stat-value{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.6rem;font-weight:700;letter-spacing:-.02em;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;font-weight:600}
+@media(max-width:640px){.stat{padding:12px}.stat-value{font-size:1.25rem}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;transition:all .3s cubic-bezier(.2,.8,.2,1);position:relative;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.card::before{content:'';position:absolute;inset:0;border-radius:16px;background:var(--gradient-subtle);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover{border-color:var(--border-hover)}
+.card:hover::before{opacity:1}
+.section-label{font-family:'Space Grotesk','Inter',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--text-sec);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.section-label::before{content:'';width:24px;height:2px;background:var(--gradient);border-radius:2px;flex-shrink:0}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.token-box{display:flex;gap:8px;position:relative}
+.token-box input{flex:1;padding:14px 16px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'JetBrains Mono','Fira Code',monospace;font-size:13px;transition:all .25s}
+.token-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.token-box input::placeholder{color:var(--text-muted)}
+.token-box button{padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text-sec);cursor:pointer;transition:all .25s;font-size:13px;font-weight:600;white-space:nowrap;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.token-box button:hover{border-color:var(--border-hover);color:var(--accent);background:var(--card-hover)}
+.api-grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:640px){.api-grid{grid-template-columns:repeat(2,1fr)}}
+.api-card{display:block;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-decoration:none;color:var(--text);transition:all .35s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.api-card::before{content:'';position:absolute;inset:-1px;padding:1px;background:var(--gradient);border-radius:inherit;opacity:0;transition:opacity .35s;pointer-events:none;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.api-card:hover{transform:translateY(-2px);background:var(--card-hover);box-shadow:var(--shadow-md),var(--shadow-glow)}
+.api-card:hover::before{opacity:.55}
+.api-card.disabled{opacity:.4;pointer-events:none}
+.api-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.api-card-title{display:flex;align-items:center;gap:12px}
+.api-card-icon{width:42px;height:42px;border-radius:12px;object-fit:cover;border:1px solid var(--border);background:rgba(0,0,0,.3)}
+.api-card-title h3{font-family:'Space Grotesk','Inter',sans-serif;font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--text)}
+.api-card-meta{display:flex;align-items:center;gap:6px;margin-top:4px}
+.api-card p{font-size:13px;color:var(--text-sec);line-height:1.55}
+.api-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.api-card-footer span{font-size:12px;color:var(--text-muted);font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.badge-ep{background:var(--accent-glow);color:var(--accent);border:1px solid rgba(255,122,53,.18)}
+.badge-maint{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(248,113,113,.2)}
+.badge-live{background:rgba(134,239,172,.08);color:var(--success);border:1px solid rgba(134,239,172,.2)}
+.arrow-icon{color:var(--text-muted);transition:all .3s}
+.api-card:hover .arrow-icon{color:var(--accent);transform:translateX(3px)}
+footer{text-align:center;padding:28px 20px;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border);margin-top:40px;letter-spacing:.02em;position:relative;z-index:1}
+footer a{color:var(--text-sec);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--accent)}
+.fade-in{animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stagger-1{animation-delay:.05s}.stagger-2{animation-delay:.1s}.stagger-3{animation-delay:.15s}.stagger-4{animation-delay:.2s}
+
+.search-wrap{position:relative;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 12px 4px 14px;margin-bottom:18px;transition:all .25s}
+.search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.search-wrap svg{color:var(--text-muted);flex-shrink:0}
+.search-wrap input{flex:1;background:transparent;border:none;outline:none;font-family:inherit;font-size:14px;padding:12px 0;color:var(--text)}
+.search-wrap input::placeholder{color:var(--text-muted)}
+.search-wrap .search-kbd{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:3px 8px;flex-shrink:0}
+.search-wrap .search-count{font-size:12px;color:var(--text-muted);padding:3px 10px;background:var(--accent-glow);color:var(--accent);border-radius:8px;font-weight:600;flex-shrink:0;font-variant-numeric:tabular-nums}
+.search-wrap .search-clear{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:6px;border-radius:6px;display:none;align-items:center;justify-content:center}
+.search-wrap .search-clear:hover{color:var(--danger);background:var(--danger-bg)}
+.search-wrap.has-value .search-clear{display:inline-flex}
+.search-wrap.has-value .search-kbd{display:none}
+.no-results{text-align:center;padding:40px 20px;color:var(--text-sec);background:var(--card);border:1px dashed var(--border);border-radius:14px;display:none}
+.no-results.show{display:block}
+.no-results strong{color:var(--text);font-weight:600}
+.sys-ep{display:flex;flex-direction:column;gap:12px}
+.sys-ep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sys-ep-method{display:inline-block;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;background:var(--accent-glow);color:var(--accent);border:1px solid rgba(255,122,53,.2)}
+.sys-ep-path{font-family:'JetBrains Mono','Fira Code',monospace;font-size:13px;font-weight:600;color:var(--text);background:var(--bg2);padding:5px 10px;border-radius:6px;border:1px solid var(--border)}
+.sys-ep-desc{font-size:12px;color:var(--text-sec)}
+.sys-ep-curl{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
+.sys-ep-curl pre{margin:0;padding:14px 56px 14px 14px;overflow-x:auto}
+.sys-ep-curl code{font-family:'JetBrains Mono','Fira Code',monospace;font-size:12px;color:#86efac;white-space:pre-wrap;word-break:break-all;line-height:1.6}
+.sys-ep-curl button{position:absolute;top:8px;right:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text-sec);cursor:pointer;padding:5px 10px;font-size:11px;font-weight:600;transition:all .2s}
+.sys-ep-curl button:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-glow)}
+.sys-ep-curl button.copied{color:var(--success);border-color:var(--success);background:rgba(22,163,74,.08)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav" id="nav">
+      <a href="/" class="nav-brand">
+        <h1>Sapimu <span>API</span></h1>
+      </a>
+      <div class="nav-actions">
+        <a href="/" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Home
+        </a>
+        <button onclick="if (!window.__cfRLUnblockHandlers) return false; logout()" class="btn btn-danger" data-cf-modified-39173b2352fef065b9b5802e-="">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
+    </nav>
+
+    <div class="hero fade-in">
+      <h2>API <span>Documentation</span></h2>
+      <p>Select a service to view endpoint documentation, parameters, and the interactive playground</p>
+    </div>
+
+    <div class="stats-row fade-in stagger-1">
+      <div class="stat">
+        <div class="stat-value">44</div>
+        <div class="stat-label">Total APIs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">339</div>
+        <div class="stat-label">Endpoints</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">43</div>
+        <div class="stat-label">Active</div>
+      </div>
+    </div>
+
+    <div class="card fade-in stagger-2">
+      <div class="section-label">API Token</div>
+      <div class="token-box">
+        <input id="token" type="password" placeholder="Your token is saved automatically..." autocomplete="off" spellcheck="false">
+        <button onclick="if (!window.__cfRLUnblockHandlers) return false; toggleToken()" id="toggleBtn" data-cf-modified-39173b2352fef065b9b5802e-="">Show</button>
+      </div>
+    </div>
+
+    <div class="card fade-in stagger-3">
+      <div class="section-label">System Endpoint</div>
+      <div class="sys-ep">
+        <div class="sys-ep-head">
+          <span class="sys-ep-method">GET</span>
+          <code class="sys-ep-path">/api/status</code>
+          <span class="sys-ep-desc">Check status (on / maintenance) of all APIs</span>
+        </div>
+        <div class="sys-ep-curl">
+          <pre><code id="statusCurl">curl -A "Mozilla/5.0" -H "Authorization: Bearer YOUR_TOKEN" https://captain.sapimu.au/api/status</code></pre>
+          <button onclick="if (!window.__cfRLUnblockHandlers) return false; copyStatusCurl()" id="statusCurlBtn" type="button" data-cf-modified-39173b2352fef065b9b5802e-="">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label fade-in stagger-3">Select a Service</div>
+    <div class="search-wrap fade-in stagger-3" id="searchWrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" id="apiSearch" placeholder="Search API, service, or description..." autocomplete="off" spellcheck="false">
+      <button type="button" class="search-clear" id="searchClear" aria-label="Clear">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+      <span class="search-kbd">/</span>
+      <span class="search-count" id="searchCount">44</span>
+    </div>
+    <div class="api-grid" id="apiGrid">
+    <a href="/docs/flickshort" class="api-card fade-in stagger-1" data-search="flickshort flickshort api for flickshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/flickshort.png" alt="FlickShort" onerror="this.style.display='none'">
+          <div><h3>FlickShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for FlickShort</p>
+      <div class="api-card-footer"><span>5 endpoints available</span><span class="badge badge-ep">5 EP</span></div>
+    </a>
+    <a href="/docs/cashdrama" class="api-card fade-in stagger-2" data-search="cashdrama cashdrama api for cashdrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/cashdrama.png" alt="CashDrama" onerror="this.style.display='none'">
+          <div><h3>CashDrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for CashDrama</p>
+      <div class="api-card-footer"><span>9 endpoints available</span><span class="badge badge-ep">9 EP</span></div>
+    </a>
+    <a href="/docs/shotshort" class="api-card fade-in stagger-3" data-search="shotshort shotshort api for shotshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/shotshort.png" alt="ShotShort" onerror="this.style.display='none'">
+          <div><h3>ShotShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for ShotShort</p>
+      <div class="api-card-footer"><span>8 endpoints available</span><span class="badge badge-ep">8 EP</span></div>
+    </a>
+    <a href="/docs/bilitv" class="api-card fade-in stagger-4" data-search="bilitv bilitv api for bilitv">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/bilitv.png" alt="BiliTV" onerror="this.style.display='none'">
+          <div><h3>BiliTV</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for BiliTV</p>
+      <div class="api-card-footer"><span>8 endpoints available</span><span class="badge badge-ep">8 EP</span></div>
+    </a>
+    <a href="/docs/dramabite" class="api-card fade-in stagger-1" data-search="dramabite dramabite api for dramabite">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramabite.png" alt="DramaBite" onerror="this.style.display='none'">
+          <div><h3>DramaBite</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DramaBite</p>
+      <div class="api-card-footer"><span>9 endpoints available</span><span class="badge badge-ep">9 EP</span></div>
+    </a>
+    <a href="/docs/dramanova" class="api-card fade-in stagger-2" data-search="dramanova dramanova api for dramanova">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramanova.png" alt="DramaNova" onerror="this.style.display='none'">
+          <div><h3>DramaNova</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DramaNova</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/dramapops" class="api-card fade-in stagger-3" data-search="dramapops dramapops api for dramapops">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramapops.png" alt="DramaPops" onerror="this.style.display='none'">
+          <div><h3>DramaPops</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DramaPops</p>
+      <div class="api-card-footer"><span>9 endpoints available</span><span class="badge badge-ep">9 EP</span></div>
+    </a>
+    <a href="/docs/fundrama" class="api-card fade-in stagger-4" data-search="fundrama fundrama api for fundrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/fundrama.png" alt="Fundrama" onerror="this.style.display='none'">
+          <div><h3>Fundrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Fundrama</p>
+      <div class="api-card-footer"><span>6 endpoints available</span><span class="badge badge-ep">6 EP</span></div>
+    </a>
+    <a href="/docs/netshort" class="api-card fade-in stagger-1" data-search="netshort netshort api for netshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/netshort.png" alt="NetShort" onerror="this.style.display='none'">
+          <div><h3>NetShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for NetShort</p>
+      <div class="api-card-footer"><span>15 endpoints available</span><span class="badge badge-ep">15 EP</span></div>
+    </a>
+    <a href="/docs/melolo" class="api-card fade-in stagger-2" data-search="melolo melolo api for melolo">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/melolo.png" alt="Melolo" onerror="this.style.display='none'">
+          <div><h3>Melolo</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Melolo</p>
+      <div class="api-card-footer"><span>8 endpoints available</span><span class="badge badge-ep">8 EP</span></div>
+    </a>
+      <div class="api-card disabled fade-in stagger-3" data-search="dramadash dramadash api for dramadash">
+        <div class="api-card-header">
+          <div class="api-card-title">
+            <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramadash.png" alt="DramaDash" onerror="this.style.display='none'">
+            <div><h3>DramaDash</h3><div class="api-card-meta"><span class="badge badge-maint">Maintenance</span></div></div>
+          </div>
+        </div>
+        <p>API for DramaDash</p>
+        <div class="api-card-footer"><span>4 endpoints</span><span class="badge badge-maint">Offline</span></div>
+      </div>
+    <a href="/docs/hishort" class="api-card fade-in stagger-4" data-search="hishort hishort api for hishort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/hishort.png" alt="HiShort" onerror="this.style.display='none'">
+          <div><h3>HiShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for HiShort</p>
+      <div class="api-card-footer"><span>4 endpoints available</span><span class="badge badge-ep">4 EP</span></div>
+    </a>
+    <a href="/docs/freereels" class="api-card fade-in stagger-1" data-search="freereels freereels api for freereels">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/freereels.png" alt="FreeReels" onerror="this.style.display='none'">
+          <div><h3>FreeReels</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for FreeReels</p>
+      <div class="api-card-footer"><span>12 endpoints available</span><span class="badge badge-ep">12 EP</span></div>
+    </a>
+    <a href="/docs/dramawave" class="api-card fade-in stagger-2" data-search="dramawave dramawave api for dramawave">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramawave.png" alt="DramaWave" onerror="this.style.display='none'">
+          <div><h3>DramaWave</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DramaWave</p>
+      <div class="api-card-footer"><span>5 endpoints available</span><span class="badge badge-ep">5 EP</span></div>
+    </a>
+    <a href="/docs/shortmax" class="api-card fade-in stagger-3" data-search="shortmax shortmax api for shortmax">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/shortmax.png" alt="ShortMax" onerror="this.style.display='none'">
+          <div><h3>ShortMax</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for ShortMax</p>
+      <div class="api-card-footer"><span>13 endpoints available</span><span class="badge badge-ep">13 EP</span></div>
+    </a>
+    <a href="/docs/starshort" class="api-card fade-in stagger-4" data-search="starshort starshort api for starshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/starshort.png" alt="StarShort" onerror="this.style.display='none'">
+          <div><h3>StarShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for StarShort</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/dotdrama" class="api-card fade-in stagger-1" data-search="dotdrama dotdrama api for dotdrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dotdrama.png" alt="DotDrama" onerror="this.style.display='none'">
+          <div><h3>DotDrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DotDrama</p>
+      <div class="api-card-footer"><span>4 endpoints available</span><span class="badge badge-ep">4 EP</span></div>
+    </a>
+    <a href="/docs/microdrama" class="api-card fade-in stagger-2" data-search="microdrama microdrama api for microdrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/microdrama.png" alt="MicroDrama" onerror="this.style.display='none'">
+          <div><h3>MicroDrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for MicroDrama</p>
+      <div class="api-card-footer"><span>4 endpoints available</span><span class="badge badge-ep">4 EP</span></div>
+    </a>
+    <a href="/docs/meloshort" class="api-card fade-in stagger-3" data-search="meloshort meloshort api for meloshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/meloshort.png" alt="MeloShort" onerror="this.style.display='none'">
+          <div><h3>MeloShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for MeloShort</p>
+      <div class="api-card-footer"><span>6 endpoints available</span><span class="badge badge-ep">6 EP</span></div>
+    </a>
+    <a href="/docs/rapidtv" class="api-card fade-in stagger-4" data-search="rapidtv rapidtv api for rapidtv">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/rapidtv.png" alt="RapidTV" onerror="this.style.display='none'">
+          <div><h3>RapidTV</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for RapidTV</p>
+      <div class="api-card-footer"><span>4 endpoints available</span><span class="badge badge-ep">4 EP</span></div>
+    </a>
+    <a href="/docs/minutedrama" class="api-card fade-in stagger-1" data-search="minutedrama minutedrama api for minutedrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/minutedrama.png" alt="MinuteDrama" onerror="this.style.display='none'">
+          <div><h3>MinuteDrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for MinuteDrama</p>
+      <div class="api-card-footer"><span>3 endpoints available</span><span class="badge badge-ep">3 EP</span></div>
+    </a>
+    <a href="/docs/reelife" class="api-card fade-in stagger-2" data-search="reelife reelife api for reelife">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/reelife.png" alt="Reelife" onerror="this.style.display='none'">
+          <div><h3>Reelife</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Reelife</p>
+      <div class="api-card-footer"><span>8 endpoints available</span><span class="badge badge-ep">8 EP</span></div>
+    </a>
+    <a href="/docs/vigloo" class="api-card fade-in stagger-3" data-search="vigloo vigloo api for vigloo streaming">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/vigloo.png" alt="Vigloo" onerror="this.style.display='none'">
+          <div><h3>Vigloo</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Vigloo streaming</p>
+      <div class="api-card-footer"><span>12 endpoints available</span><span class="badge badge-ep">12 EP</span></div>
+    </a>
+    <a href="/docs/goodshort" class="api-card fade-in stagger-4" data-search="goodshort goodshort api for goodshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/goodshort.png" alt="GoodShort" onerror="this.style.display='none'">
+          <div><h3>GoodShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for GoodShort</p>
+      <div class="api-card-footer"><span>8 endpoints available</span><span class="badge badge-ep">8 EP</span></div>
+    </a>
+    <a href="/docs/sodareels" class="api-card fade-in stagger-1" data-search="sodareels sodareels api for sodareels">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/sodareels.png" alt="SodaReels" onerror="this.style.display='none'">
+          <div><h3>SodaReels</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for SodaReels</p>
+      <div class="api-card-footer"><span>6 endpoints available</span><span class="badge badge-ep">6 EP</span></div>
+    </a>
+    <a href="/docs/radreels" class="api-card fade-in stagger-2" data-search="radreels radreels api for radreels">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/radreels.png" alt="RadReels" onerror="this.style.display='none'">
+          <div><h3>RadReels</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for RadReels</p>
+      <div class="api-card-footer"><span>9 endpoints available</span><span class="badge badge-ep">9 EP</span></div>
+    </a>
+    <a href="/docs/dramarush" class="api-card fade-in stagger-3" data-search="dramarush dramarush api for dramarush">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramarush.png" alt="DramaRush" onerror="this.style.display='none'">
+          <div><h3>DramaRush</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DramaRush</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/reelshort" class="api-card fade-in stagger-4" data-search="reelshort reelshort api for reelshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/reelshort.png" alt="ReelShort" onerror="this.style.display='none'">
+          <div><h3>ReelShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for ReelShort</p>
+      <div class="api-card-footer"><span>11 endpoints available</span><span class="badge badge-ep">11 EP</span></div>
+    </a>
+    <a href="/docs/stardusttv" class="api-card fade-in stagger-1" data-search="stardusttv stardusttv api for stardusttv">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/stardusttv.png" alt="StardustTV" onerror="this.style.display='none'">
+          <div><h3>StardustTV</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for StardustTV</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/snackshort" class="api-card fade-in stagger-2" data-search="snackshort snackshort api for snackshort">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/snackshort.png" alt="SnackShort" onerror="this.style.display='none'">
+          <div><h3>SnackShort</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for SnackShort</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/shorten" class="api-card fade-in stagger-3" data-search="shorten shorten api for shorten">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/shorten.png" alt="Shorten" onerror="this.style.display='none'">
+          <div><h3>Shorten</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Shorten</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/idrama" class="api-card fade-in stagger-4" data-search="idrama idrama api for idrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/idrama.png" alt="iDrama" onerror="this.style.display='none'">
+          <div><h3>iDrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for iDrama</p>
+      <div class="api-card-footer"><span>9 endpoints available</span><span class="badge badge-ep">9 EP</span></div>
+    </a>
+    <a href="/docs/flextv" class="api-card fade-in stagger-1" data-search="flextv flextv api for flextv">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/flextv.png" alt="FlexTV" onerror="this.style.display='none'">
+          <div><h3>FlexTV</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for FlexTV</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/velolo" class="api-card fade-in stagger-2" data-search="velolo velolo api for velolo">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/velolo.png" alt="Velolo" onerror="this.style.display='none'">
+          <div><h3>Velolo</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Velolo</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/shortsky" class="api-card fade-in stagger-3" data-search="shortsky shortsky api for shortsky">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/shortsky.png" alt="ShortSky" onerror="this.style.display='none'">
+          <div><h3>ShortSky</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for ShortSky</p>
+      <div class="api-card-footer"><span>6 endpoints available</span><span class="badge badge-ep">6 EP</span></div>
+    </a>
+    <a href="/docs/shortbox" class="api-card fade-in stagger-4" data-search="shortbox shortbox api for shortbox">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/shortbox.png" alt="ShortBox" onerror="this.style.display='none'">
+          <div><h3>ShortBox</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for ShortBox</p>
+      <div class="api-card-footer"><span>10 endpoints available</span><span class="badge badge-ep">10 EP</span></div>
+    </a>
+    <a href="/docs/reelala" class="api-card fade-in stagger-1" data-search="reelala reelala api for reelala">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/reelala.png" alt="Reelala" onerror="this.style.display='none'">
+          <div><h3>Reelala</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for Reelala</p>
+      <div class="api-card-footer"><span>6 endpoints available</span><span class="badge badge-ep">6 EP</span></div>
+    </a>
+    <a href="/docs/moboreels" class="api-card fade-in stagger-2" data-search="moboreels moboreels api for moboreels">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/moboreels.png" alt="MoboReels" onerror="this.style.display='none'">
+          <div><h3>MoboReels</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for MoboReels</p>
+      <div class="api-card-footer"><span>10 endpoints available</span><span class="badge badge-ep">10 EP</span></div>
+    </a>
+    <a href="/docs/cubetv" class="api-card fade-in stagger-3" data-search="cubetv cubetv api for cubetv">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/cubetv.png" alt="CubeTV" onerror="this.style.display='none'">
+          <div><h3>CubeTV</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for CubeTV</p>
+      <div class="api-card-footer"><span>11 endpoints available</span><span class="badge badge-ep">11 EP</span></div>
+    </a>
+    <a href="/docs/shortwave" class="api-card fade-in stagger-4" data-search="shortwave shortwave api for shortwave">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/shortwave.png" alt="ShortWave" onerror="this.style.display='none'">
+          <div><h3>ShortWave</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for ShortWave</p>
+      <div class="api-card-footer"><span>8 endpoints available</span><span class="badge badge-ep">8 EP</span></div>
+    </a>
+    <a href="/docs/sarostv" class="api-card fade-in stagger-1" data-search="sarostv sarostv api for sarostv">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/sarostv.png" alt="SarosTV" onerror="this.style.display='none'">
+          <div><h3>SarosTV</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for SarosTV</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/sereal" class="api-card fade-in stagger-2" data-search="sereal sereal api untuk sereal">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/sereal.png" alt="Sereal" onerror="this.style.display='none'">
+          <div><h3>Sereal</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API untuk Sereal</p>
+      <div class="api-card-footer"><span>9 endpoints available</span><span class="badge badge-ep">9 EP</span></div>
+    </a>
+    <a href="/docs/pinedrama" class="api-card fade-in stagger-3" data-search="pinedrama pinedrama api untuk pinedrama">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/pinedrama.png" alt="PineDrama" onerror="this.style.display='none'">
+          <div><h3>PineDrama</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API untuk PineDrama</p>
+      <div class="api-card-footer"><span>7 endpoints available</span><span class="badge badge-ep">7 EP</span></div>
+    </a>
+    <a href="/docs/dramaboxbaru" class="api-card fade-in stagger-4" data-search="dramabox baru dramaboxbaru api for dramabox baru">
+      <div class="api-card-header">
+        <div class="api-card-title">
+          <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49"></script><img class="api-card-icon" src="/logos/dramaboxbaru.png" alt="DramaBox Baru" onerror="this.style.display='none'">
+          <div><h3>DramaBox Baru</h3><div class="api-card-meta"><span class="badge badge-live">Live</span></div></div>
+        </div>
+        <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+      <p>API for DramaBox Baru</p>
+      <div class="api-card-footer"><span>10 endpoints available</span><span class="badge badge-ep">10 EP</span></div>
+    </a></div>
+    <div class="no-results" id="noResults">No APIs match your search. Try different keywords.</div>
+  </div>
+
+  <footer>
+    <p>Sapimu API Gateway &mdash; <a href="/">Home</a> &middot; <a href="/dmca">DMCA</a></p>
+  </footer>
+
+  <script type="39173b2352fef065b9b5802e-text/javascript">
+    const tokenInput=document.getElementById('token');
+    const toggleBtn=document.getElementById('toggleBtn');
+    tokenInput.value=localStorage.getItem('api_token')||'';
+    tokenInput.addEventListener('input',()=>localStorage.setItem('api_token',tokenInput.value));
+    function toggleToken(){const isPass=tokenInput.type==='password';tokenInput.type=isPass?'text':'password';toggleBtn.textContent=isPass?'Hide':'Show'}
+    function logout(){document.cookie='auth_token=;path=/;max-age=0';localStorage.removeItem('api_token');location.href='/'}
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>10)},{passive:true});
+
+    // Populate /api/status curl with actual origin
+    const statusCurlEl=document.getElementById('statusCurl');
+    function renderStatusCurl(){
+      statusCurlEl.textContent='curl -A "Mozilla/5.0" -H "Authorization: Bearer '+(tokenInput.value||'YOUR_TOKEN')+'" '+location.origin+'/api/status';
+    }
+    renderStatusCurl();
+    tokenInput.addEventListener('input',renderStatusCurl);
+    function copyStatusCurl(){
+      navigator.clipboard.writeText(statusCurlEl.textContent).then(()=>{
+        const btn=document.getElementById('statusCurlBtn');
+        btn.textContent='Copied!';btn.classList.add('copied');
+        setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},1500);
+      });
+    }
+
+    // Search/filter
+    const searchInput=document.getElementById('apiSearch');
+    const searchWrap=document.getElementById('searchWrap');
+    const searchClear=document.getElementById('searchClear');
+    const searchCount=document.getElementById('searchCount');
+    const apiGrid=document.getElementById('apiGrid');
+    const noResults=document.getElementById('noResults');
+    const apiCards=apiGrid.querySelectorAll('.api-card');
+    const totalApis=apiCards.length;
+    function runFilter(){
+      const q=searchInput.value.trim().toLowerCase();
+      let visible=0;
+      apiCards.forEach(card=>{
+        const match=!q||(card.dataset.search||'').includes(q);
+        card.style.display=match?'':'none';
+        if(match)visible++;
+      });
+      searchCount.textContent=q?visible+'/'+totalApis:totalApis;
+      searchWrap.classList.toggle('has-value',!!q);
+      noResults.classList.toggle('show',q&&visible===0);
+      apiGrid.style.display=(q&&visible===0)?'none':'';
+    }
+    searchInput.addEventListener('input',runFilter);
+    searchClear.addEventListener('click',()=>{searchInput.value='';runFilter();searchInput.focus();});
+    document.addEventListener('keydown',(e)=>{
+      if(e.key==='/'&&document.activeElement!==searchInput&&document.activeElement!==tokenInput){
+        e.preventDefault();searchInput.focus();searchInput.select();
+      } else if(e.key==='Escape'&&document.activeElement===searchInput){
+        searchInput.value='';runFilter();searchInput.blur();
+      }
+    });
+  </script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="39173b2352fef065b9b5802e-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"2b9a951c7fce4050b4dbd114cd47db0f","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0fb17c47825fcfc',t:'MTc4MjEyOTYyOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
