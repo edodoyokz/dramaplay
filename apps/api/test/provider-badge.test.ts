@@ -105,6 +105,55 @@ function buildHomeShelves(rows: any[], limit = 3) {
   return [...grouped.values()].sort((a, b) => a.priority - b.priority || a.name.localeCompare(b.name));
 }
 
+function buildSearchResponse(rows: any[], opts: { q: string; provider?: string; page?: number; limit?: number }) {
+  const q = opts.q.trim().toLowerCase();
+  const page = Math.max(1, opts.page ?? 1);
+  const limit = Math.min(50, Math.max(1, opts.limit ?? 24));
+  if (q.length < 2) return { items: [], page, limit, hasMore: false };
+  const matched = rows.filter(
+    (r) =>
+      r.title.toLowerCase().includes(q) &&
+      r.isPublished &&
+      r.visibility === "public" &&
+      r.isPrimary &&
+      r.providerEnabled &&
+      (!opts.provider || r.providerCode === opts.provider)
+  );
+  const pageRows = matched.slice((page - 1) * limit, page * limit + 1);
+  return {
+    items: pageRows.slice(0, limit).map((r) => ({ ...r, provider: { code: r.providerCode, name: r.providerName } })),
+    page,
+    limit,
+    hasMore: pageRows.length > limit,
+    ...(opts.provider ? { provider: { code: opts.provider, name: matched[0]?.providerName } } : {}),
+  };
+}
+
+describe("multiprovider search", () => {
+  const searchRows = [
+    { id: "1", title: "Cinta CEO", isPublished: true, visibility: "public", isPrimary: true, providerEnabled: true, providerCode: "reelshort", providerName: "ReelShort" },
+    { id: "2", title: "Cinta Rahasia", isPublished: true, visibility: "public", isPrimary: true, providerEnabled: true, providerCode: "netshort", providerName: "NetShort" },
+    { id: "3", title: "Cinta Kedua", isPublished: true, visibility: "public", isPrimary: true, providerEnabled: true, providerCode: "reelshort", providerName: "ReelShort" },
+    { id: "4", title: "Cinta Lama", isPublished: false, visibility: "public", isPrimary: true, providerEnabled: true, providerCode: "reelshort", providerName: "ReelShort" },
+  ];
+
+  it("does not search for one-character queries", () => {
+    expect(buildSearchResponse(searchRows, { q: "c" })).toMatchObject({ items: [], hasMore: false });
+  });
+
+  it("filters by provider and returns provider badges", () => {
+    const result = buildSearchResponse(searchRows, { q: "cinta", provider: "reelshort" });
+    expect(result.items).toHaveLength(2);
+    expect(result.items.every((i: any) => i.provider.code === "reelshort")).toBe(true);
+  });
+
+  it("paginates search results", () => {
+    const result = buildSearchResponse(searchRows, { q: "cinta", page: 1, limit: 2 });
+    expect(result.items).toHaveLength(2);
+    expect(result.hasMore).toBe(true);
+  });
+});
+
 describe("provider homepage shelves", () => {
   it("groups by enabled provider and keeps max 3 dramas", () => {
     const rows = Array.from({ length: 4 }, (_, i) => ({
