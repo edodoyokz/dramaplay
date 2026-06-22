@@ -11,6 +11,8 @@ pattern = "api.dramaplay.my.id/*"
 zone_name = "dramaplay.my.id"
 
 # ponytail: cron disabled until Cloudflare creates the account workers.dev subdomain.
-# Re-enable after opening Workers in the dashboard once.
+# Open Workers in the dashboard once, then uncomment to enable:
+#   - keep-alive ping (anti-pause) + analytics_events 7-day purge (see scheduled() in src/index.ts)
+#   - provider sync
 # [triggers]
 # crons = ["*/30 * * * *", "0 */2 * * *"]
