@@ -6,6 +6,7 @@ import { billing } from "./routes/billing";
 import { pakasir } from "./routes/pakasir";
 import { admin } from "./routes/admin";
 import { events } from "./routes/events";
+import { auth } from "./routes/auth";
 import { createDb } from "@dramaplay/db";
 import { providers } from "@dramaplay/db";
 import { eq } from "drizzle-orm";
@@ -21,6 +22,7 @@ app.route("/billing", billing);
 app.route("/pakasir", pakasir);
 app.route("/events", events);
 app.route("/admin", admin);
+app.route("/auth", auth);
 
 export default {
   fetch: app.fetch,

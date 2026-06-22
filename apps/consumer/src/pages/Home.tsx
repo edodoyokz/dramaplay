@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
+import { supabase } from "../lib/supabase";
 
 interface Drama {
   id: string;
@@ -57,16 +58,17 @@ export default function Home() {
       .catch(() => setFresh([]));
 
     // Check VIP state
-    const token = localStorage.getItem("dramaplay:token");
-    if (token) {
-      api<{ user: { isVip: boolean } }>("/auth/me")
+    supabase.auth.getSession().then(({ data }) => {
+      const token = data.session?.access_token;
+      if (!token) return;
+      api<{ user: { isVip: boolean } }>("/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((res) => {
-          if (res?.user) {
-            setUserVip(res.user.isVip);
-          }
+          if (res?.user) setUserVip(res.user.isVip);
         })
         .catch(() => {});
-    }
+    });
   }, []);
 
   // Filter items based on selected genre
