@@ -13,13 +13,14 @@
   "dependencies": {
     "@dramaplay/db": "workspace:*",
     "@dramaplay/shared": "workspace:*",
-    "hono": "^4.6.5",
     "@supabase/supabase-js": "^2.45.4",
-    "drizzle-orm": "^0.36.0"
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.6.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241011.0",
-    "wrangler": "^3.80.0",
-    "vitest": "^2.1.3"
+    "tsx": "^4.22.4",
+    "vitest": "^2.1.3",
+    "wrangler": "^3.80.0"
   }
 }

@@ -77,30 +77,46 @@ export function streamTypeFromUrl(url: string): ProviderStreamSource["streamType
 }
 
 /**
+ * Check if an array item is a module wrapper: an object with a nested
+ * non-empty array under one of the known wrapper keys (items/dramas/books/...).
+ * Returns the flattened inner arrays across all items, or null if not wrappers.
+ */
+function unwrapModules(arr: unknown[]): unknown[] | null {
+  if (!arr.length || typeof arr[0] !== "object" || arr[0] === null) return null;
+  const first = arr[0] as Row;
+  for (const wk of WRAPPER_KEYS) {
+    if (Array.isArray(first[wk]) && (first[wk] as unknown[]).length) {
+      return arr.flatMap((item) => {
+        const o = item as Row;
+        return Array.isArray(o[wk]) ? (o[wk] as unknown[]) : [];
+      });
+    }
+  }
+  return null;
+}
+
+/**
  * Extract first usable array from a nested response.
- * Handles both flat arrays (search results) and module-wrapped arrays
- * (dramawave feed: { data: { items: [{ type: "x", items: [drama1, drama2] }] }).
+ * Handles flat arrays, module-wrapped arrays, and 2-level nesting.
+ * Examples it resolves:
+ *   { data: [drama] }                         (netshort)
+ *   { rows: [drama] }                         (dramanova search)
+ *   { rows: [{ category, dramas: [drama] }] } (dramanova recommend)
+ *   { cell: [{ name, books: [drama] }] }      (melolo bookmall)
+ *   { data: { items: [{ items: [drama] }] } } (dramawave feed)
  */
 export function firstArray(value: unknown): unknown[] {
   if (Array.isArray(value)) {
-    if (value.length > 0 && typeof value[0] === "object" && value[0] !== null && "items" in (value[0] as object)) {
-      return (value as unknown[]).flatMap((item: any) =>
-        Array.isArray(item?.items) ? item.items : []
-      );
-    }
-    return value as unknown[];
+    const unwrapped = unwrapModules(value);
+    return unwrapped ?? (value as unknown[]);
   }
   if (!value || typeof value !== "object") return [];
   const row = value as Row;
-  for (const key of ["data", "items", "list", "rows", "records", "result", "dramas", "episodes"]) {
+  for (const key of TOP_KEYS) {
     const v = row[key];
     if (Array.isArray(v)) {
-      if (v.length > 0 && typeof v[0] === "object" && v[0] !== null && "items" in (v[0] as object)) {
-        return v.flatMap((item: any) =>
-          Array.isArray(item?.items) ? item.items : []
-        );
-      }
-      return v as unknown[];
+      const unwrapped = unwrapModules(v);
+      return unwrapped ?? (v as unknown[]);
     }
     if (v && typeof v === "object") {
       const nested = firstArray(v);
@@ -132,15 +148,15 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
 }
 
 // ─── Config-driven adapter factory ──────────────────────────────────────────
-// ponytail: field mappings are best-effort from endpoint docs only; refine
-// during live smoke testing (Task 8). Tries common field name variants so
-// adapters work even when exact response shape is unknown.
-
-const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id"];
-const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle"];
-const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic"];
-const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content"];
-const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters"];
+// ponytail: field mappings learned from live probe (probe-sapimu.ts);
+// covers all observed field-name variants across batch-1 providers.
+const WRAPPER_KEYS = ["items", "dramas", "books", "list", "chapters", "episodes", "videos", "rows", "data", "lists"];
+const TOP_KEYS = ["data", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists"];
+const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id", "t_book_id", "collectionId", "collection_id", "seriesId", "series_id"];
+const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title"];
+const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover"];
+const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc"];
+const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters"];
 
 function pickString(row: Row, fields: string[]): string | undefined {
   for (const f of fields) {
@@ -161,11 +177,47 @@ function pickNumber(row: Row, fields: string[]): number | undefined {
 }
 
 function pickGenres(row: Row): string[] | undefined {
-  for (const f of ["tag", "tags", "genre", "genres", "content_tags", "category", "categories"]) {
+  for (const f of ["tag", "tags", "genre", "genres", "content_tags", "category", "categories", "labels", "categoryNames", "theme", "content_tags"]) {
     const v = row[f];
     if (Array.isArray(v) && v.length) return v.map(String);
   }
   return undefined;
+}
+
+const EP_ID_FIELDS = ["episodeId", "episode_id", "chapterId", "chapter_id", "videoId", "video_id", "fileId", "file_id"];
+const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "chapterNo", "chapter_no", "chapter"];
+
+/** Find the first object that looks like a drama row (has both a title and an id). */
+function findDetailRow(data: unknown): Row | null {
+  function walk(o: unknown): Row | null {
+    if (!o || typeof o !== "object") return null;
+    if (Array.isArray(o)) {
+      for (const x of o) { const r = walk(x); if (r) return r; }
+      return null;
+    }
+    const row = o as Row;
+    if (pickString(row, TITLE_FIELDS) && pickString(row, ID_FIELDS)) return row;
+    for (const v of Object.values(row)) { const r = walk(v); if (r) return r; }
+    return null;
+  }
+  return walk(data);
+}
+
+/** Find the first array whose items look like episodes (have an episode id or number). */
+function findEpisodeList(data: unknown): Row[] {
+  function walk(o: unknown): Row[] {
+    if (Array.isArray(o)) {
+      if (o.length && typeof o[0] === "object" && o[0] !== null) {
+        const it = o[0] as Row;
+        if (pickString(it, EP_ID_FIELDS) || pickNumber(it, EP_NUM_FIELDS) !== undefined) return o as Row[];
+      }
+      return [];
+    }
+    if (!o || typeof o !== "object") return [];
+    for (const v of Object.values(o)) { const r = walk(v); if (r.length) return r; }
+    return [];
+  }
+  return walk(data);
 }
 
 export interface SapimuAdapterConfig {
@@ -236,7 +288,7 @@ export function createSapimuAdapter(
 
     async fetchDetail(id: string): Promise<ProviderDramaDetail | null> {
       const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
-      const row = (firstArray(data)[0] as Row) ?? null;
+      const row = findDetailRow(data);
       if (!row) return null;
       const episodes = await this.fetchEpisodes(id);
       return {
@@ -248,25 +300,25 @@ export function createSapimuAdapter(
     }
 
     async fetchEpisodes(id: string): Promise<ProviderEpisodeSummary[]> {
-      if (!cfg.episodesFromDetail) {
-        // No separate episodes endpoint; derive from detail episode count.
-        const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
-        const row = (firstArray(data)[0] as Row) ?? {};
-        const total = pickNumber(row, COUNT_FIELDS) ?? 0;
-        return Array.from({ length: total }, (_, i) => ({
-          providerEpisodeId: `${id}:${i + 1}`,
-          episodeNumber: i + 1,
-          title: `Episode ${i + 1}`,
-        }));
-      }
-      // Detail includes an episode array — extract it.
       const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
-      const row = (firstArray(data)[0] as Row) ?? {};
-      const epList = firstArray(row);
-      return epList.map((e, i) => ({
-        providerEpisodeId: String(pickString(e as Row, ID_FIELDS) ?? `${id}:${i + 1}`),
-        episodeNumber: pickNumber(e as Row, ["episode", "episodeNo", "number", "sort"]) ?? i + 1,
-        title: pickString(e as Row, TITLE_FIELDS) ?? `Episode ${i + 1}`,
+      const list = findEpisodeList(data);
+      if (list.length) {
+        return list.map((e, i) => {
+          const num = pickNumber(e, EP_NUM_FIELDS) ?? i + 1;
+          return {
+            providerEpisodeId: `${id}:${num}`,
+            episodeNumber: num,
+            title: pickString(e, TITLE_FIELDS) ?? `Episode ${num}`,
+          };
+        });
+      }
+      // Fallback: derive synthetic episodes from the detail's count field.
+      const row = findDetailRow(data) ?? {};
+      const total = pickNumber(row, COUNT_FIELDS) ?? 0;
+      return Array.from({ length: total }, (_, i) => ({
+        providerEpisodeId: `${id}:${i + 1}`,
+        episodeNumber: i + 1,
+        title: `Episode ${i + 1}`,
       }));
     }
 
