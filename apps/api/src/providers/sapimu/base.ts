@@ -103,6 +103,25 @@ export function streamTypeFromUrl(url: string): ProviderStreamSource["streamType
   return "other";
 }
 
+function findSubtitleUrl(value: unknown, preferred = "id"): string | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  if (Array.isArray(value)) {
+    const rows = value.filter((v): v is Row => !!v && typeof v === "object");
+    const row = rows.find((r) => String(r.lang ?? r.language ?? "").toLowerCase().startsWith(preferred)) ?? rows[0];
+    return s(row?.url);
+  }
+  const row = value as Row;
+  for (const key of ["subtitles", "subtitle", "captions", "caption"]) {
+    const found = findSubtitleUrl(row[key], preferred);
+    if (found) return found;
+  }
+  for (const child of Object.values(row)) {
+    const found = findSubtitleUrl(child, preferred);
+    if (found) return found;
+  }
+  return undefined;
+}
+
 /**
  * Check if an array item is a module wrapper: an object with a nested
  * non-empty array under one of the known wrapper keys (items/dramas/books/...).
@@ -385,7 +404,15 @@ export function createSapimuAdapter(
       const data = await this.get<unknown>(playPath);
       const url = findStreamUrl(data);
       if (!url) return null;
-      return { streamUrl: url, streamType: streamTypeFromUrl(url) };
+      let subtitleUrl = findSubtitleUrl(data);
+      if (code === "pinedrama") {
+        // Pinedrama quirk: language=id gives Indonesian subs but HEVC video;
+        // language=in gives H264 video but only Chinese subs. Use H264 video
+        // from `in`, then fetch subtitle from official Indonesian locale.
+        const subData = await this.get<unknown>(playPath.replace("language=in", "language=id")).catch(() => null);
+        subtitleUrl = findSubtitleUrl(subData) ?? subtitleUrl;
+      }
+      return { streamUrl: url, streamType: streamTypeFromUrl(url), subtitleUrl };
     }
   }
 

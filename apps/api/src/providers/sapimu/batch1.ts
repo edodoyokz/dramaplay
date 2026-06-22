@@ -51,20 +51,20 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       episodePlayField: ["fileId"],
     }),
 
-    // netshort: /feed/:page, /new/:page, /vip/:page; detail has episodes[]; play /episode/:id/:no
+    // netshort: official Indonesian locale is id_ID.
     netshort: mk("netshort", {
-      trending: "/netshort/api/v1/feed/1",
-      latest: "/netshort/api/v1/new/1",
-      vip: "/netshort/api/v1/vip/1",
-      foryou: "/netshort/api/v1/feed/1",
-      search: "/netshort/api/v1/search/{q}/1",
-      detail: "/netshort/api/v1/detail/{id}",
-      play: "/netshort/api/v1/episode/{id}/{ep}",
+      trending: "/netshort/api/v1/feed/1?lang=id_ID",
+      latest: "/netshort/api/v1/new/1?lang=id_ID",
+      vip: "/netshort/api/v1/vip/1?lang=id_ID",
+      foryou: "/netshort/api/v1/feed/1?lang=id_ID",
+      search: "/netshort/api/v1/search/{q}/1?lang=id_ID",
+      detail: "/netshort/api/v1/detail/{id}?lang=id_ID",
+      play: "/netshort/api/v1/episode/{id}/{ep}?lang=id_ID",
     }),
 
-    // pinedrama: dramas in /search (data.collections); detail uses id locale,
-    // but play must use language=in: language=id returns HEVC mp4 that Chrome
-    // cannot decode; language=in returns browser-playable H264.
+    // pinedrama: official Indonesian locale (id/ID) returns Indonesian subs
+    // but HEVC video. Play uses undocumented `in` to get H264; resolver fetches
+    // subtitle from id/ID separately.
     pinedrama: mk("pinedrama", {
       trending: "/pinedrama/api/drama/search?keyword=love&lang=id",
       latest: "/pinedrama/api/drama/search?keyword=romance&lang=id",

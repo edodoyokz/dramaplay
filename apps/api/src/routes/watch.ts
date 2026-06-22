@@ -63,7 +63,7 @@ async function makeStreamResponse(
     JSON.stringify({
       streamUrl: source.streamUrl,
       streamType: source.streamType ?? "mp4",
-      subtitleUrl: sub?.url ?? undefined,
+      subtitleUrl: sub?.url ?? source.subtitleUrl ?? undefined,
       posterUrl: drama.posterUrl ?? undefined,
       dramaTitle: drama.title,
       dramaSlug: drama.slug,
