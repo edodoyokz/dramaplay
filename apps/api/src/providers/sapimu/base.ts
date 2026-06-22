@@ -57,6 +57,7 @@ export function findStreamUrl(value: unknown): string | undefined {
     "stream_url",
     "main_url",
     "backup_url",
+    "PlayURL",
     "playUrl",
     "play_url",
     "videoUrl",
@@ -193,7 +194,7 @@ function pickGenres(row: Row): string[] | undefined {
 }
 
 const EP_ID_FIELDS = ["episodeId", "episode_id", "chapterId", "chapter_id", "videoId", "video_id", "fileId", "file_id"];
-const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter"];
+const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter", "serial_number", "serialNumber"];
 
 /** Find the first object that looks like a drama row (has both a title and an id). */
 function findDetailRow(data: unknown): Row | null {
@@ -240,6 +241,12 @@ export interface SapimuAdapterConfig {
   episodesFromDetail?: boolean;
   /** Episode play path. Use {id} and {ep}. */
   play: string;
+  /**
+   * Separate episodes-list endpoint (use {id}). If omitted, episodes are read
+   * from the detail response. Set when the provider splits detail and chapter
+   * lists (e.g. reelshort /book/:id/chapters).
+   */
+  episodes?: string;
   /**
    * If true, the play endpoint returns a raw stream manifest (e.g. m3u8 text)
    * that requires Authorization and cannot be fetched by a browser player.
@@ -322,7 +329,8 @@ export function createSapimuAdapter(
     }
 
     async fetchEpisodes(id: string): Promise<ProviderEpisodeSummary[]> {
-      const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
+      const path = (cfg.episodes ?? cfg.detail).replace("{id}", q(id));
+      const data = await this.get<unknown>(path);
       const list = findEpisodeList(data);
       if (list.length) {
         return list.map((e, i) => {

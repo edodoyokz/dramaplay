@@ -75,7 +75,9 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       play: "/pinedrama/api/drama/play?collection_id={id}&episode={ep}&language=id&region=ID",
     }),
 
-    // reelshort: /feed/0 has data.lists (books); /search has data.lists; play /book/:id/chapter/:ch/video
+    // reelshort: /feed/0 data.lists (books); chapters at /book/:id/chapters
+    // (separate from detail); play /book/:id/chapter/:chapter_id/video returns
+    // videos[].PlayURL. chapter_id (not episode number) is the play param.
     reelshort: mk("reelshort", {
       trending: "/reelshort/api/v1/feed/0",
       latest: "/reelshort/api/v1/feed/0",
@@ -83,7 +85,9 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       foryou: "/reelshort/api/v1/feed/0",
       search: "/reelshort/api/v1/search?q={q}",
       detail: "/reelshort/api/v1/book/{id}",
+      episodes: "/reelshort/api/v1/book/{id}/chapters?lang=in",
       play: "/reelshort/api/v1/book/{id}/chapter/{ep}/video",
+      episodePlayField: ["chapter_id"],
     }),
 
     // melolo: bookmall cell.cell_data[*].books; detail /series; play /multi-video
