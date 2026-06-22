@@ -1,0 +1,512 @@
+{
+  "dramawave": {
+    "firstItem": {
+      "key": "BUNhha5qEW",
+      "cover": "https://static-v1.mydramawave.com/vt/prod/cover/11e7c168-8f8a-41a4-b3ab-d5cf3eb84347.jpg?image_process=quality,85/resize,w_600/format,webp",
+      "title": "Dimanjakan Taipan Kejam(Sulih Suara)",
+      "desc": "Demi balas dendam, Su Xi mendekati Xie Yanjing, taipan dingin sekaligus paman musuhnya. Alih-alih dihancurkan, ia justru dimanjakan. Saat Su Xi direndahkan, Xie Yanjing tegas menyatakan berdiri di pihaknya.",
+      "tag": [
+        "Dubbing"
+      ],
+      "series_tag": [
+        ""
+      ],
+      "content_tags": [
+        "Balas Dendam",
+        "Dimanjakan"
+      ],
+      "content_detail_tags": null,
+      "operation_tags": [
+        {
+          "text": "Dubbing",
+          "text_color": "#FFFFFF",
+          "bg_start": "#F47040",
+          "bg_end": "#F52067",
+          "tag_type": ""
+        }
+      ],
+      "episode_count": 79,
+      "follow_count": 2730,
+      "view_count": 0,
+      "episode_info": {
+        "id": "SFwpSQYLfn",
+        "name": "Dimanjakan Taipan Kejam(Sulih Suara)",
+        "cover": "https://static-v1.mydramawave.com/vt/video/cover/episode/0172dd5941d34123bdaad1150e0b3bcd.jpg?image_process=quality,85/resize,w_600/format,webp",
+        "video_url": "",
+        "m3u8_url": "",
+        "external_audio_h264_m3u8": "https://video-v6.mydramawave.com/vt/31369921-b120-4b41-8db3-6ac1a1ae0af4/h264-aa399617-b29c-42b0-a8e4-f2d71cc5db21.m3u8",
+        "external_audio_h265_m3u8": "https://video-v6.mydramawave.com/vt/31369921-b120-4b41-8db3-6ac1a1ae0af4/h265-aa399617-b29c-42b0-a8e4-f2d71cc5db21.m3u8",
+        "subtitle_list": [
+          {
+            "language": "en-US",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/f5899e77-3df9-40db-830f-dfb32d2b63cd.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_485796c8-652f-4701-ba30-93ea65383673.vtt",
+            "display_name": "Inggris"
+          },
+          {
+            "language": "cs-CZ",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/1b802dfa-4a54-44bc-8697-7a62415880d0.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_fadd2dd4-cb38-4b50-ac1d-762e1576e9eb.vtt",
+            "display_name": "Ceko"
+          },
+          {
+            "language": "ro-RO",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/d7a32fb4-c55a-4fa1-83d5-5d8651886f8d.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_f786e35e-5f2c-4c5f-aec2-41f06e3b2ebe.vtt",
+            "display_name": "Rumania"
+          },
+          {
+            "language": "pl-PL",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/47bcff0a-8a56-46c9-b674-f86ae8051ab4.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_f84c0c08-d091-426b-9888-207cde40a76d.vtt",
+            "display_name": "Polandia"
+          },
+          {
+            "language": "te-IN",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/dd4845bc-795b-4b58-9ccb-e668e4e0aee8.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_f562b3bb-a155-46b7-bba8-8cc440580e8a.vtt",
+            "display_name": "Telugu"
+          },
+          {
+            "language": "ta-IN",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/e1b64705-ca73-4921-a6e7-72a3288d3109.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_00199520-91fd-4799-ae26-516b247ce508.vtt",
+            "display_name": "Tamil"
+          },
+          {
+            "language": "bn-BD",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/e76c2f23-5ef4-4b3f-ad1c-5313abf50504.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_c9800eed-3e06-4172-a096-2ff63c9e7d4b.vtt",
+            "display_name": "Bengali"
+          },
+          {
+            "language": "es-MX",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/9524ca55-fead-427a-a5cc-9517a7bcd028.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_ddb2e9ae-51d9-4c0c-9a03-051820e0dfe7.vtt",
+            "display_name": "Spanyol"
+          },
+          {
+            "language": "pt-PT",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/3d047a62-dd79-4887-8659-0477a59ccc32.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_67f5f4da-ec34-4a1c-b901-1513ae2e7877.vtt",
+            "display_name": "Portugis"
+          },
+          {
+            "language": "id-ID",
+            "type": "original",
+            "subtitle": "https://video-v6.mydramawave.com/ut/18802/1_a8d3d467-9bba-41f2-ba45-10a563e47b32.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_c032df0a0887200cba5ce2f199d96f5a.vtt",
+            "display_name": "Indonesia"
+          },
+          {
+            "language": "de-DE",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/4c9bcd60-7261-4e81-9372-dbb622b6b3ae.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_ae0a880d-4187-45e0-a869-30076216bbd6.vtt",
+            "display_name": "Jerman"
+          },
+          {
+            "language": "fr-FR",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/033a4e4f-1eb6-4ebc-81a6-513bd39d7b03.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_2366469b-6332-4d2e-9388-76f36b592715.vtt",
+            "display_name": "Prancis"
+          },
+          {
+            "language": "ru-RU",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/009bfd64-b235-46f9-ad88-e2fe5e907184.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_def05bc6-20b3-4736-8531-b4ef02e66ab3.vtt",
+            "display_name": "Rusia"
+          },
+          {
+            "language": "it-IT",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/ea3eed1f-90c0-4974-b0f9-2caaf177c625.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_4a931cca-3da1-4baa-9c69-abac38308a6f.vtt",
+            "display_name": "Italia"
+          },
+          {
+            "language": "tr-TR",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/17878c9f-9641-4b65-92ad-49c5bf913508.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_3b72d2dc-ee43-4eba-b14e-ab614612a127.vtt",
+            "display_name": "Turki"
+          },
+          {
+            "language": "ja-JP",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/b8c4a421-da89-4d2d-a340-ccce56b2fd11.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_f3dfd812-2e14-43fd-9d2c-4a4c5aba0fbc.vtt",
+            "display_name": "Jepang"
+          },
+          {
+            "language": "ko-KR",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/6fe71b3d-3f1a-4a7e-980f-c933c5c37c6e.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_91dade7d-504f-4140-b3e3-dc5c1c4ff0c6.vtt",
+            "display_name": "Korea"
+          },
+          {
+            "language": "th-TH",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/f4e02acb-0b1e-4da8-95ab-0318d1d6b762.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_d8cb4ec2-488c-4a0e-86e8-916d75d32b57.vtt",
+            "display_name": "Thailand"
+          },
+          {
+            "language": "vi-VN",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/72baca58-4da1-427a-9f8a-a074c045d9ea.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_f4323e85-21a3-454f-80c4-3372918ec33e.vtt",
+            "display_name": "Vietnam"
+          },
+          {
+            "language": "tl-PH",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/003d6e86-41f1-4517-a607-74dc0c75e806.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_a93a0e2a-9494-4f77-8802-c99f5020501d.vtt",
+            "display_name": "Filipina"
+          },
+          {
+            "language": "ms-MY",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/704fc02f-4d82-4581-8009-60f92873b92c.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_ea5dc07c-4504-433a-844d-acecef2f55d2.vtt",
+            "display_name": "Melayu"
+          },
+          {
+            "language": "zh-TW",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/c1f60575-4f32-4f79-9b35-3794a4974130.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_d925a7c9-a728-4ad8-96f6-85fc700cdcb2.vtt",
+            "display_name": "Mandarin Tradisional"
+          },
+          {
+            "language": "hi-IN",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/51b697f1-180c-4888-b176-5c2eac43e332.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_a892ecb5-9bc8-4b54-8e1e-e04102ace71b.vtt",
+            "display_name": "Hindi"
+          },
+          {
+            "language": "ar-SA",
+            "type": "normal",
+            "subtitle": "https://video-v6.mydramawave.com/vt/18802/aa8b67d9-5a5d-426a-a503-292c6f00b7b9.srt",
+            "vtt": "https://video-v6.mydramawave.com/ut/18802/1_1928140e-a935-40de-8800-af3400301f66.vtt",
+            "display_name": "Arab"
+          }
+        ],
+        "region": null,
+        "audio": [
+          "en-US",
+          "zh-CN",
+          "zh-TW",
+          "ja-JP",
+          "ko-KR",
+          "es-MX",
+          "pt-PT",
+          "fr-FR",
+          "id-ID",
+          "ru-RU",
+          "de-DE",
+          "vi-VN",
+          "it-IT",
+          "tr-TR",
+          "ms-MY",
+          "th-TH",
+          "tl-PH",
+          "hi-IN",
+          "ar-SA",
+          "yue"
+        ],
+        "original_audio_language": "zh-CN",
+        "index": 1,
+        "unlock": true,
+        "h5_available": false,
+        "duration": 264,
+        "episode_price": 50,
+        "video_type": "free",
+        "new": false,
+        "update_time": 1779966361,
+        "user_unlocked": false,
+        "serialize_pub_status": 0,
+        "highlight_pub_status": 0,
+        "is_blooper": false,
+        "trans_resolution": "1080x1920,720x1280,540x960,480x854,360x640,240x426"
+      },
+      "link_type": 1,
+      "link": "dramawave://dramawave.app/detail?id=BUNhha5qEW",
+      "r_info": {
+        "session_id": "2069024332674400257",
+        "request_id": "2069024419279642624",
+        "page_num": "1",
+        "page_size": "10",
+        "item_idx": "1"
+      },
+      "r_info1": "{\"ab_exps\":\"534:1612,461:1391,1366:4743,1018:3441,1419:4941,697:2196,437:1325,1284:4448,1398:4869,544:1646,1326:4595,1413:4914,1403:4883,1197:4129,1414:4918,1434:4989,1207:4170,205:552,1348:4676,1194:4119,1359:4714,1228:4269,1375:4775,1412:4911,1388:4824,1390:4839,617:1901\",\"device_id\":\"abfe7394-a6c1-4668-a2e6-12a2cfde0410\",\"item_id\":326154166,\"item_idx\":\"1\",\"item_key\":\"SFwpSQYLfn\",\"language\":\"id-ID\",\"module_id\":1353,\"module_key\":\"1353\",\"page_num\":\"1\",\"page_size\":\"10\",\"request_id\":\"2069024419279642624\",\"scene_source\":\"/home/vip/recommend_vip\",\"series_id\":237539,\"series_key\":\"BUNhha5qEW\",\"session_id\":\"2069024332674400257\",\"tab_id\":683,\"tab_key\":\"vip\",\"theater_id\":66,\"theater_key\":\"home\",\"trace_id\":\"2069024332674400257\",\"user_id\":57922460}",
+      "free": false,
+      "vip_type": 0,
+      "style": 4,
+      "pay_index": 11,
+      "orientation": 1,
+      "resource_type": 1,
+      "update_count": 79
+    },
+    "dramaId": null,
+    "tested": {}
+  },
+  "goodshort": {
+    "firstItem": null,
+    "dramaId": null,
+    "tested": {}
+  },
+  "netshort": {
+    "firstItem": null,
+    "dramaId": null,
+    "tested": {}
+  },
+  "melolo": {
+    "firstItem": {
+      "book_id": "7650305257141963829",
+      "title": "Cinta Buta Masa Lalu Istri",
+      "author": "gangganghaoyingshi",
+      "abstract": "Usai mengorbankan segalanya, seorang wanita justru dikhianati suaminya lalu nekat membongkar kebenaran di depan keluarga. Ia bangkit kembali ke dunia bisnis dan tegas memutus hubungan dengan mantan suaminya demi membangun kejayaan baru sebagai wanita mandiri yang sukses serta penuh pesona.",
+      "cover": "https://p16-novel-sign.fizzopic.org/novel-images-apsoutheast/e654d328cb59cb9a786f2ba2151f422f~tplv-836v1mcgsk-image-quality-ttk1-cp:570:810.heic?rk3s=95ec04ee&x-expires=1783814435&x-signature=%2FoHEsh11nuBy9AChm9EI9yEyk7k%3D",
+      "status": "Selesai",
+      "age_gate": "18",
+      "read_count": "0",
+      "language": "id",
+      "source": "刚刚好影视"
+    },
+    "dramaId": "7650305257141963829",
+    "tested": {
+      "/melolo/api/v1/detail/7650305257141963829?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/detail/7650305257141963829</pre>\n<script type=\"eca0548a29debf14010fd736-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb11f94e240519',t:'MTc4MjEyOTM5MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};"
+      },
+      "/melolo/api/v1/detail?id=7650305257141963829&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/detail</pre>\n<script type=\"dfba874cb89bde2ba7819667-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb11fbad646042',t:'MTc4MjEyOTM5MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystat"
+      },
+      "/melolo/api/v1/episodes/7650305257141963829?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/episodes/7650305257141963829</pre>\n<script type=\"a68530c5ea3e62654e349045-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12014e8a0519',t:'MTc4MjEyOTM5Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){"
+      },
+      "/melolo/api/v1/allepisode?id=7650305257141963829&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/allepisode</pre>\n<script type=\"0c9395d004e670210963d61c-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb120aa8ab6042',t:'MTc4MjEyOTM5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onready"
+      },
+      "/melolo/api/v1/play/7650305257141963829?ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/play/7650305257141963829</pre>\n<script type=\"8796cd56be61eb110934389d-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb120e6d546042',t:'MTc4MjEyOTM5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};do"
+      },
+      "/melolo/api/v1/episode?id=7650305257141963829:1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/episode</pre>\n<script type=\"3f6274afc8af62498d3a1e26-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12136d716042',t:'MTc4MjEyOTM5NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadysta"
+      },
+      "/melolo/api/v1/play?id=7650305257141963829&ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/GGywgwvsj/play</pre>\n<script type=\"ddc62fc86e4836923976b503-text/javascript\">(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb1215fa0caedc',t:'MTc4MjEyOTM5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatec"
+      }
+    }
+  },
+  "reelshort": {
+    "firstItem": null,
+    "dramaId": null,
+    "tested": {}
+  },
+  "shortmax": {
+    "firstItem": {
+      "id": 25013,
+      "code": 854260,
+      "name": "Cinta yang Menyimpang",
+      "cover": "https://akamai-static.shorttv.live/images/cover/2026/06/22/37616bb3d48c4448af66b8216838b3a5.jpg?auth_key=1782134909-0-0-524bb6d303d1bc5574ba4e3b9d3883e3&process=mediagate",
+      "episodes": 62,
+      "summary": "Ayu Santoso, putri pemilik perusahaan pelayaran, dikhianati oleh tunangannya tepat di hari pernikahan. Dalam keputusasaan, ia memutuskan menikah dengan Andi Permana. Menghadapi tuduhan plagiat dan tekanan publik, Ayu berani membuktikan kebenaran dirinya. Melalui ujian keluarga, karier, dan pencarian jati diri, Ayu bangkit menghadapi tantangan, meraih kemandirian dan kedewasaan."
+    },
+    "dramaId": "854260",
+    "tested": {
+      "/shortmax/api/v1/detail/854260?lang=id": {
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "data": {
+          "data": {
+            "id": 25013,
+            "code": 854260,
+            "name": "Cinta yang Menyimpang",
+            "cover": "https://akamai-static.shorttv.live/images/cover/2026/06/22/46030dd7035b43cebfe9862ea3aa323c.jpg?auth_key=1782135981-0-0-4098e0d69b2d2f7c8132d0a464cdaf93&process=mediagate",
+            "episodes": 62,
+            "summary": "Ayu Santoso, putri pemilik perusahaan pelayaran, dikhianati oleh tunangannya tepat di hari pernikahan. Dalam keputusasaan, ia memutuskan menikah dengan Andi Permana. Menghadapi tuduhan plagiat dan tekanan publik, Ayu berani membuktikan kebenaran dirinya. Melalui ujian keluarga, karier, dan pencarian jati diri, Ayu bangkit menghadapi tantangan, meraih kemandirian dan kedewasaan."
+          },
+          "cached": true,
+          "ttl": 85785
+        }
+      },
+      "/shortmax/api/v1/detail?id=854260&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/detail</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb121b2b572328',t:'MTc4MjEyOTM5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyStat"
+      },
+      "/shortmax/api/v1/episodes/854260?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/episodes/854260</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb121d8d3ff88e',t:'MTc4MjEyOTM5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document."
+      },
+      "/shortmax/api/v1/allepisode?id=854260&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/allepisode</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb1223cdedc691',t:'MTc4MjEyOTM5OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.ready"
+      },
+      "/shortmax/api/v1/play/854260?ep=1&lang=id": {
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "data": {
+          "data": {
+            "id": 1508958,
+            "name": "Cinta yang Menyimpang",
+            "episode": 1,
+            "total": 62,
+            "video": {
+              "video_720": "https://akamai-static.shorttv.live/hls/65d5481c-97ac-4c9c-b101-bc0c01e51751_720/main.m3u8?auth_key=1782135986-0-0-e5815330ccbac6585deb017bc3d8078f",
+              "video_1080": "https://akamai-static.shorttv.live/hls/65d5481c-97ac-4c9c-b101-bc0c01e51751_1080/main.m3u8?auth_key=1782135986-0-0-4bff3e42a518c2c89d98e66210ad22f4",
+              "video_480": "https://akamai-static.shorttv.live/hls/65d5481c-97ac-4c9c-b101-bc0c01e51751_480/main.m3u8?auth_key=1782135986-0-0-6232d9f95b7abfa9b3a9dd054a166179"
+            },
+            "expires": 1782135986,
+            "expires_in": 6586
+          },
+          "cached": true,
+          "ttl": 6586
+        }
+      },
+      "/shortmax/api/v1/episode?id=854260:1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/episode</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12331b4d8211',t:'MTc4MjEyOTQwMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readySta"
+      },
+      "/shortmax/api/v1/play?id=854260&ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/play</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb123b39372f2a',t:'MTc4MjEyOTQwMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&"
+      }
+    }
+  },
+  "snackshort": {
+    "firstItem": {
+      "book_id": 1391,
+      "title": "*Drama setinggi langit: Cinta, Keluarga, dan Penebusan",
+      "image": "https://bs.kjcdn.com/i/pubrs/8c/bo/o4q97.webp",
+      "bannerImage": "https://bs.kjcdn.com/i/pub/o4q98.webp",
+      "cover_key": "https://bs.kjcdn.com/i/pubrs/8c/bo/o4q97.webp",
+      "chapters": 99,
+      "onlineChapter": 99,
+      "introduce": "Orang terkaya ini diganggu di pesawat, namun ia mengambil tindakan untuk menghukum orang yang bersalah. Setelah mendarat darurat, dia mampu menyelesaikan krisis keluarga, menyelesaikan kesalahpahaman, dan pada akhirnya memenangkan hati seorang pria yang menarik!",
+      "tag_name": "",
+      "sort": "",
+      "cell_name": "",
+      "type": 1,
+      "chapter_id": 95430,
+      "chapter_order": 1
+    },
+    "dramaId": "1391",
+    "tested": {
+      "/snackshort/api/v1/detail/1391?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/detail/1391</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb123fada8fdbc',t:'MTc4MjEyOTQwMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.read"
+      },
+      "/snackshort/api/v1/detail?id=1391&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/detail</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12439a10a07a',t:'MTc4MjEyOTQwMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyStat"
+      },
+      "/snackshort/api/v1/episodes/1391?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/episodes/1391</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb1247fd2fcdfd',t:'MTc4MjEyOTQwNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.re"
+      },
+      "/snackshort/api/v1/allepisode?id=1391&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/allepisode</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb124d0cb48992',t:'MTc4MjEyOTQwNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.ready"
+      },
+      "/snackshort/api/v1/play/1391?ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/play/1391</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12522f6c448a',t:'MTc4MjEyOTQwNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyS"
+      },
+      "/snackshort/api/v1/episode?id=1391:1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/episode</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb1255ac1e18f8',t:'MTc4MjEyOTQwNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readySta"
+      },
+      "/snackshort/api/v1/play?id=1391&ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/play</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb1266a99040bf',t:'MTc4MjEyOTQwOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&"
+      }
+    }
+  },
+  "stardusttv": {
+    "firstItem": {
+      "id": 15277,
+      "title": "Cinta dari Nol",
+      "poster": "https://assets.stardusttv.cc/uploadfile/20260109/868075510036893696.jpg",
+      "category_id": 31
+    },
+    "dramaId": "15277",
+    "tested": {
+      "/stardusttv/api/v1/detail/15277?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/detail/15277</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb126a5d18a8c7',t:'MTc4MjEyOTQwOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.rea"
+      },
+      "/stardusttv/api/v1/detail?id=15277&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/detail</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb126f583a97a7',t:'MTc4MjEyOTQxMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyStat"
+      },
+      "/stardusttv/api/v1/episodes/15277?lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/episodes/15277</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb1278c910fdae',t:'MTc4MjEyOTQxMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.r"
+      },
+      "/stardusttv/api/v1/allepisode?id=15277&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/allepisode</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb127efd3c7983',t:'MTc4MjEyOTQxMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.ready"
+      },
+      "/stardusttv/api/v1/play/15277?ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/play/15277</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12852e0ff920',t:'MTc4MjEyOTQxMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.ready"
+      },
+      "/stardusttv/api/v1/episode?id=15277:1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/episode</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12957e8fce02',t:'MTc4MjEyOTQxNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readySta"
+      },
+      "/stardusttv/api/v1/play?id=15277&ep=1&lang=id": {
+        "status": 404,
+        "contentType": "text/html; charset=utf-8",
+        "data": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api/v1/play</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a0fb12a47d0fce4e',t:'MTc4MjEyOTQxOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&"
+      }
+    }
+  }
+}

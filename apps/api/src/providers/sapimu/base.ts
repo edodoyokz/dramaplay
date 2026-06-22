@@ -14,7 +14,11 @@ export abstract class SapimuBaseAdapter extends BaseProviderAdapter {
     this.token = token;
   }
 
-  protected get<T>(path: string): Promise<T> {
+  /**
+   * @internal — public for test double pattern.
+   * Subclasses call this for all HTTP calls; override in tests.
+   */
+  get<T>(path: string): Promise<T> {
     return this.getJson<T>(path, {
       headers: {
         Authorization: `Bearer ${this.token}`,
@@ -66,14 +70,32 @@ export function streamTypeFromUrl(url: string): ProviderStreamSource["streamType
   return "other";
 }
 
-/** Extract first array found inside a nested response object. */
+/**
+ * Extract first usable array from a nested response.
+ * Handles both flat arrays (search results) and module-wrapped arrays
+ * (dramawave feed: { data: { items: [{ type: "x", items: [drama1, drama2] }] }).
+ */
 export function firstArray(value: unknown): unknown[] {
-  if (Array.isArray(value)) return value;
+  if (Array.isArray(value)) {
+    if (value.length > 0 && typeof value[0] === "object" && value[0] !== null && "items" in (value[0] as object)) {
+      return (value as unknown[]).flatMap((item: any) =>
+        Array.isArray(item?.items) ? item.items : []
+      );
+    }
+    return value as unknown[];
+  }
   if (!value || typeof value !== "object") return [];
   const row = value as Row;
   for (const key of ["data", "items", "list", "rows", "records", "result", "dramas", "episodes"]) {
     const v = row[key];
-    if (Array.isArray(v)) return v;
+    if (Array.isArray(v)) {
+      if (v.length > 0 && typeof v[0] === "object" && v[0] !== null && "items" in (v[0] as object)) {
+        return v.flatMap((item: any) =>
+          Array.isArray(item?.items) ? item.items : []
+        );
+      }
+      return v as unknown[];
+    }
     if (v && typeof v === "object") {
       const nested = firstArray(v);
       if (nested.length) return nested;

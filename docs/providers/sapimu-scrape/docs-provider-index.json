@@ -1,0 +1,833 @@
+[
+  {
+    "slug": "bilitv",
+    "name": "Sapimu API",
+    "docBytes": 26367,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/drama/:id/episode/:ep",
+      "/api/v1/dramas",
+      "/api/v1/home",
+      "/api/v1/languages",
+      "/api/v1/recommend",
+      "/api/v1/search",
+      "/api/v1/subtitle/:shortId/:episode"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nBiliTV API\nSapimu \nAPI\nAll APIs\nLogout\nBiliTV \nDocumentation\nAPI for BiliTV — 8 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (8)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "cashdrama",
+    "name": "Sapimu API",
+    "docBytes": 26526,
+    "endpoints": [
+      "/api/v1/blocks",
+      "/api/v1/drama/:vid",
+      "/api/v1/drama/:vid/episodes",
+      "/api/v1/home",
+      "/api/v1/languages",
+      "/api/v1/play/:vid/:ep",
+      "/api/v1/search",
+      "/api/v1/tags",
+      "/api/v1/tags/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nCashDrama API\nSapimu \nAPI\nAll APIs\nLogout\nCashDrama \nDocumentation\nAPI for CashDrama — 9 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (9)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "cubetv",
+    "name": "Sapimu API",
+    "docBytes": 26912,
+    "endpoints": [],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nCubeTV API\nSapimu \nAPI\nAll APIs\nLogout\nCubeTV \nDocumentation\nAPI for CubeTV — 11 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (11)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dotdrama",
+    "name": "Sapimu API",
+    "docBytes": 25253,
+    "endpoints": [
+      "/api/v1/categories",
+      "/api/v1/collections",
+      "/api/v1/dramas",
+      "/api/v1/dramas/:id"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDotDrama API\nSapimu \nAPI\nAll APIs\nLogout\nDotDrama \nDocumentation\nAPI for DotDrama — 4 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (4)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dramabite",
+    "name": "Sapimu API",
+    "docBytes": 26419,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/drama/:id/episode/:ep",
+      "/api/v1/drama/:id/likes",
+      "/api/v1/dramas",
+      "/api/v1/foryou",
+      "/api/v1/hot",
+      "/api/v1/languages",
+      "/api/v1/recommend",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDramaBite API\nSapimu \nAPI\nAll APIs\nLogout\nDramaBite \nDocumentation\nAPI for DramaBite — 9 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (9)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dramaboxbaru",
+    "name": "Sapimu API",
+    "docBytes": 26393,
+    "endpoints": [
+      "/api/browse",
+      "/api/categories",
+      "/api/drama/:bookId",
+      "/api/hidden-gems",
+      "/api/home",
+      "/api/languages",
+      "/api/rank",
+      "/api/recommend/book",
+      "/api/search",
+      "/api/stream"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDramaBox Baru API\nSapimu \nAPI\nAll APIs\nLogout\nDramaBox Baru \nDocumentation\nAPI for DramaBox Baru — 10 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (10)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dramanova",
+    "name": "Sapimu API",
+    "docBytes": 26192,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/dramas",
+      "/api/v1/languages",
+      "/api/v1/modules",
+      "/api/v1/recommend",
+      "/api/v1/search",
+      "/api/video"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDramaNova API\nSapimu \nAPI\nAll APIs\nLogout\nDramaNova \nDocumentation\nAPI for DramaNova — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dramapops",
+    "name": "Sapimu API",
+    "docBytes": 26360,
+    "endpoints": [
+      "/api/v1/config",
+      "/api/v1/drama/:id",
+      "/api/v1/drama/:id/episode/:ep/video",
+      "/api/v1/dramas",
+      "/api/v1/dramas/popular",
+      "/api/v1/dramas/trending",
+      "/api/v1/homepage",
+      "/api/v1/languages",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDramaPops API\nSapimu \nAPI\nAll APIs\nLogout\nDramaPops \nDocumentation\nAPI for DramaPops — 9 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (9)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dramarush",
+    "name": "Sapimu API",
+    "docBytes": 26027,
+    "endpoints": [
+      "/api/v1/config",
+      "/api/v1/drama/:id",
+      "/api/v1/play/:id",
+      "/api/v1/play/:id/:ep",
+      "/api/v1/ranking",
+      "/api/v1/search/:q",
+      "/api/v1/tabs/:id"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDramaRush API\nSapimu \nAPI\nAll APIs\nLogout\nDramaRush \nDocumentation\nAPI for DramaRush — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "dramawave",
+    "name": "Sapimu API",
+    "docBytes": 25630,
+    "endpoints": [
+      "/api/v1/dramas/:id",
+      "/api/v1/dramas/:id/play/:ep",
+      "/api/v1/feed/:tab",
+      "/api/v1/languages",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nDramaWave API\nSapimu \nAPI\nAll APIs\nLogout\nDramaWave \nDocumentation\nAPI for DramaWave — 5 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (5)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "flextv",
+    "name": "Sapimu API",
+    "docBytes": 26064,
+    "endpoints": [
+      "/api/v1/languages",
+      "/api/v1/play/:series_id/:section_id",
+      "/api/v1/search",
+      "/api/v1/series/:id",
+      "/api/v1/series/:id/episodes",
+      "/api/v1/tabs",
+      "/api/v1/tabs/:id"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nFlexTV API\nSapimu \nAPI\nAll APIs\nLogout\nFlexTV \nDocumentation\nAPI for FlexTV — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "flickshort",
+    "name": "Sapimu API",
+    "docBytes": 25672,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/drama/:id/episode/:ep",
+      "/api/v1/languages",
+      "/api/v1/recommend",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nFlickShort API\nSapimu \nAPI\nAll APIs\nLogout\nFlickShort \nDocumentation\nAPI for FlickShort — 5 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (5)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "freereels",
+    "name": "Sapimu API",
+    "docBytes": 27212,
+    "endpoints": [
+      "/api/v1/anime",
+      "/api/v1/coming-soon",
+      "/api/v1/dramas/:id",
+      "/api/v1/dramas/:id/episodes",
+      "/api/v1/dramas/:id/play/:ep",
+      "/api/v1/dubbing",
+      "/api/v1/female",
+      "/api/v1/foryou",
+      "/api/v1/male",
+      "/api/v1/new",
+      "/api/v1/popular",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nFreeReels API\nSapimu \nAPI\nAll APIs\nLogout\nFreeReels \nDocumentation\nAPI for FreeReels — 12 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (12)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "fundrama",
+    "name": "Sapimu API",
+    "docBytes": 25733,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/drama/:id/episode/:ep",
+      "/api/v1/drama/:id/episodes",
+      "/api/v1/dramas",
+      "/api/v1/languages",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nFundrama API\nSapimu \nAPI\nAll APIs\nLogout\nFundrama \nDocumentation\nAPI for Fundrama — 6 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (6)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "goodshort",
+    "name": "Sapimu API",
+    "docBytes": 26126,
+    "endpoints": [
+      "/api/v1/book/:id",
+      "/api/v1/chapters/:bookId",
+      "/api/v1/home",
+      "/api/v1/key",
+      "/api/v1/play/:bookId/:chapterId",
+      "/api/v1/search",
+      "/api/v1/segments",
+      "/api/v1/unlock/:bookId"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nGoodShort API\nSapimu \nAPI\nAll APIs\nLogout\nGoodShort \nDocumentation\nAPI for GoodShort — 8 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (8)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "hishort",
+    "name": "Sapimu API",
+    "docBytes": 24953,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/episode/:slug",
+      "/api/v1/home",
+      "/api/v1/search/:q"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nHiShort API\nSapimu \nAPI\nAll APIs\nLogout\nHiShort \nDocumentation\nAPI for HiShort — 4 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (4)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "idrama",
+    "name": "Sapimu API",
+    "docBytes": 26827,
+    "endpoints": [
+      "/api/v1/drama/:id",
+      "/api/v1/genre/:id",
+      "/api/v1/genres",
+      "/api/v1/latest",
+      "/api/v1/popular",
+      "/api/v1/ranking/hits",
+      "/api/v1/ranking/trending",
+      "/api/v1/search",
+      "/api/v1/unlock/:dramaId"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\niDrama API\nSapimu \nAPI\nAll APIs\nLogout\niDrama \nDocumentation\nAPI for iDrama — 9 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (9)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "melolo",
+    "name": "Sapimu API",
+    "docBytes": 26208,
+    "endpoints": [
+      "/api/v1/book",
+      "/api/v1/bookmall",
+      "/api/v1/bookmall/tabs",
+      "/api/v1/languages",
+      "/api/v1/multi-video",
+      "/api/v1/search",
+      "/api/v1/search/suggest",
+      "/api/v1/series"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nMelolo API\nSapimu \nAPI\nAll APIs\nLogout\nMelolo \nDocumentation\nAPI for Melolo — 8 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (8)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "meloshort",
+    "name": "Sapimu API",
+    "docBytes": 26445,
+    "endpoints": [
+      "/api/v1/drama/all",
+      "/api/v1/dramas/:id/episodes",
+      "/api/v1/dramas/:id/episodes/:chapter",
+      "/api/v1/dramas/discover",
+      "/api/v1/dramas/search",
+      "/api/v1/dramas/top"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nMeloShort API\nSapimu \nAPI\nAll APIs\nLogout\nMeloShort \nDocumentation\nAPI for MeloShort — 6 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (6)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "microdrama",
+    "name": "Sapimu API",
+    "docBytes": 25133,
+    "endpoints": [
+      "/api/v1/dramas",
+      "/api/v1/dramas/:id",
+      "/api/v1/dramas/search",
+      "/api/v1/languages"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nMicroDrama API\nSapimu \nAPI\nAll APIs\nLogout\nMicroDrama \nDocumentation\nAPI for MicroDrama — 4 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (4)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "minutedrama",
+    "name": "Sapimu API",
+    "docBytes": 25123,
+    "endpoints": [
+      "/api/v1/popular",
+      "/api/v1/search",
+      "/api/v1/videos/:id"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nMinuteDrama API\nSapimu \nAPI\nAll APIs\nLogout\nMinuteDrama \nDocumentation\nAPI for MinuteDrama — 3 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (3)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "moboreels",
+    "name": "Sapimu API",
+    "docBytes": 27270,
+    "endpoints": [
+      "/api/channelDetail",
+      "/api/channelList",
+      "/api/guessYouLike",
+      "/api/hotList",
+      "/api/languages",
+      "/api/proxy/subtitle",
+      "/api/search",
+      "/api/seriesDetail",
+      "/api/seriesPage",
+      "/api/video"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nMoboReels API\nSapimu \nAPI\nAll APIs\nLogout\nMoboReels \nDocumentation\nAPI for MoboReels — 10 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (10)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "netshort",
+    "name": "Sapimu API",
+    "docBytes": 28207,
+    "endpoints": [
+      "/api/v1/categories",
+      "/api/v1/category/:page",
+      "/api/v1/detail/:id",
+      "/api/v1/dubbing/:page",
+      "/api/v1/episode/:id/:episodeNo",
+      "/api/v1/explore/:page",
+      "/api/v1/feed/:page",
+      "/api/v1/languages",
+      "/api/v1/new/:page",
+      "/api/v1/search-hint",
+      "/api/v1/search/:keyword/:page",
+      "/api/v1/similar/:id",
+      "/api/v1/tab/:tabId/:page",
+      "/api/v1/tabs",
+      "/api/v1/vip/:page"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nNetShort API\nSapimu \nAPI\nAll APIs\nLogout\nNetShort \nDocumentation\nAPI for NetShort — 15 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (15)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "pinedrama",
+    "name": "Sapimu API",
+    "docBytes": 26503,
+    "endpoints": [
+      "/api/drama/categories",
+      "/api/drama/center",
+      "/api/drama/detail",
+      "/api/drama/episodes",
+      "/api/drama/play",
+      "/api/drama/search",
+      "/api/languages"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nPineDrama API\nSapimu \nAPI\nAll APIs\nLogout\nPineDrama \nDocumentation\nAPI untuk PineDrama — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "radreels",
+    "name": "Sapimu API",
+    "docBytes": 26498,
+    "endpoints": [
+      "/api/v1/drama/:keyword",
+      "/api/v1/episodes/:fakeId",
+      "/api/v1/foryou",
+      "/api/v1/home",
+      "/api/v1/languages",
+      "/api/v1/ranking",
+      "/api/v1/search/:query",
+      "/api/v1/tab/:id",
+      "/api/v1/video/:videoFakeId/:episodicDramaId"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nRadReels API\nSapimu \nAPI\nAll APIs\nLogout\nRadReels \nDocumentation\nAPI for RadReels — 9 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (9)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "rapidtv",
+    "name": "Sapimu API",
+    "docBytes": 25483,
+    "endpoints": [
+      "/api/v1/dramas",
+      "/api/v1/dramas/:id",
+      "/api/v1/dramas/:id/episodes",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nRapidTV API\nSapimu \nAPI\nAll APIs\nLogout\nRapidTV \nDocumentation\nAPI for RapidTV — 4 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (4)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "reelala",
+    "name": "Sapimu API",
+    "docBytes": 25401,
+    "endpoints": [
+      "/api/chapters",
+      "/api/for-you",
+      "/api/home",
+      "/api/languages",
+      "/api/search",
+      "/api/search/hot"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nReelala API\nSapimu \nAPI\nAll APIs\nLogout\nReelala \nDocumentation\nAPI for Reelala — 6 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (6)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "reelife",
+    "name": "Sapimu API",
+    "docBytes": 26071,
+    "endpoints": [
+      "/api/v1/dramas",
+      "/api/v1/dramas/:bookId/episodes/:chapterId",
+      "/api/v1/dramas/:id",
+      "/api/v1/dramas/:id/chapters",
+      "/api/v1/foryou",
+      "/api/v1/ranking",
+      "/api/v1/search",
+      "/api/v1/search/suggest"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nReelife API\nSapimu \nAPI\nAll APIs\nLogout\nReelife \nDocumentation\nAPI for Reelife — 8 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (8)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "reelshort",
+    "name": "Sapimu API",
+    "docBytes": 26653,
+    "endpoints": [
+      "/api/v1/book/:id",
+      "/api/v1/book/:id/chapter/:chapterId/video",
+      "/api/v1/book/:id/chapters",
+      "/api/v1/completed",
+      "/api/v1/drama",
+      "/api/v1/feed/:tabId",
+      "/api/v1/foryou",
+      "/api/v1/new",
+      "/api/v1/romance",
+      "/api/v1/search",
+      "/api/v1/search/suggestions"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nReelShort API\nSapimu \nAPI\nAll APIs\nLogout\nReelShort \nDocumentation\nAPI for ReelShort — 11 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (11)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "sarostv",
+    "name": "Sapimu API",
+    "docBytes": 25667,
+    "endpoints": [
+      "/api/languages",
+      "/api/recommend",
+      "/api/series",
+      "/api/series/episode",
+      "/api/series/search",
+      "/api/theater",
+      "/api/types"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nSarosTV API\nSapimu \nAPI\nAll APIs\nLogout\nSarosTV \nDocumentation\nAPI for SarosTV — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "sereal",
+    "name": "Sapimu API",
+    "docBytes": 26439,
+    "endpoints": [
+      "/api/content/detail",
+      "/api/content/recommend-smart/:page",
+      "/api/index/content-search/:contentId/:page",
+      "/api/index/for-you/:page",
+      "/api/index/home/:page",
+      "/api/index/search/:q",
+      "/api/index/trending",
+      "/api/languages",
+      "/api/watch/:contentId/:ep"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nSereal API\nSapimu \nAPI\nAll APIs\nLogout\nSereal \nDocumentation\nAPI untuk Sereal — 9 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (9)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "shortbox",
+    "name": "Sapimu API",
+    "docBytes": 27083,
+    "endpoints": [
+      "/api/categories",
+      "/api/for-you",
+      "/api/hot-search",
+      "/api/info/:id",
+      "/api/languages",
+      "/api/list",
+      "/api/new-list",
+      "/api/recommend",
+      "/api/search",
+      "/api/stream/:id/:ep"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nShortBox API\nSapimu \nAPI\nAll APIs\nLogout\nShortBox \nDocumentation\nAPI for ShortBox — 10 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (10)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "shorten",
+    "name": "Sapimu API",
+    "docBytes": 25697,
+    "endpoints": [
+      "/api/v1/categories",
+      "/api/v1/dubbed",
+      "/api/v1/editors",
+      "/api/v1/exclusive",
+      "/api/v1/explore",
+      "/api/v1/releases",
+      "/api/v1/series/:slug"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nShorten API\nSapimu \nAPI\nAll APIs\nLogout\nShorten \nDocumentation\nAPI for Shorten — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "shortmax",
+    "name": "Sapimu API",
+    "docBytes": 26883,
+    "endpoints": [
+      "/api/v1/detail/:code",
+      "/api/v1/feed/epic",
+      "/api/v1/feed/new",
+      "/api/v1/feed/ranked",
+      "/api/v1/feed/recommend",
+      "/api/v1/feed/romance",
+      "/api/v1/feed/vip",
+      "/api/v1/feed/war",
+      "/api/v1/foryou",
+      "/api/v1/home",
+      "/api/v1/languages",
+      "/api/v1/play/:code",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nShortMax API\nSapimu \nAPI\nAll APIs\nLogout\nShortMax \nDocumentation\nAPI for ShortMax — 13 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (13)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "shortsky",
+    "name": "Sapimu API",
+    "docBytes": 25616,
+    "endpoints": [
+      "/api/drama/:id",
+      "/api/drama/:id/episode/:ep",
+      "/api/home",
+      "/api/languages",
+      "/api/recommend",
+      "/api/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nShortSky API\nSapimu \nAPI\nAll APIs\nLogout\nShortSky \nDocumentation\nAPI for ShortSky — 6 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (6)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "shortwave",
+    "name": "Sapimu API",
+    "docBytes": 26226,
+    "endpoints": [
+      "/api/all",
+      "/api/drama/:dramaId",
+      "/api/more",
+      "/api/rankings",
+      "/api/search/:query",
+      "/api/set-lang/:lang",
+      "/api/stream/:dramaId/:chapterId",
+      "/api/top"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nShortWave API\nSapimu \nAPI\nAll APIs\nLogout\nShortWave \nDocumentation\nAPI for ShortWave — 8 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (8)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "shotshort",
+    "name": "Sapimu API",
+    "docBytes": 26497,
+    "endpoints": [
+      "/api/book/:bookId/chapter/:chapterId",
+      "/api/book/:id",
+      "/api/book/:id/episodes",
+      "/api/category",
+      "/api/category/list",
+      "/api/languages",
+      "/api/popular",
+      "/api/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nShotShort API\nSapimu \nAPI\nAll APIs\nLogout\nShotShort \nDocumentation\nAPI for ShotShort — 8 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (8)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "snackshort",
+    "name": "Sapimu API",
+    "docBytes": 26272,
+    "endpoints": [
+      "/api/v1/book/:bookId",
+      "/api/v1/book/:bookId/chapters",
+      "/api/v1/book/:bookId/episode/:chapterId",
+      "/api/v1/browsing",
+      "/api/v1/home",
+      "/api/v1/search",
+      "/api/v1/tabs"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nSnackShort API\nSapimu \nAPI\nAll APIs\nLogout\nSnackShort \nDocumentation\nAPI for SnackShort — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "sodareels",
+    "name": "Sapimu API",
+    "docBytes": 25744,
+    "endpoints": [
+      "/api/v1/category",
+      "/api/v1/drama/:id",
+      "/api/v1/episodes",
+      "/api/v1/home",
+      "/api/v1/info/:id",
+      "/api/v1/search"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nSodaReels API\nSapimu \nAPI\nAll APIs\nLogout\nSodaReels \nDocumentation\nAPI for SodaReels — 6 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (6)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "stardusttv",
+    "name": "Sapimu API",
+    "docBytes": 26112,
+    "endpoints": [
+      "/api/v1/categories",
+      "/api/v1/category/:id",
+      "/api/v1/homepage",
+      "/api/v1/languages",
+      "/api/v1/search",
+      "/api/v1/video/:id",
+      "/api/v1/video/:id/episode/:episode"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nStardustTV API\nSapimu \nAPI\nAll APIs\nLogout\nStardustTV \nDocumentation\nAPI for StardustTV — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "starshort",
+    "name": "Sapimu API",
+    "docBytes": 25868,
+    "endpoints": [
+      "/api/v1/dramas",
+      "/api/v1/dramas/:dramaId",
+      "/api/v1/dramas/:dramaId/episodes",
+      "/api/v1/dramas/:dramaId/episodes/:epNum",
+      "/api/v1/dramas/new",
+      "/api/v1/dramas/search",
+      "/api/v1/languages"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nStarShort API\nSapimu \nAPI\nAll APIs\nLogout\nStarShort \nDocumentation\nAPI for StarShort — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "velolo",
+    "name": "Sapimu API",
+    "docBytes": 26056,
+    "endpoints": [],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nVelolo API\nSapimu \nAPI\nAll APIs\nLogout\nVelolo \nDocumentation\nAPI for Velolo — 7 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (7)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  },
+  {
+    "slug": "vigloo",
+    "name": "Sapimu API",
+    "docBytes": 27259,
+    "endpoints": [
+      "/api/v1/browse",
+      "/api/v1/bundles/:id",
+      "/api/v1/drama/:id",
+      "/api/v1/drama/:programId/season/:seasonId/episodes",
+      "/api/v1/genres",
+      "/api/v1/languages",
+      "/api/v1/play",
+      "/api/v1/rank",
+      "/api/v1/search",
+      "/api/v1/stream",
+      "/api/v1/tabs",
+      "/api/v1/tabs/:id"
+    ],
+    "methods": [],
+    "codeblocks": [
+      ""
+    ],
+    "textPreview": "\nVigloo API\nSapimu \nAPI\nAll APIs\nLogout\nVigloo \nDocumentation\nAPI for Vigloo streaming — 12 endpoints available\nBase URL\nCopy\nAPI Token\nShow\nEndpoints (12)\nSapimu API Gateway — \nAll APIs\n· \nHome\n· \nDMCA\n"
+  }
+]
