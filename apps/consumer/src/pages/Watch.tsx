@@ -249,7 +249,13 @@ export default function Watch() {
       {/* Main Video Player */}
       <div className="relative w-full aspect-[9/16] bg-black">
         <VerticalShortPlayer
-          source={{ streamUrl: data.streamUrl, streamType: data.streamType }}
+          source={{
+            streamUrl:
+              data.streamType === "m3u8"
+                ? `/stream?u=${encodeURIComponent(data.streamUrl)}`
+                : data.streamUrl,
+            streamType: data.streamType,
+          }}
           poster={data.posterUrl}
           subtitleUrl={data.subtitleUrl}
           onEnded={() => {
