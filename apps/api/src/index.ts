@@ -47,10 +47,25 @@ app.get("/proxy/sapimu-stream", async (c) => {
       headers: { Authorization: `Bearer ${c.env.PROVIDER_API_TOKEN}`, "User-Agent": "Mozilla/5.0" },
     });
     if (!upstream.ok || !upstream.body) return c.json({ error: "upstream_error" }, 502);
-    return new Response(upstream.body, {
+    // Rewrite segment URLs through the same-origin /stream proxy so playback
+    // matches the working path (reelshort): segments load same-origin with a
+    // video/mp2t content-type instead of the CDN's text/plain + nosniff, which
+    // some browsers/extensions refuse to feed to MSE.
+    const text = await upstream.text();
+    const proxy = (ref: string) => `/stream?u=${encodeURIComponent(ref)}`;
+    const rewritten = text
+      .split("\n")
+      .map((line) => {
+        const t = line.trim();
+        if (!t) return line;
+        if (t.startsWith("#")) return line.replace(/URI="([^"]+)"/g, (_, ref) => `URI="${proxy(ref)}"`);
+        return /^https?:\/\//.test(t) ? proxy(t) : line;
+      })
+      .join("\n");
+    return new Response(rewritten, {
       status: 200,
       headers: {
-        "content-type": upstream.headers.get("content-type") ?? "application/vnd.apple.mpegurl",
+        "content-type": "application/vnd.apple.mpegurl",
         "access-control-allow-origin": "*",
         "cache-control": "private, max-age=60",
       },
