@@ -6,5 +6,5 @@ export interface Env {
   SUPABASE_ANON_KEY: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
   PAKASIR_API_KEY: string;
-  PAKASIR_WEBHOOK_SECRET: string;
+  PAKASIR_PROJECT_SLUG: string;
 }

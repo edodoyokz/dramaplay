@@ -18,7 +18,7 @@
 │                                                       │
 │  ┌─────────────┐  ┌────────────┐  ┌───────────────┐  │
 │  │  Workers    │  │  Pages     │  │  Pages        │  │
-│  │  api.drama- │  │  admin.    │  │  dramaplay.id │  │
+│  │  api.drama- │  │  admin.    │  │  dramaplay.my.id │  │
 │  │  play.id    │  │  dramaplay │  │  (consumer)   │  │
 │  │  (Hono)     │  │  .id       │  │               │  │
 │  └──────┬──────┘  └────────────┘  └───────────────┘  │
@@ -64,7 +64,7 @@
 |---------|----------|------------|
 | Cloudflare | https://dash.cloudflare.com/sign-up | Free tier cukup untuk MVP |
 | Supabase | https://supabase.com/dashboard | Free tier atau Pro |
-| Pakasir | https://pakasir.id | Payment gateway Indonesia |
+| Pakasir | https://pakasir.com | Payment gateway Indonesia |
 | GitHub | https://github.com | Untuk repo & Actions |
 | Google Play Console | https://play.google.com/console | Untuk publish Android (opsional, $25 one-time) |
 | Google Cloud Console | https://console.cloud.google.com | Untuk OAuth Google (login) |
@@ -148,18 +148,18 @@ Atau buka langsung file `packages/db/supabase/profiles-trigger.sql` dan copy-pas
 
 ### 3.1 Daftar & Dapatkan API Key
 
-1. Daftar di https://pakasir.id
+1. Daftar di https://pakasir.com
 2. Buka dashboard → **Integration**
 3. Catat:
-   - `PAKASIR_API_KEY` — API key untuk request
-   - `PAKASIR_WEBHOOK_SECRET` — Secret untuk verifikasi webhook callback
+   - `PAKASIR_API_KEY` — API key untuk cek detail transaksi
+   - `PAKASIR_PROJECT_SLUG` — slug proyek Pakasir
 
 ### 3.2 Setup Webhook URL
 
 Di dashboard Pakasir, set webhook URL:
 
 ```
-https://api.dramaplay.id/webhooks/pakasir
+https://api.dramaplay.my.id/pakasir/webhook
 ```
 
 > **CATATAN:** Webhook akan aktif setelah API deploy dan domain live.
@@ -211,7 +211,7 @@ Catat KV ID yang dihasilkan, tambahkan ke `wrangler.toml` jika diperlukan.
 ### 5.1 Tambahkan Domain ke Cloudflare
 
 1. Dashboard Cloudflare → **Add a Site**
-2. Masukkan `dramaplay.id`
+2. Masukkan `dramaplay.my.id`
 3. Pilih plan **Free**
 4. Update nameserver di registrar domain ke nameserver Cloudflare
 
@@ -235,11 +235,11 @@ Setelah project Pages dibuat:
 ```bash
 # Consumer
 wrangler pages project create dramaplay-consumer --production-branch main
-wrangler pages project domain add dramaplay-consumer dramaplay.id
+wrangler pages project domain add dramaplay-consumer dramaplay.my.id
 
 # Admin
 wrangler pages project create dramaplay-admin --production-branch main
-wrangler pages project domain add dramaplay-admin admin.dramaplay.id
+wrangler pages project domain add dramaplay-admin admin.dramaplay.my.id
 ```
 
 ### 5.4 Setup Custom Domain di Workers
@@ -248,8 +248,8 @@ Untuk Workers API, tambahkan route di `wrangler.toml`:
 
 ```toml
 [[routes]]
-pattern = "api.dramaplay.id/*"
-zone_name = "dramaplay.id"
+pattern = "api.dramaplay.my.id/*"
+zone_name = "dramaplay.my.id"
 ```
 
 Lalu deploy ulang dengan `wrangler deploy`.
@@ -284,11 +284,11 @@ wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 wrangler secret put PAKASIR_API_KEY
 # > paste: pk_xxxxx
 
-wrangler secret put PAKASIR_WEBHOOK_SECRET
-# > paste: whsec_xxxxx
+wrangler secret put PAKASIR_PROJECT_SLUG
+# > paste: slug proyek Pakasir, contoh: dramaplay
 
 wrangler secret put PROVIDER_BASE_URL
-# > paste: https://api.provider.com
+# > paste: 
 ```
 
 ### 6.2 Update wrangler.toml
@@ -302,11 +302,11 @@ main = "src/index.ts"
 
 [vars]
 ENVIRONMENT = "production"
-PROVIDER_BASE_URL = "https://api.provider.com"
+PROVIDER_BASE_URL = ""
 
 [[routes]]
-pattern = "api.dramaplay.id/*"
-zone_name = "dramaplay.id"
+pattern = "api.dramaplay.my.id/*"
+zone_name = "dramaplay.my.id"
 
 [triggers]
 crons = ["*/30 * * * *", "0 */2 * * *"]
@@ -322,7 +322,7 @@ wrangler deploy
 Verifikasi:
 
 ```bash
-curl https://api.dramaplay.id/health
+curl https://api.dramaplay.my.id/health
 # Response: { "status": "ok" }
 ```
 
@@ -340,20 +340,20 @@ wrangler pages project create dramaplay-admin --production-branch main
 
 # Tambahkan environment variable
 wrangler pages secret put VITE_API_URL --project-name dramaplay-admin
-# > https://api.dramaplay.id
+# > https://api.dramaplay.my.id
 ```
 
 Atau melalui **Dashboard Cloudflare Pages → dramaplay-admin → Settings → Environment variables**:
 
 | Key | Value | Environment |
 |-----|-------|-------------|
-| `VITE_API_URL` | `https://api.dramaplay.id` | Production |
+| `VITE_API_URL` | `https://api.dramaplay.my.id` | Production |
 
 ### 7.2 Build & Deploy Manual
 
 ```bash
 cd apps/admin
-VITE_API_URL=https://api.dramaplay.id pnpm build
+VITE_API_URL=https://api.dramaplay.my.id pnpm build
 
 # Deploy ke Cloudflare Pages
 wrangler pages deploy dist --project-name dramaplay-admin --branch main
@@ -363,7 +363,7 @@ Verifikasi:
 
 ```bash
 # Buka browser
-open https://admin.dramaplay.id
+open https://admin.dramaplay.my.id
 ```
 
 ---
@@ -376,7 +376,7 @@ open https://admin.dramaplay.id
 wrangler pages project create dramaplay-consumer --production-branch main
 
 wrangler pages secret put VITE_API_URL --project-name dramaplay-consumer
-# > https://api.dramaplay.id
+# > https://api.dramaplay.my.id
 
 wrangler pages secret put VITE_SUPABASE_URL --project-name dramaplay-consumer
 # > https://xxxxxxxxxxxx.supabase.co
@@ -389,7 +389,7 @@ wrangler pages secret put VITE_SUPABASE_ANON_KEY --project-name dramaplay-consum
 
 ```bash
 cd apps/consumer
-VITE_API_URL=https://api.dramaplay.id \
+VITE_API_URL=https://api.dramaplay.my.id \
 VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co \
 VITE_SUPABASE_ANON_KEY=eyJhbG...anon...key \
 pnpm build
@@ -400,7 +400,7 @@ wrangler pages deploy dist --project-name dramaplay-consumer --branch main
 Verifikasi:
 
 ```bash
-open https://dramaplay.id
+open https://dramaplay.my.id
 ```
 
 ---
@@ -416,10 +416,10 @@ Buka repository GitHub: **Settings → Secrets and variables → Actions → New
 | `CLOUDFLARE_API_TOKEN` | `xxx...` | Token API Cloudflare |
 | `CLOUDFLARE_ACCOUNT_ID` | `xxx...` | Account ID Cloudflare |
 | `DATABASE_URL` | `postgresql://...` | URL database Supabase |
-| `VITE_API_URL` | `https://api.dramaplay.id` | URL API untuk build frontend |
+| `VITE_API_URL` | `https://api.dramaplay.my.id` | URL API untuk build frontend |
 | `VITE_SUPABASE_URL` | `https://xxx.supabase.co` | URL Supabase untuk consumer |
 | `VITE_SUPABASE_ANON_KEY` | `eyJhbG...` | Anon key Supabase |
-| `API_URL` | `https://api.dramaplay.id` | URL API untuk smoke test |
+| `API_URL` | `https://api.dramaplay.my.id` | URL API untuk smoke test |
 
 ### 9.2 Trigger Deploy Otomatis
 
@@ -508,11 +508,11 @@ Buka **Supabase Dashboard → Authentication → Providers**:
 
 | Setting | Development | Production |
 |---------|-------------|------------|
-| Site URL | `http://localhost:5173` | `https://dramaplay.id` |
-| Redirect URLs | `http://localhost:5173/auth/callback` | `https://dramaplay.id/auth/callback` |
+| Site URL | `http://localhost:5173` | `https://dramaplay.my.id` |
+| Redirect URLs | `http://localhost:5173/auth/callback` | `https://dramaplay.my.id/auth/callback` |
 
 > **Redirect URLs bisa multiple,** tambahkan juga untuk admin:
-> - `https://admin.dramaplay.id/auth/callback`
+> - `https://admin.dramaplay.my.id/auth/callback`
 
 ### 11.3 Database Trigger
 
@@ -539,7 +539,7 @@ cat packages/db/supabase/profiles-trigger.sql
 cd apps/consumer
 
 # Build production dengan env production
-VITE_API_URL=https://api.dramaplay.id \
+VITE_API_URL=https://api.dramaplay.my.id \
 VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co \
 VITE_SUPABASE_ANON_KEY=eyJhbG...anon...key \
 pnpm build
@@ -606,7 +606,7 @@ Simpan sebagai GitHub secrets:
 Jalankan smoke test yang sudah tersedia:
 
 ```bash
-API_URL=https://api.dramaplay.id bash scripts/smoke.sh
+API_URL=https://api.dramaplay.my.id bash scripts/smoke.sh
 ```
 
 Atau via GitHub Actions: **Actions → Smoke Test → Run workflow**
@@ -615,9 +615,9 @@ Atau via GitHub Actions: **Actions → Smoke Test → Run workflow**
 
 | Komponen | URL | Cek |
 |----------|-----|-----|
-| API Health | `https://api.dramaplay.id/health` | Response 200 `{"status":"ok"}` |
-| Consumer PWA | `https://dramaplay.id` | Halaman load, bisa login |
-| Admin Panel | `https://admin.dramaplay.id` | Halaman load, bisa login admin |
+| API Health | `https://api.dramaplay.my.id/health` | Response 200 `{"status":"ok"}` |
+| Consumer PWA | `https://dramaplay.my.id` | Halaman load, bisa login |
+| Admin Panel | `https://admin.dramaplay.my.id` | Halaman load, bisa login admin |
 | Supabase Auth | Login via app | Redirect berhasil, token tersimpan |
 | Database | Cek data muncul di admin | Drama/providers/users tampil |
 | Payment | Test transaksi Pakasir | Webhook diterima, status update |
@@ -645,21 +645,21 @@ Harus muncul:
 | `SUPABASE_URL` | `https://xxxxxxxxxxxx.supabase.co` | URL project Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbG...` | Service role key (admin) |
 | `PAKASIR_API_KEY` | `pk_xxxxx` | API key Pakasir |
-| `PAKASIR_WEBHOOK_SECRET` | `whsec_xxxxx` | Webhook secret Pakasir |
-| `PROVIDER_BASE_URL` | `https://api.provider.com` | Provider API base URL |
+| `PAKASIR_PROJECT_SLUG` | `dramaplay` | Slug proyek Pakasir |
+| `PROVIDER_BASE_URL` | `` | Provider API base URL |
 | `ENVIRONMENT` | `production` | Environment mode |
 
 ### 14.2 Cloudflare Pages — Admin (`apps/admin`)
 
 | Variable | Contoh | Keterangan |
 |----------|--------|------------|
-| `VITE_API_URL` | `https://api.dramaplay.id` | URL API backend |
+| `VITE_API_URL` | `https://api.dramaplay.my.id` | URL API backend |
 
 ### 14.3 Cloudflare Pages — Consumer (`apps/consumer`)
 
 | Variable | Contoh | Keterangan |
 |----------|--------|------------|
-| `VITE_API_URL` | `https://api.dramaplay.id` | URL API backend |
+| `VITE_API_URL` | `https://api.dramaplay.my.id` | URL API backend |
 | `VITE_SUPABASE_URL` | `https://xxxxxxxxxxxx.supabase.co` | URL project Supabase |
 | `VITE_SUPABASE_ANON_KEY` | `eyJhbG...` | Anon/public key Supabase |
 
@@ -723,7 +723,7 @@ Dashboard Cloudflare Pages → project → **Deployments** → klik `...` pada d
 | Pages build gagal | Cek env vars di Pages settings, pastikan semua `VITE_*` ada |
 | Database connection timeout | Pastikan port **6543** (pooling), bukan 5432 |
 | Supabase Auth redirect gagal | Cek URL configuration & redirect URLs |
-| CORS error | Pastikan API mengizinkan origin `dramaplay.id` dan `admin.dramaplay.id` |
+| CORS error | Pastikan API mengizinkan origin `dramaplay.my.id` dan `admin.dramaplay.my.id` |
 | Cron tidak jalan | Cek `[triggers]` di wrangler.toml, re-deploy |
 | Domain tidak resolve | Cek DNS Cloudflare (proxy orange), tunggu propagasi 5-30 menit |
 
@@ -758,7 +758,7 @@ pg_dump "postgresql://postgres.xxx:pass@aws-0-ap-southeast-1.pooler.supabase.com
 - [ ] Supabase Auth dikonfigurasi (Email + Google OAuth)
 - [ ] Pakasir API key & webhook secret didapat
 - [ ] Cloudflare API token dibuat
-- [ ] Domain `dramaplay.id` diarahkan ke Cloudflare nameserver
+- [ ] Domain `dramaplay.my.id` diarahkan ke Cloudflare nameserver
 - [ ] DNS records di-setup (api, admin, @, www)
 - [ ] Secrets Cloudflare Workers di-upload (`wrangler secret put`)
 - [ ] API di-deploy & health check OK
@@ -781,7 +781,7 @@ pg_dump "postgresql://postgres.xxx:pass@aws-0-ap-southeast-1.pooler.supabase.com
 - [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
 - [Cloudflare Pages Docs](https://developers.cloudflare.com/pages/)
 - [Supabase Docs](https://supabase.com/docs)
-- [Pakasir Docs](https://docs.pakasir.id/)
+- [Pakasir Docs](https://pakasir.com/p/docs)
 - [Capacitor Android Docs](https://capacitorjs.com/docs/android)
 - [Wrangler CLI Docs](https://developers.cloudflare.com/workers/wrangler/)
 - [Drizzle ORM Docs](https://orm.drizzle.team/docs/overview)

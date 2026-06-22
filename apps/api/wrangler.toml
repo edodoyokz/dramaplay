@@ -3,8 +3,11 @@ compatibility_date = "2024-10-01"
 main = "src/index.ts"
 
 [vars]
-ENVIRONMENT = "development"
-PROVIDER_BASE_URL = "https://api.example.com"
+ENVIRONMENT = "production"
+
+[[routes]]
+pattern = "api.dramaplay.my.id/*"
+zone_name = "dramaplay.my.id"
 
 # Cron triggers: every 30 min (health check) and every 2 hours (catalog sync)
 [triggers]

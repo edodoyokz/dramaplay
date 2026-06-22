@@ -30,13 +30,13 @@
                 <data android:scheme="dramaplay" />
             </intent-filter>
 
-            <!-- Verified deep link: https://dramaplay.id -->
+            <!-- Verified deep link: https://dramaplay.my.id -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="dramaplay.id" />
-                <data android:scheme="https" android:host="www.dramaplay.id" />
+                <data android:scheme="https" android:host="dramaplay.my.id" />
+                <data android:scheme="https" android:host="www.dramaplay.my.id" />
             </intent-filter>
 
         </activity>

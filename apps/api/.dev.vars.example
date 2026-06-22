@@ -4,5 +4,5 @@ SUPABASE_URL=http://localhost:54321
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 PAKASIR_API_KEY=
-PAKASIR_WEBHOOK_SECRET=
-PROVIDER_BASE_URL=https://api.example.com
+PAKASIR_PROJECT_SLUG=
+PROVIDER_BASE_URL=https://api.sansekai.my.id/api

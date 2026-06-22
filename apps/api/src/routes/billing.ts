@@ -22,13 +22,21 @@ billing.post("/checkout", authMiddleware, async (c) => {
 
   const [payment] = await db
     .insert(payments)
-    .values({ userId, planId: plan.id, amountIdr: plan.priceIdr, status: "pending" })
+    .values({
+      userId,
+      planId: plan.id,
+      amountIdr: plan.priceIdr,
+      status: "pending",
+      pakasirReference: crypto.randomUUID(),
+    })
     .returning();
 
-  // TODO: create real Pakasir transaction via Pakasir SDK/API and store reference.
-  const checkoutUrl = `https://pakasir.example.com/checkout?ref=${payment.id}`;
+  const checkoutUrl = new URL(
+    `https://app.pakasir.com/pay/${c.env.PAKASIR_PROJECT_SLUG}/${payment.amountIdr}`
+  );
+  checkoutUrl.searchParams.set("order_id", payment.pakasirReference ?? payment.id);
 
-  return c.json({ paymentId: payment.id, checkoutUrl });
+  return c.json({ paymentId: payment.id, checkoutUrl: checkoutUrl.toString() });
 });
 
 billing.get("/me", authMiddleware, async (c) => {
