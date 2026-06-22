@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
@@ -17,6 +17,13 @@ interface StreamResponse {
   nextEpisode: number | null;
 }
 
+function playableUrl(data: StreamResponse) {
+  if (data.streamType !== "m3u8") return data.streamUrl;
+  if (data.streamUrl.startsWith("/proxy/")) return `/api${data.streamUrl}`;
+  if (data.streamUrl.startsWith("/")) return data.streamUrl;
+  return `/stream?u=${encodeURIComponent(data.streamUrl)}`;
+}
+
 export default function Watch() {
   const { slug, n } = useParams();
   const navigate = useNavigate();
@@ -27,6 +34,8 @@ export default function Watch() {
   const [liked, setLiked] = useState(false);
   const [favorited, setFavorited] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [retryTick, setRetryTick] = useState(0);
+  const lastProgressSave = useRef(0);
 
   const updateWatchProgress = (stream: StreamResponse, percent: number) => {
     try {
@@ -63,6 +72,7 @@ export default function Watch() {
       setBlocked(false);
       setLiked(false);
       setFavorited(false);
+      setFailed(false);
 
       if (!slug || !n) return;
 
@@ -95,6 +105,8 @@ export default function Watch() {
         if (!active) return;
         if (e instanceof Error && e.message.startsWith("403")) {
           setBlocked(true);
+        } else {
+          setFailed(true);
         }
       }
     })();
@@ -102,7 +114,7 @@ export default function Watch() {
     return () => {
       active = false;
     };
-  }, [slug, n]);
+  }, [slug, n, retryTick]);
 
   const handleLike = () => {
     if (!data) return;
@@ -190,7 +202,7 @@ export default function Watch() {
     );
   }
 
-  if (failed && data) {
+  if (failed) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#030303] px-6 py-12 text-zinc-100">
         <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 mb-2">
@@ -198,11 +210,11 @@ export default function Watch() {
         </div>
         <h1 className="text-xl font-extrabold tracking-wide">Stream Tidak Tersedia</h1>
         <p className="text-center text-xs text-zinc-400 max-w-xs leading-relaxed">
-          {data.dramaTitle} &middot; Episode {data.episodeNumber}
+          {data ? `${data.dramaTitle} · Episode ${data.episodeNumber}` : "Gagal menghubungkan stream. Coba lagi."}
         </p>
         <div className="flex flex-col gap-2.5 w-full max-w-xs mt-4">
           <button
-            onClick={() => { setFailed(false); setData(null); }}
+            onClick={() => { setFailed(false); setData(null); setRetryTick((v) => v + 1); }}
             className="w-full py-3 rounded-full bg-gradient-sunset text-white font-bold text-sm tracking-wide shadow-lg shadow-rose-500/20 active:scale-95 duration-100"
           >
             Coba Lagi
@@ -250,11 +262,8 @@ export default function Watch() {
       <div className="relative w-full aspect-[9/16] bg-black">
         <VerticalShortPlayer
           source={{
-            streamUrl:
-              data.streamType === "m3u8"
-                ? `/stream?u=${encodeURIComponent(data.streamUrl)}`
-                : data.streamUrl,
-            streamType: data.streamType,
+            streamUrl: playableUrl(data),
+            streamType: data.streamType === "other" ? "mp4" : data.streamType,
           }}
           poster={data.posterUrl}
           subtitleUrl={data.subtitleUrl}
@@ -264,7 +273,9 @@ export default function Watch() {
             navigate(`/drama/${slug}/episode/${next}`);
           }}
           onTimeUpdate={(sec) => {
-            // Periodic watch history updates
+            const now = Date.now();
+            if (now - lastProgressSave.current < 10_000) return;
+            lastProgressSave.current = now;
             updateWatchProgress(data, Math.min(Math.floor(sec * 3), 98));
           }}
         />

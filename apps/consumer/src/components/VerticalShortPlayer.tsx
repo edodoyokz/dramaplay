@@ -26,16 +26,16 @@ export default function VerticalShortPlayer({
     const player = videojs(ref.current, {
       controls: true,
       fluid: true,
+      html5: { vhs: { overrideNative: true } },
       poster,
       playbackRates: [0.5, 1, 1.25, 1.5, 2],
     });
     playerRef.current = player;
 
-    if (source.streamType === "m3u8") {
-      player.src({ src: source.streamUrl, type: "application/x-mpegURL" });
-    } else if (source.streamType === "mp4") {
-      player.src({ src: source.streamUrl, type: "video/mp4" });
-    }
+    player.src({
+      src: source.streamUrl,
+      type: source.streamType === "m3u8" ? "application/x-mpegURL" : "video/mp4",
+    });
 
     if (subtitleUrl) {
       player.addRemoteTextTrack(
@@ -50,8 +50,13 @@ export default function VerticalShortPlayer({
       );
     }
 
+    player.on("error", () => {
+      const error = player.error();
+      console.error("Video.js playback error", error?.code, error?.message, source.streamUrl);
+    });
     player.on("ended", () => onEnded?.());
     player.on("timeupdate", () => onTimeUpdate?.(player.currentTime() ?? 0));
+    player.ready(() => player.load());
 
     return () => {
       player.dispose();
@@ -65,6 +70,7 @@ export default function VerticalShortPlayer({
       <div data-vjs-player>
         <video
           ref={ref}
+          key={source.streamUrl}
           className="video-js vjs-big-play-centered h-full w-full"
           playsInline
         />
