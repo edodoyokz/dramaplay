@@ -240,7 +240,7 @@ export default function Watch() {
   }
 
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden flex flex-col justify-center">
+    <div className="relative h-[100dvh] w-full bg-black overflow-hidden">
       {/* Absolute Header Overlay */}
       <div className="absolute top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
         <button
@@ -259,7 +259,7 @@ export default function Watch() {
       </div>
 
       {/* Main Video Player */}
-      <div className="relative w-full aspect-[9/16] bg-black">
+      <div className="absolute inset-0 bg-black">
         <VerticalShortPlayer
           source={{
             streamUrl: playableUrl(data),
