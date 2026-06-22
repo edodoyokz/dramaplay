@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,8 +12,154 @@ body,
 
 body {
   margin: 0;
-  background-color: #0f172a;
-  color: #f8fafc;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: #030303;
+  color: #f4f4f5;
+  font-family: "Plus Jakarta Sans", "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbars but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Redefined custom components and helpers */
+.glass-panel {
+  background: rgba(9, 9, 11, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(24, 24, 27, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: rgba(39, 39, 42, 0.7);
+  border-color: rgba(244, 63, 94, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgba(244, 63, 94, 0.2);
+}
+
+.glass-input {
+  background: rgba(24, 24, 27, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  border-color: #f43f5e;
+  background: rgba(9, 9, 11, 0.95);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+  outline: none;
+}
+
+/* Gradients and glows */
+.bg-gradient-sunset {
+  background: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(180deg, rgba(3, 3, 3, 0) 0%, rgba(3, 3, 3, 0.95) 85%, #030303 100%);
+}
+
+.text-gradient-sunset {
+  background: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glow-sunset {
+  box-shadow: 0 0 25px rgba(244, 63, 94, 0.35);
+}
+
+.glow-gold {
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.35);
+}
+
+/* Custom styles for Video.js vertical stream player */
+.video-js.vjs-fluid {
+  padding-top: 177.78% !important; /* Force 9:16 aspect ratio */
+}
+
+.video-js {
+  background-color: #000 !important;
+  font-family: inherit;
+}
+
+.video-js .vjs-big-play-button {
+  background-color: rgba(244, 63, 94, 0.8) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 60px !important;
+  height: 60px !important;
+  line-height: 60px !important;
+  margin-left: -30px !important;
+  margin-top: -30px !important;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.5) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.video-js:hover .vjs-big-play-button {
+  background-color: #f43f5e !important;
+  transform: scale(1.1);
+}
+
+.video-js .vjs-control-bar {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%) !important;
+  height: 60px !important;
+}
+
+.video-js .vjs-play-progress {
+  background-color: #f43f5e !important;
+}
+
+.video-js .vjs-slider {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.video-js .vjs-load-progress {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Text Track / Subtitle Overlay customization */
+.video-js .vjs-text-track-display {
+  pointer-events: none;
+}
+
+.video-js .vjs-text-track-settings {
+  display: none !important;
+}
+
+.video-js .vjs-cue-text-container {
+  font-size: 1.15rem !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9) !important;
+  padding: 8px 16px !important;
+  background-color: rgba(0, 0, 0, 0.65) !important;
+  border-radius: 8px !important;
+  bottom: 80px !important;
 }

@@ -11,14 +11,13 @@ import Reports from "./pages/Reports";
 import { getToken, clearSession, supabase } from "./lib/supabase";
 
 function RequireAuth() {
-  const [ok, setOk] = useState<boolean | null>(null);
+  const [ok, setOk] = useState<boolean | null>(() => {
+    const token = getToken();
+    return token ? null : false;
+  });
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      setOk(false);
-      return;
-    }
+    if (ok !== null) return;
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) setOk(true);
       else {
@@ -26,7 +25,7 @@ function RequireAuth() {
         setOk(false);
       }
     });
-  }, []);
+  }, [ok]);
 
   if (ok === null) {
     return (
