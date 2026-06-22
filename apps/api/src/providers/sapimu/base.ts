@@ -44,7 +44,10 @@ export function findStreamUrl(value: unknown): string | undefined {
   if (typeof value === "string" && /^https?:\/\//.test(value) && !looksLikeImage(value)) return value;
   if (!value || typeof value !== "object") return undefined;
   if (Array.isArray(value)) {
-    for (const item of value) {
+    // Prefer browser-playable codecs: HEVC/H265 only plays in Safari, so a list
+    // that mixes H264 and H265 (e.g. reelshort) must pick H264 first.
+    const ordered = orderByPlayableCodec(value);
+    for (const item of ordered) {
       const found = findStreamUrl(item);
       if (found) return found;
     }
@@ -76,6 +79,21 @@ export function findStreamUrl(value: unknown): string | undefined {
     if (found) return found;
   }
   return undefined;
+}
+
+/**
+ * Reorder candidate video objects so browser-playable codecs come first.
+ * HEVC/H265 only decodes in Safari; Chrome/Firefox need H264, otherwise
+ * playback yields audio-only with a black/poster frame.
+ */
+function orderByPlayableCodec(arr: unknown[]): unknown[] {
+  const codec = (item: unknown): string => {
+    const r = item as Row;
+    return String(r?.Encode ?? r?.encode ?? r?.codec ?? "").toUpperCase();
+  };
+  if (!arr.some((i) => codec(i))) return arr;
+  const rank = (c: string) => (c.includes("265") || c.includes("HEV") ? 1 : 0);
+  return [...arr].sort((a, b) => rank(codec(a)) - rank(codec(b)));
 }
 
 /** Detect stream type from URL extension. */

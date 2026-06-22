@@ -17,6 +17,14 @@ describe("Sapimu base helpers", () => {
       expect(findStreamUrl([null, { url: "https://x.mp4" }, {}])).toBe("https://x.mp4");
     });
 
+    it("prefers H264 over H265 when codec labels present", () => {
+      const videos = [
+        { PlayURL: "https://x.test/hevc.m3u8", Encode: "H265" },
+        { PlayURL: "https://x.test/h264.m3u8", Encode: "H264" },
+      ];
+      expect(findStreamUrl(videos)).toBe("https://x.test/h264.m3u8");
+    });
+
     it("returns undefined for no URL", () => {
       expect(findStreamUrl({ foo: "bar" })).toBeUndefined();
       expect(findStreamUrl(null)).toBeUndefined();
