@@ -99,10 +99,6 @@ body {
 }
 
 /* Custom styles for Video.js vertical stream player */
-.video-js.vjs-fluid {
-  padding-top: 177.78% !important; /* Force 9:16 aspect ratio */
-}
-
 .video-js {
   background-color: #000 !important;
   font-family: inherit;

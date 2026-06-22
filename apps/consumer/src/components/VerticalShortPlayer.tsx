@@ -66,8 +66,8 @@ export default function VerticalShortPlayer({
   }, [source.streamUrl, source.streamType, subtitleUrl]);
 
   return (
-    <div className="aspect-[9/16] bg-black">
-      <div data-vjs-player>
+    <div className="h-full w-full bg-black">
+      <div data-vjs-player className="h-full w-full">
         <video
           ref={ref}
           key={source.streamUrl}

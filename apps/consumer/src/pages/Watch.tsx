@@ -324,7 +324,7 @@ export default function Watch() {
                 : "bg-black/40 border-zinc-800 text-zinc-300 hover:text-white"
             }`}>
               <svg className={`w-5.5 h-5.5 ${favorited ? "fill-current" : "fill-none"}`} stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.9 1.393-.9 1.693 0l5.44 11.3a1 1 0 00.95.69h11.82c.987 0 1.397 1.27.607 1.84l-9.56 6.95a1 1 0 00-.36 1.12l3.6 11.09c.3.9-.74 1.66-1.53 1.1l-9.56-6.95a1 1 0 00-1.17 0l-9.56 6.95c-.79.56-1.83-.2-1.53-1.1l3.6-11.09a1 1 0 00-.36-1.12l-9.56-6.95c-.79-.57-.38-1.84.607-1.84h11.82a1 1 0 00.95-.69l5.44-11.3z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
               </svg>
             </div>
             <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200">
@@ -339,8 +339,7 @@ export default function Watch() {
           >
             <div className="w-11 h-11 rounded-full bg-black/40 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center backdrop-blur-md shadow-md transition-all">
               <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742l4.636-2.5m0 7.508l-4.636-2.5m10.19C20.3 12.33 19 14.16 19 16c0 1.84 1.3 3.67 3.5 3.67s3.5-1.83 3.5-3.67c0-1.84-1.3-3.67-3.5-3.67zm-11 0c2.2 0 3.5-1.83 3.5-3.67S10.2 6 8 6s-3.5 1.83-3.5 3.67 1.3 3.67 3.5 3.67zm-11 0c2.2 0 3.5-1.83 3.5-3.67S10.2 12 8 12s-3.5 1.83-3.5 3.67 1.3 3.67 3.5 3.67z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742a3.375 3.375 0 11-3.375-3.375 3.375 3.375 0 013.375 3.375zm0 2.516a3.375 3.375 0 11-3.375 3.375 3.375 0 013.375-3.375zm11-6.258a3.375 3.375 0 11-3.375 3.375 3.375 0 013.375-3.375z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
               </svg>
             </div>
             <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200">
