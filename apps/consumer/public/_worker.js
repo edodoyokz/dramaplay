@@ -25,10 +25,10 @@ export default {
       headers.set("Cache-Control", "no-cache");
 
       if (!isManifest) {
-        // Force a media content-type: some CDNs (dramaboxdb) serve .ts as
-        // text/plain + nosniff, which browsers refuse to feed to MSE.
-        const isSegment = target.includes(".ts") || ct.includes("mp2t") || ct.includes("video");
-        headers.set("content-type", isSegment ? "video/mp2t" : ct || "video/mp2t");
+        // Force only MPEG-TS segments: some CDNs (dramaboxdb) serve .ts as
+        // text/plain + nosniff. Do not relabel MP4 as TS.
+        const isTs = target.includes(".ts") || ct.includes("mp2t");
+        headers.set("content-type", isTs ? "video/mp2t" : ct || "application/octet-stream");
         return new Response(upstream.body, { status: upstream.status, headers });
       }
 

@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
+import { playableUrl } from "../lib/playable";
 import VerticalShortPlayer from "../components/VerticalShortPlayer";
 import PricingModal from "../components/PricingModal";
 
@@ -16,13 +17,6 @@ interface StreamResponse {
   episodeNumber: number;
   accessType: "free" | "vip";
   nextEpisode: number | null;
-}
-
-function playableUrl(data: StreamResponse) {
-  if (data.streamType !== "m3u8") return data.streamUrl;
-  if (data.streamUrl.startsWith("/proxy/")) return `/api${data.streamUrl}`;
-  if (data.streamUrl.startsWith("/")) return data.streamUrl;
-  return `/stream?u=${encodeURIComponent(data.streamUrl)}`;
 }
 
 export default function Watch() {
