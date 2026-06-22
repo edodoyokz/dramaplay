@@ -6,6 +6,7 @@ import Watch from "./pages/Watch";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
+import ProviderDramas from "./pages/ProviderDramas";
 
 const qc = new QueryClient();
 
@@ -80,6 +81,7 @@ export default function App() {
             <Route path="/drama/:slug" element={<DramaDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/provider/:code" element={<ProviderDramas />} />
           </Route>
           
           {/* Layouts without bottom nav (Player & Auth) */}
