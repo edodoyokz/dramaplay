@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
-import type Player from "video.js/dist/types/player";
+import Hls from "hls.js";
 
 interface Props {
   source: { streamUrl: string; streamType: "mp4" | "m3u8" | "other" };
@@ -13,56 +11,51 @@ interface Props {
 
 export default function VerticalShortPlayer({ source, poster, subtitleUrl, onEnded, onTimeUpdate }: Props) {
   const ref = useRef<HTMLVideoElement | null>(null);
-  const playerRef = useRef<Player | null>(null);
-  // Keep latest callbacks without re-initializing the player.
-  const cbRef = useRef({ onEnded, onTimeUpdate });
-  cbRef.current = { onEnded, onTimeUpdate };
 
-  // Init player once.
   useEffect(() => {
-    if (!ref.current || playerRef.current) return;
-    const player = videojs(ref.current, {
-      controls: true,
-      fill: true,
-      preload: "auto",
-      html5: { vhs: { overrideNative: true } },
-      playbackRates: [0.5, 1, 1.25, 1.5, 2],
-    });
-    playerRef.current = player;
+    const video = ref.current;
+    if (!video) return;
 
-    player.on("error", () => {
-      const e = player.error();
-      console.error("Video.js playback error", e?.code, e?.message, player.currentSrc());
-    });
-    player.on("ended", () => cbRef.current.onEnded?.());
-    player.on("timeupdate", () => cbRef.current.onTimeUpdate?.(player.currentTime() ?? 0));
+    let hls: Hls | null = null;
+    const isHls = source.streamType === "m3u8";
+    const nativeHls = video.canPlayType("application/vnd.apple.mpegurl");
+
+    if (isHls && Hls.isSupported() && !nativeHls) {
+      // hls.js handles HE-AAC and codec edge cases that video.js/VHS chokes on.
+      hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+      hls.loadSource(source.streamUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.ERROR, (_e, data) => {
+        if (!data.fatal) return;
+        console.error("hls.js fatal", data.type, data.details, source.streamUrl);
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls?.startLoad();
+        else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls?.recoverMediaError();
+        else hls?.destroy();
+      });
+    } else {
+      // Native: Safari HLS, or direct mp4.
+      video.src = source.streamUrl;
+    }
 
     return () => {
-      player.dispose();
-      playerRef.current = null;
+      hls?.destroy();
+      video.removeAttribute("src");
+      video.load();
     };
-  }, []);
-
-  // Update source / poster / subtitle when they change.
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player) return;
-    if (poster) player.poster(poster);
-    player.src({ src: source.streamUrl, type: source.streamType === "m3u8" ? "application/x-mpegURL" : "video/mp4" });
-    player.load();
-
-    const tracks = player.remoteTextTracks() as unknown as { length: number; [i: number]: HTMLTrackElement };
-    for (let i = tracks.length - 1; i >= 0; i--) {
-      if (tracks[i]) player.removeRemoteTextTrack(tracks[i]);
-    }
-    if (subtitleUrl) {
-      player.addRemoteTextTrack({ src: subtitleUrl, kind: "subtitles", srclang: "id", label: "Indonesia", default: true }, false);
-    }
-  }, [source.streamUrl, source.streamType, poster, subtitleUrl]);
+  }, [source.streamUrl, source.streamType]);
 
   return (
-    <div data-vjs-player className="h-full w-full bg-black">
-      <video ref={ref} className="video-js vjs-big-play-centered h-full w-full" playsInline />
-    </div>
+    <video
+      ref={ref}
+      poster={poster}
+      controls
+      autoPlay
+      playsInline
+      onEnded={() => onEnded?.()}
+      onTimeUpdate={(e) => onTimeUpdate?.(e.currentTarget.currentTime)}
+      className="h-full w-full bg-black object-contain"
+    >
+      {subtitleUrl ? <track src={subtitleUrl} kind="subtitles" srcLang="id" label="Indonesia" default /> : null}
+    </video>
   );
 }

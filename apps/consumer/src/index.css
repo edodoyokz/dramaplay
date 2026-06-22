@@ -98,64 +98,12 @@ body {
   box-shadow: 0 0 25px rgba(251, 191, 36, 0.35);
 }
 
-/* Custom styles for Video.js vertical stream player */
-.video-js {
-  background-color: #000 !important;
-  font-family: inherit;
-}
-
-.video-js .vjs-big-play-button {
-  background-color: rgba(244, 63, 94, 0.8) !important;
-  border: none !important;
-  border-radius: 50% !important;
-  width: 60px !important;
-  height: 60px !important;
-  line-height: 60px !important;
-  margin-left: -30px !important;
-  margin-top: -30px !important;
-  box-shadow: 0 0 20px rgba(244, 63, 94, 0.5) !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-.video-js:hover .vjs-big-play-button {
-  background-color: #f43f5e !important;
-  transform: scale(1.1);
-}
-
-.video-js .vjs-control-bar {
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%) !important;
-  height: 60px !important;
-}
-
-.video-js .vjs-play-progress {
-  background-color: #f43f5e !important;
-}
-
-.video-js .vjs-slider {
-  background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-.video-js .vjs-load-progress {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Text Track / Subtitle Overlay customization */
-.video-js .vjs-text-track-display {
-  pointer-events: none;
-}
-
-.video-js .vjs-text-track-settings {
-  display: none !important;
-}
-
-.video-js .vjs-cue-text-container {
-  font-size: 1.15rem !important;
-  line-height: 1.4 !important;
-  font-weight: 600 !important;
-  color: #ffffff !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.9) !important;
-  padding: 8px 16px !important;
-  background-color: rgba(0, 0, 0, 0.65) !important;
-  border-radius: 8px !important;
-  bottom: 80px !important;
+/* Native video subtitle (::cue) styling for the short player */
+video::cue {
+  font-size: 1.05rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
