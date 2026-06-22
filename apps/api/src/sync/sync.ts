@@ -14,10 +14,11 @@ interface SyncResult {
 export async function syncProvider(
   dbUrl: string,
   providerCode: string,
-  providerBaseUrl: string
+  providerBaseUrl: string,
+  providerToken?: string
 ): Promise<SyncResult> {
   const db = createDb(dbUrl);
-  const adapters = buildProviders(providerBaseUrl);
+  const adapters = buildProviders(providerBaseUrl, providerToken);
   const adapter = adapters[providerCode];
   if (!adapter) throw new Error(`unknown provider ${providerCode}`);
 

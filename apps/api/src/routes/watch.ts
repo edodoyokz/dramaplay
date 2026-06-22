@@ -42,7 +42,7 @@ async function streamResponse(env: Env, drama: typeof dramas.$inferSelect, episo
     .from(episodeProviders)
     .where(eq(episodeProviders.episodeId, episode.id));
 
-  const providers = buildProviders(env.PROVIDER_BASE_URL);
+  const providers = buildProviders(env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN);
   const provider = Object.values(providers)[0];
 
   const source = provider ? await provider.resolveStream(primary?.providerEpisodeId ?? "").catch(() => null) : null;

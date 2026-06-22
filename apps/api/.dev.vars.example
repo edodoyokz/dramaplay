@@ -5,4 +5,5 @@ SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 PAKASIR_API_KEY=
 PAKASIR_PROJECT_SLUG=
-PROVIDER_BASE_URL=https://api.sansekai.my.id/api
+PROVIDER_BASE_URL=https://captain.sapimu.au
+PROVIDER_API_TOKEN=

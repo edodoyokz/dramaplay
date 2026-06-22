@@ -31,7 +31,7 @@ export default {
         const enabled = await db.select().from(providers).where(eq(providers.isEnabled, true));
         for (const p of enabled) {
           try {
-            await syncProvider(env.DATABASE_URL, p.code, env.PROVIDER_BASE_URL);
+            await syncProvider(env.DATABASE_URL, p.code, env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN);
           } catch {
             // errors already logged inside syncProvider
           }
