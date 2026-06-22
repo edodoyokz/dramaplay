@@ -10,6 +10,7 @@ ENVIRONMENT = "production"
 pattern = "api.dramaplay.my.id/*"
 zone_name = "dramaplay.my.id"
 
-# Cron triggers: every 30 min (health check) and every 2 hours (catalog sync)
-[triggers]
-crons = ["*/30 * * * *", "0 */2 * * *"]
+# ponytail: cron disabled until Cloudflare creates the account workers.dev subdomain.
+# Re-enable after opening Workers in the dashboard once.
+# [triggers]
+# crons = ["*/30 * * * *", "0 */2 * * *"]
