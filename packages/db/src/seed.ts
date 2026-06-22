@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { createDb } from "./client";
 import { plans, providers } from "./schema";
 
@@ -19,17 +20,22 @@ async function main() {
       // generated initials when unset, so logos can be added later without a
       // migration. Batch-1 Sapimu providers seeded disabled; enable one-by-one
       // after live smoke testing passes (smoke-sapimu-providers.ts).
-      { code: "dramabox", name: "DramaBox", priority: 10, isEnabled: true, config: {} },
-      { code: "shortmax", name: "ShortMax", priority: 20, isEnabled: true, config: {} },
-      { code: "reelshort", name: "ReelShort", priority: 30, isEnabled: false, config: {} },
-      { code: "dramaboxbaru", name: "DramaBox Baru", priority: 31, isEnabled: false, config: {} },
-      { code: "dramawave", name: "DramaWave", priority: 32, isEnabled: false, config: {} },
-      { code: "pinedrama", name: "PineDrama", priority: 33, isEnabled: false, config: {} },
-      { code: "netshort", name: "NetShort", priority: 34, isEnabled: false, config: {} },
-      { code: "dramanova", name: "DramaNova", priority: 35, isEnabled: false, config: {} },
-      { code: "melolo", name: "Melolo", priority: 36, isEnabled: false, config: {} },
+      { code: "dramabox", name: "DramaBox", priority: 10, isEnabled: true, config: { logoUrl: "/logos/dramabox.png" } },
+      { code: "shortmax", name: "ShortMax", priority: 20, isEnabled: true, config: { logoUrl: "/logos/shortmax.png" } },
+      { code: "reelshort", name: "ReelShort", priority: 30, isEnabled: false, config: { logoUrl: "/logos/reelshort.png" } },
+      { code: "dramaboxbaru", name: "DramaBox Baru", priority: 31, isEnabled: false, config: { logoUrl: "/logos/dramaboxbaru.png" } },
+      { code: "dramawave", name: "DramaWave", priority: 32, isEnabled: false, config: { logoUrl: "/logos/dramawave.png" } },
+      { code: "pinedrama", name: "PineDrama", priority: 33, isEnabled: false, config: { logoUrl: "/logos/pinedrama.png" } },
+      { code: "netshort", name: "NetShort", priority: 34, isEnabled: false, config: { logoUrl: "/logos/netshort.png" } },
+      { code: "dramanova", name: "DramaNova", priority: 35, isEnabled: false, config: { logoUrl: "/logos/dramanova.png" } },
+      { code: "melolo", name: "Melolo", priority: 36, isEnabled: false, config: { logoUrl: "/logos/melolo.png" } },
     ])
-    .onConflictDoNothing({ target: providers.code });
+    .onConflictDoUpdate({
+      target: providers.code,
+      set: {
+        config: sql`excluded.config`,
+      },
+    });
 
   await db.$client.end();
   console.log("seed done");

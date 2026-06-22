@@ -86,11 +86,7 @@ export default function Home() {
       {/* Immersive Glass Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-black/60 backdrop-blur-md border-b border-zinc-900/60">
         <div className="flex items-center gap-2" onClick={() => navigate("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-sunset flex items-center justify-center glow-sunset">
-            <svg className="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
+          <img src="/logo-app.png" alt="Dramaplay Logo" className="w-8 h-8 rounded-lg object-cover shadow-md" />
           <span className="text-xl font-bold tracking-tight text-gradient-sunset">
             Dramaplay
           </span>

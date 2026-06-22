@@ -78,11 +78,7 @@ export default function Auth() {
       <div className="flex-1 flex flex-col justify-center items-center max-w-sm mx-auto w-full z-10">
         {/* Brand Logo */}
         <div className="flex flex-col items-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-sunset flex items-center justify-center glow-sunset border border-rose-500/25">
-            <svg className="w-7 h-7 text-white fill-current" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
+          <img src="/logo-app.png" alt="Dramaplay Logo" className="w-12 h-12 rounded-2xl object-cover shadow-lg border border-rose-500/20" />
           <h1 className="text-2xl font-black text-gradient-sunset tracking-tight">Dramaplay</h1>
           <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Vertical Short Drama</p>
         </div>
