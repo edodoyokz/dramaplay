@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import type { Env } from "../env";
 import { authMiddleware } from "../middleware/auth";
 import { adminMiddleware } from "../middleware/admin";
+import { syncProvider } from "../sync/sync";
 
 export const admin = new Hono<{ Bindings: Env; Variables: { user: { id: string } } }>();
 
@@ -29,6 +30,16 @@ admin.post("/providers/:id/toggle", async (c) => {
   if (!row) return c.json({ error: "not_found" }, 404);
   await db.update(providers).set({ isEnabled: !row.isEnabled }).where(eq(providers.id, row.id));
   return c.json({ ok: true });
+});
+
+admin.post("/providers/:code/sync", async (c) => {
+  const result = await syncProvider(
+    c.env.DATABASE_URL,
+    c.req.param("code"),
+    c.env.PROVIDER_BASE_URL,
+    c.env.PROVIDER_API_TOKEN
+  );
+  return c.json({ ok: true, ...result });
 });
 
 admin.get("/dramas", async (c) => {

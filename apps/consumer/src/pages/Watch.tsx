@@ -14,6 +14,7 @@ interface StreamResponse {
   dramaSlug: string;
   episodeNumber: number;
   accessType: "free" | "vip";
+  nextEpisode: number | null;
 }
 
 export default function Watch() {
@@ -21,6 +22,7 @@ export default function Watch() {
   const navigate = useNavigate();
   const [data, setData] = useState<StreamResponse | null>(null);
   const [blocked, setBlocked] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
   const [liked, setLiked] = useState(false);
   const [favorited, setFavorited] = useState(false);
@@ -72,7 +74,13 @@ export default function Watch() {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (!active) return;
+        if (!res.streamUrl) {
+          setFailed(true);
+          setData(res);
+          return;
+        }
         setData(res);
+        setFailed(false);
         
         // Track liked and favorited from local storage
         const likes = JSON.parse(localStorage.getItem("dramaplay:likes") || "[]");
@@ -182,6 +190,34 @@ export default function Watch() {
     );
   }
 
+  if (failed && data) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#030303] px-6 py-12 text-zinc-100">
+        <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 mb-2">
+          <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+        <h1 className="text-xl font-extrabold tracking-wide">Stream Tidak Tersedia</h1>
+        <p className="text-center text-xs text-zinc-400 max-w-xs leading-relaxed">
+          {data.dramaTitle} &middot; Episode {data.episodeNumber}
+        </p>
+        <div className="flex flex-col gap-2.5 w-full max-w-xs mt-4">
+          <button
+            onClick={() => { setFailed(false); setData(null); }}
+            className="w-full py-3 rounded-full bg-gradient-sunset text-white font-bold text-sm tracking-wide shadow-lg shadow-rose-500/20 active:scale-95 duration-100"
+          >
+            Coba Lagi
+          </button>
+          <button
+            onClick={() => navigate(-1)}
+            className="w-full py-3 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold text-sm active:scale-95 duration-100"
+          >
+            Kembali
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!data) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center text-zinc-500">
@@ -218,7 +254,8 @@ export default function Watch() {
           subtitleUrl={data.subtitleUrl}
           onEnded={() => {
             updateWatchProgress(data, 100);
-            navigate(`/drama/${slug}/episode/${Number(n ?? 1) + 1}`);
+            const next = data.nextEpisode ?? (Number(n ?? 1) + 1);
+            navigate(`/drama/${slug}/episode/${next}`);
           }}
           onTimeUpdate={(sec) => {
             // Periodic watch history updates

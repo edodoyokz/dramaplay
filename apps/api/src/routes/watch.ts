@@ -47,6 +47,19 @@ async function streamResponse(env: Env, drama: typeof dramas.$inferSelect, episo
 
   const source = provider ? await provider.resolveStream(primary?.providerEpisodeId ?? "").catch(() => null) : null;
 
+  if (!source?.streamUrl) {
+    return new Response(
+      JSON.stringify({ error: "stream_unavailable" }),
+      { status: 502, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  const [nextEpisode] = await db
+    .select({ episodeNumber: episodes.episodeNumber })
+    .from(episodes)
+    .where(and(eq(episodes.dramaId, drama.id), eq(episodes.episodeNumber, episode.episodeNumber + 1)))
+    .limit(1);
+
   const [sub] = await db
     .select()
     .from(subtitles)
@@ -61,14 +74,15 @@ async function streamResponse(env: Env, drama: typeof dramas.$inferSelect, episo
 
   return new Response(
     JSON.stringify({
-      streamUrl: source?.streamUrl ?? "",
-      streamType: source?.streamType ?? "mp4",
+      streamUrl: source.streamUrl,
+      streamType: source.streamType ?? "mp4",
       subtitleUrl: sub?.url ?? undefined,
       posterUrl: drama.posterUrl ?? undefined,
       dramaTitle: drama.title,
       dramaSlug: drama.slug,
       episodeNumber: episode.episodeNumber,
       accessType: episode.accessType,
+      nextEpisode: nextEpisode?.episodeNumber ?? null,
     }),
     { headers: { "content-type": "application/json" } }
   );

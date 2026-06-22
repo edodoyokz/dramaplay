@@ -1,5 +1,5 @@
 import { createDb, providers, syncLogs, dramas, dramaProviders, episodes, episodeProviders } from "@dramaplay/db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { buildProviders } from "../providers/registry";
 import { slugifyTitle } from "../lib/slug";
 import type { ProviderDramaSummary, ProviderEpisodeSummary } from "@dramaplay/shared";
@@ -75,7 +75,7 @@ export async function syncProvider(
           const existingEp = await db
             .select()
             .from(episodes)
-            .where(eq(episodes.dramaId, dramaId))
+            .where(and(eq(episodes.dramaId, dramaId), eq(episodes.episodeNumber, ep.episodeNumber)))
             .limit(1);
           if (existingEp.length === 0) {
             const [created] = await db

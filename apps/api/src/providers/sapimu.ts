@@ -88,11 +88,33 @@ export class SapimuProviderAdapter extends BaseProviderAdapter {
   async resolveStream(episodeId: string): Promise<ProviderStreamSource | null> {
     const [code, ep = "1"] = episodeId.split(":");
     const data = await this.get<{ data?: Row }>(`/shortmax/api/v1/play/${encodeURIComponent(code)}?ep=${encodeURIComponent(ep)}&lang=id`);
-    const row = data.data ?? data as Row;
-    const url = s(row.url ?? row.videoUrl ?? row.video_url ?? row.playUrl ?? row.play_url ?? row.src);
+    // ponytail: walk response tree for any http url; Sapimu nests differently per provider.
+    const url = findStreamUrl(data.data ?? data);
     if (!url) return null;
     return { streamUrl: url, streamType: url.includes(".m3u8") ? "m3u8" : url.includes(".mp4") ? "mp4" : "other" };
   }
+}
+
+function findStreamUrl(value: unknown): string | undefined {
+  if (typeof value === "string" && /^https?:\/\//.test(value)) return value;
+  if (!value || typeof value !== "object") return undefined;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = findStreamUrl(item);
+      if (found) return found;
+    }
+    return undefined;
+  }
+  const row = value as Row;
+  for (const key of ["url", "videoUrl", "video_url", "playUrl", "play_url", "src", "m3u8", "mp4"]) {
+    const found = findStreamUrl(row[key]);
+    if (found) return found;
+  }
+  for (const child of Object.values(row)) {
+    const found = findStreamUrl(child);
+    if (found) return found;
+  }
+  return undefined;
 }
 
 function toShortmaxSummary(row: Row): ProviderDramaSummary {
