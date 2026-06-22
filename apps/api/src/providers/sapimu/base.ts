@@ -34,9 +34,14 @@ export abstract class SapimuBaseAdapter extends BaseProviderAdapter {
   }
 }
 
+/** True if a URL looks like an image (not a video stream). */
+function looksLikeImage(url: string): boolean {
+  return /\.(heic|jpg|jpeg|png|webp|gif|bmp|avif)(\?|$)/i.test(url);
+}
+
 /** Walk a nested object/array and return the first string that looks like a stream URL. */
 export function findStreamUrl(value: unknown): string | undefined {
-  if (typeof value === "string" && /^https?:\/\//.test(value)) return value;
+  if (typeof value === "string" && /^https?:\/\//.test(value) && !looksLikeImage(value)) return value;
   if (!value || typeof value !== "object") return undefined;
   if (Array.isArray(value)) {
     for (const item of value) {
@@ -49,6 +54,7 @@ export function findStreamUrl(value: unknown): string | undefined {
   for (const key of [
     "url",
     "streamUrl",
+    "stream_url",
     "videoUrl",
     "video_url",
     "playUrl",

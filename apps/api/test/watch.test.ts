@@ -42,7 +42,7 @@ const { isUserVip, getUserId, resolveStream, buildProviders } = vi.hoisted(() =>
   const isUserVip = vi.fn(() => Promise.resolve(_isVip));
   const getUserId = vi.fn(() => Promise.resolve("u1"));
   const resolveStream = vi.fn(() => Promise.resolve(_resolveStreamResult));
-  const buildProviders = vi.fn(() => ({ p: { resolveStream } }));
+  const buildProviders = vi.fn(() => ({ reelshort: { resolveStream } }));
   return { isUserVip, getUserId, resolveStream, buildProviders };
 });
 

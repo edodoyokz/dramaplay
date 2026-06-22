@@ -46,7 +46,7 @@ async function makeStreamResponse(
   ]);
 
   const providers = buildProviders(env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN);
-  const adapter = Object.values(providers)[0];
+  const adapter = providerInfo ? providers[providerInfo.code] : Object.values(providers)[0];
 
   const source = adapter
     ? await adapter.resolveStream(primary?.providerEpisodeId ?? "").catch(() => null)

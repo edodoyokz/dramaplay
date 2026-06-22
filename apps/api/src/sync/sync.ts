@@ -1,5 +1,5 @@
 import { createDb, providers, syncLogs, dramas, dramaProviders, episodes, episodeProviders } from "@dramaplay/db";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { buildProviders } from "../providers/registry";
 import { slugifyTitle } from "../lib/slug";
 import type { ProviderDramaSummary, ProviderEpisodeSummary } from "@dramaplay/shared";
@@ -79,33 +79,42 @@ export async function syncProvider(
           .onConflictDoNothing();
 
         const eps: ProviderEpisodeSummary[] = await adapter.fetchEpisodes(item.providerDramaId);
-        for (const ep of eps) {
-          const existingEp = await db
-            .select()
+        if (eps.length) {
+          // ponytail: bulk per-drama — 1 select (existing numbers) + 1 insert.
+          // Avoids N sequential round-trips AND needs no unique constraint.
+          const existing = await db
+            .select({ n: episodes.episodeNumber })
             .from(episodes)
-            .where(and(eq(episodes.dramaId, dramaId), eq(episodes.episodeNumber, ep.episodeNumber)))
-            .limit(1);
-          if (existingEp.length === 0) {
-            const [created] = await db
+            .where(eq(episodes.dramaId, dramaId));
+          const have = new Set(existing.map((e) => e.n));
+          const toInsert = eps.filter((e) => !have.has(e.episodeNumber));
+          if (toInsert.length) {
+            const inserted = await db
               .insert(episodes)
-              .values({
-                dramaId,
-                episodeNumber: ep.episodeNumber,
-                title: ep.title,
-                thumbnailUrl: ep.thumbnailUrl,
-                durationSeconds: ep.durationSeconds,
-              })
-              .returning();
+              .values(
+                toInsert.map((ep) => ({
+                  dramaId,
+                  episodeNumber: ep.episodeNumber,
+                  title: ep.title,
+                  thumbnailUrl: ep.thumbnailUrl,
+                  durationSeconds: ep.durationSeconds,
+                }))
+              )
+              .returning({ id: episodes.id, episodeNumber: episodes.episodeNumber });
+            result.episodeNew += inserted.length;
             await db
               .insert(episodeProviders)
-              .values({
-                episodeId: created.id,
-                providerId: providerRow.id,
-                providerEpisodeId: ep.providerEpisodeId,
-                isPrimary: true,
-              })
+              .values(
+                inserted.map((row) => ({
+                  episodeId: row.id,
+                  providerId: providerRow.id,
+                  providerEpisodeId:
+                    eps.find((e) => e.episodeNumber === row.episodeNumber)?.providerEpisodeId ??
+                    `${item.providerDramaId}:${row.episodeNumber}`,
+                  isPrimary: true,
+                }))
+              )
               .onConflictDoNothing();
-            result.episodeNew++;
           }
         }
       } catch {
