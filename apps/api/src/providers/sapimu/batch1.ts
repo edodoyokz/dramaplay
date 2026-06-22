@@ -38,15 +38,17 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       rawStream: true,
     }),
 
-    // dramanova: /dramas (flat rows), /recommend (module-wrapped); detail 500s (auth).
+    // dramanova: feed /dramas?lang=in (flat rows); detail has episodes[] with
+    // fileId; play /api/video?id=<fileId> returns videos[].main_url (mp4).
     dramanova: mk("dramanova", {
-      trending: "/dramanova/api/v1/dramas?lang=id",
-      latest: "/dramanova/api/v1/dramas?lang=id",
-      vip: "/dramanova/api/v1/recommend?lang=id",
-      foryou: "/dramanova/api/v1/dramas?lang=id",
-      search: "/dramanova/api/v1/search?q={q}&lang=id",
-      detail: "/dramanova/api/v1/drama/{id}?lang=id",
-      play: "/dramanova/api/video?fileId={id}&lang=id",
+      trending: "/dramanova/api/v1/dramas?lang=in&page=1&size=20",
+      latest: "/dramanova/api/v1/dramas?lang=in&page=1&size=20",
+      vip: "/dramanova/api/v1/dramas?lang=in&page=2&size=20",
+      foryou: "/dramanova/api/v1/dramas?lang=in&page=1&size=20",
+      search: "/dramanova/api/v1/search?q={q}&lang=in",
+      detail: "/dramanova/api/v1/drama/{id}?lang=in",
+      play: "/dramanova/api/video?id={ep}&lang=in",
+      episodePlayField: ["fileId"],
     }),
 
     // netshort: /feed/:page, /new/:page, /vip/:page; detail has episodes[]; play /episode/:id/:no

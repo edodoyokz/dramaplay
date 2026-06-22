@@ -36,7 +36,7 @@ export abstract class SapimuBaseAdapter extends BaseProviderAdapter {
 
 /** True if a URL looks like an image (not a video stream). */
 function looksLikeImage(url: string): boolean {
-  return /\.(heic|jpg|jpeg|png|webp|gif|bmp|avif)(\?|$)/i.test(url);
+  return /\.(heic|jpg|jpeg|png|webp|gif|bmp|avif|image)(\?|$)/i.test(url);
 }
 
 /** Walk a nested object/array and return the first string that looks like a stream URL. */
@@ -55,10 +55,12 @@ export function findStreamUrl(value: unknown): string | undefined {
     "url",
     "streamUrl",
     "stream_url",
-    "videoUrl",
-    "video_url",
+    "main_url",
+    "backup_url",
     "playUrl",
     "play_url",
+    "videoUrl",
+    "video_url",
     "src",
     "m3u8",
     "mp4",
@@ -245,6 +247,13 @@ export interface SapimuAdapterConfig {
    * Worker serves with the token; the manifest's segments are public.
    */
   rawStream?: boolean;
+  /**
+   * Fields (in priority order) to use as the per-episode play param encoded in
+   * providerEpisodeId as `${dramaId}:${playParam}`. Defaults to the episode
+   * number. Set e.g. ["fileId"] when the play endpoint needs a fileId, not the
+   * episode number.
+   */
+  episodePlayField?: string[];
 }
 
 function rowToSummary(row: Row): ProviderDramaSummary {
@@ -318,8 +327,9 @@ export function createSapimuAdapter(
       if (list.length) {
         return list.map((e, i) => {
           const num = pickNumber(e, EP_NUM_FIELDS) ?? i + 1;
+          const playParam = pickString(e, cfg.episodePlayField ?? []) ?? String(num);
           return {
-            providerEpisodeId: `${id}:${num}`,
+            providerEpisodeId: `${id}:${playParam}`,
             episodeNumber: num,
             title: pickString(e, TITLE_FIELDS) ?? `Episode ${num}`,
           };
