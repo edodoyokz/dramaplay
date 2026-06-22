@@ -1,5 +1,11 @@
 import { BaseProviderAdapter } from "../base";
-import type { ProviderStreamSource } from "@dramaplay/shared";
+import type {
+  ProviderAdapter,
+  ProviderDramaDetail,
+  ProviderDramaSummary,
+  ProviderEpisodeSummary,
+  ProviderStreamSource,
+} from "@dramaplay/shared";
 
 type Row = Record<string, unknown>;
 
@@ -123,4 +129,155 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
     seen.add(k);
     return true;
   });
+}
+
+// ─── Config-driven adapter factory ──────────────────────────────────────────
+// ponytail: field mappings are best-effort from endpoint docs only; refine
+// during live smoke testing (Task 8). Tries common field name variants so
+// adapters work even when exact response shape is unknown.
+
+const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id"];
+const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle"];
+const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic"];
+const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content"];
+const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters"];
+
+function pickString(row: Row, fields: string[]): string | undefined {
+  for (const f of fields) {
+    const v = row[f];
+    if (typeof v === "string" && v) return v;
+    if (typeof v === "number" && v) return String(v);
+  }
+  return undefined;
+}
+
+function pickNumber(row: Row, fields: string[]): number | undefined {
+  for (const f of fields) {
+    const v = row[f];
+    if (typeof v === "number") return v;
+    if (typeof v === "string" && v && /^\d+$/.test(v)) return Number(v);
+  }
+  return undefined;
+}
+
+function pickGenres(row: Row): string[] | undefined {
+  for (const f of ["tag", "tags", "genre", "genres", "content_tags", "category", "categories"]) {
+    const v = row[f];
+    if (Array.isArray(v) && v.length) return v.map(String);
+  }
+  return undefined;
+}
+
+export interface SapimuAdapterConfig {
+  /** Path templates. Use {q} for search query, {id} for drama id, {ep} for episode number. */
+  trending?: string;
+  latest?: string;
+  vip?: string;
+  foryou?: string;
+  search: string;
+  detail: string;
+  /** If detail response includes episode list, set this to extract episode count field. */
+  episodesFromDetail?: boolean;
+  /** Episode play path. Use {id} and {ep}. */
+  play: string;
+}
+
+function rowToSummary(row: Row): ProviderDramaSummary {
+  return {
+    providerDramaId: String(pickString(row, ID_FIELDS) ?? ""),
+    title: String(pickString(row, TITLE_FIELDS) ?? "Untitled"),
+    posterUrl: pickString(row, POSTER_FIELDS),
+    genres: pickGenres(row),
+  };
+}
+
+function rowsToSummaries(data: unknown): ProviderDramaSummary[] {
+  return unique(firstArray(data).map((r) => rowToSummary(r as Row)), (x) => x.providerDramaId);
+}
+
+/**
+ * Create a concrete Sapimu provider adapter from endpoint paths.
+ * Field mappings use common-name fallbacks — no per-provider field config needed.
+ */
+export function createSapimuAdapter(
+  code: string,
+  baseUrl: string,
+  token: string,
+  cfg: SapimuAdapterConfig
+): ProviderAdapter {
+  const q = (v: string) => encodeURIComponent(v);
+
+  class CfgAdapter extends SapimuBaseAdapter {
+    constructor() {
+      super(code, baseUrl, token);
+    }
+
+    async fetchForYou(_cursor?: string) {
+      const path = cfg.foryou ?? cfg.latest ?? cfg.trending;
+      const data = path ? await this.get<unknown>(path) : { data: [] };
+      return { items: rowsToSummaries(data) };
+    }
+    async fetchTrending() {
+      const data = cfg.trending ? await this.get<unknown>(cfg.trending) : { data: [] };
+      return rowsToSummaries(data);
+    }
+    async fetchLatest() {
+      const data = cfg.latest ? await this.get<unknown>(cfg.latest) : { data: [] };
+      return rowsToSummaries(data);
+    }
+    async fetchVip() {
+      const data = cfg.vip ? await this.get<unknown>(cfg.vip) : { data: [] };
+      return rowsToSummaries(data);
+    }
+    async search(query: string) {
+      const data = await this.get<unknown>(cfg.search.replace("{q}", q(query)));
+      return rowsToSummaries(data);
+    }
+
+    async fetchDetail(id: string): Promise<ProviderDramaDetail | null> {
+      const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
+      const row = (firstArray(data)[0] as Row) ?? null;
+      if (!row) return null;
+      const episodes = await this.fetchEpisodes(id);
+      return {
+        ...rowToSummary(row),
+        synopsis: pickString(row, SYNOPSIS_FIELDS),
+        episodeCount: episodes.length || pickNumber(row, COUNT_FIELDS),
+        episodes,
+      };
+    }
+
+    async fetchEpisodes(id: string): Promise<ProviderEpisodeSummary[]> {
+      if (!cfg.episodesFromDetail) {
+        // No separate episodes endpoint; derive from detail episode count.
+        const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
+        const row = (firstArray(data)[0] as Row) ?? {};
+        const total = pickNumber(row, COUNT_FIELDS) ?? 0;
+        return Array.from({ length: total }, (_, i) => ({
+          providerEpisodeId: `${id}:${i + 1}`,
+          episodeNumber: i + 1,
+          title: `Episode ${i + 1}`,
+        }));
+      }
+      // Detail includes an episode array — extract it.
+      const data = await this.get<unknown>(cfg.detail.replace("{id}", q(id)));
+      const row = (firstArray(data)[0] as Row) ?? {};
+      const epList = firstArray(row);
+      return epList.map((e, i) => ({
+        providerEpisodeId: String(pickString(e as Row, ID_FIELDS) ?? `${id}:${i + 1}`),
+        episodeNumber: pickNumber(e as Row, ["episode", "episodeNo", "number", "sort"]) ?? i + 1,
+        title: pickString(e as Row, TITLE_FIELDS) ?? `Episode ${i + 1}`,
+      }));
+    }
+
+    async resolveStream(episodeId: string): Promise<ProviderStreamSource | null> {
+      const [id, ep = "1"] = episodeId.split(":");
+      const data = await this.get<unknown>(cfg.play.replace("{id}", q(id)).replace("{ep}", q(ep)));
+      const url = findStreamUrl(data);
+      if (!url) return null;
+      return { streamUrl: url, streamType: streamTypeFromUrl(url) };
+    }
+  }
+
+  return new CfgAdapter();
 }
