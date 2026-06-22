@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { createDb, dramas, episodes } from "@dramaplay/db";
+import { createDb, dramas, episodes, dramaProviders, providers } from "@dramaplay/db";
 import { eq, desc, sql, and } from "drizzle-orm";
 import type { Env } from "../env";
 
@@ -19,22 +19,37 @@ function store(key: string, data: unknown) {
   cache.set(key, { data, ts: Date.now() });
 }
 
+function withBadge<T extends { providerCode: string | null; providerName: string | null }>(r: T) {
+  return {
+    ...r,
+    provider: r.providerCode
+      ? { code: r.providerCode, name: r.providerName ?? r.providerCode }
+      : undefined,
+  };
+}
+
 catalog.get("/trending", async (c) => {
   const hit = cached("trending");
   if (hit) return c.json(hit);
   const db = createDb(c.env.DATABASE_URL);
   const rows = await db
-    .select()
+    .select({
+      id: dramas.id,
+      slug: dramas.slug,
+      title: dramas.title,
+      posterUrl: dramas.posterUrl,
+      episodeCount: dramas.episodeCount,
+      popularityScore: dramas.popularityScore,
+      providerCode: providers.code,
+      providerName: providers.name,
+    })
     .from(dramas)
-    .where(
-      and(
-        eq(dramas.isPublished, true),
-        eq(dramas.visibility, "public")
-      )
-    )
+    .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+    .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
+    .where(and(eq(dramas.isPublished, true), eq(dramas.visibility, "public"), eq(dramaProviders.isPrimary, true)))
     .orderBy(desc(dramas.popularityScore))
     .limit(20);
-  const body = { items: rows };
+  const body = { items: rows.map(withBadge) };
   store("trending", body);
   return c.json(body);
 });
@@ -43,26 +58,59 @@ catalog.get("/new", async (c) => {
   const hit = cached("new");
   if (hit) return c.json(hit);
   const db = createDb(c.env.DATABASE_URL);
-  const rows = await db.select().from(dramas).orderBy(desc(dramas.createdAt)).limit(20);
-  const body = { items: rows };
+  const rows = await db
+    .select({
+      id: dramas.id,
+      slug: dramas.slug,
+      title: dramas.title,
+      posterUrl: dramas.posterUrl,
+      episodeCount: dramas.episodeCount,
+      createdAt: dramas.createdAt,
+      providerCode: providers.code,
+      providerName: providers.name,
+    })
+    .from(dramas)
+    .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+    .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
+    .where(and(eq(dramas.isPublished, true), eq(dramas.visibility, "public"), eq(dramaProviders.isPrimary, true)))
+    .orderBy(desc(dramas.createdAt))
+    .limit(20);
+  const body = { items: rows.map(withBadge) };
   store("new", body);
   return c.json(body);
 });
 
 catalog.get("/dramas/:slug", async (c) => {
   const slug = c.req.param("slug");
-  const hit = cached(`drama:${slug}`);
+  const hit = cached("drama:" + slug);
   if (hit) return c.json(hit);
   const db = createDb(c.env.DATABASE_URL);
-  const [drama] = await db.select().from(dramas).where(eq(dramas.slug, slug));
-  if (!drama) return c.json({ error: "not_found" }, 404);
+  const [row] = await db
+    .select({
+      drama: dramas,
+      providerCode: providers.code,
+      providerName: providers.name,
+    })
+    .from(dramas)
+    .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+    .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
+    .where(and(eq(dramas.slug, slug), eq(dramaProviders.isPrimary, true)));
+  if (!row) return c.json({ error: "not_found" }, 404);
   const eps = await db
     .select()
     .from(episodes)
-    .where(eq(episodes.dramaId, drama.id))
+    .where(eq(episodes.dramaId, row.drama.id))
     .orderBy(episodes.episodeNumber);
-  const body = { drama, episodes: eps };
-  store(`drama:${slug}`, body);
+  const body = {
+    drama: {
+      ...row.drama,
+      provider: row.providerCode
+        ? { code: row.providerCode, name: row.providerName ?? row.providerCode }
+        : undefined,
+    },
+    episodes: eps,
+  };
+  store("drama:" + slug, body);
   return c.json(body);
 });
 
@@ -71,9 +119,19 @@ catalog.get("/search", async (c) => {
   if (!q) return c.json({ items: [] });
   const db = createDb(c.env.DATABASE_URL);
   const rows = await db
-    .select()
+    .select({
+      id: dramas.id,
+      slug: dramas.slug,
+      title: dramas.title,
+      posterUrl: dramas.posterUrl,
+      episodeCount: dramas.episodeCount,
+      providerCode: providers.code,
+      providerName: providers.name,
+    })
     .from(dramas)
-    .where(sql`${dramas.title} ilike ${"%" + q + "%"}`)
+    .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+    .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
+    .where(and(sql`${dramas.title} ilike ${"%" + q + "%"}`, eq(dramaProviders.isPrimary, true)))
     .limit(20);
-  return c.json({ items: rows });
+  return c.json({ items: rows.map(withBadge) });
 });
