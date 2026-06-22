@@ -4,6 +4,7 @@ export function slugifyTitle(title: string): string {
     .normalize("NFKD")
     .replace(/[^\w\s-]/g, "")
     .trim()
-    .replace(/\s+/g, "-")
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-")
     .slice(0, 100);
 }

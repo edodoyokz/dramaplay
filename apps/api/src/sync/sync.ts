@@ -4,6 +4,14 @@ import { buildProviders } from "../providers/registry";
 import { slugifyTitle } from "../lib/slug";
 import type { ProviderDramaSummary, ProviderEpisodeSummary } from "@dramaplay/shared";
 
+/**
+ * Slugify a title and prefix it with the provider code so the same title
+ * from different providers does not overwrite each other.
+ */
+export function providerSlug(providerCode: string, title: string): string {
+  return `${providerCode}-${slugifyTitle(title)}`;
+}
+
 interface SyncResult {
   dramaNew: number;
   dramaUpdated: number;
@@ -32,7 +40,7 @@ export async function syncProvider(
     const items: ProviderDramaSummary[] = await adapter.fetchLatest();
     for (const item of items) {
       try {
-        const slug = slugifyTitle(item.title);
+        const slug = providerSlug(providerCode, item.title);
         const existing = await db.select().from(dramas).where(eq(dramas.slug, slug)).limit(1);
         let dramaId: string;
 
