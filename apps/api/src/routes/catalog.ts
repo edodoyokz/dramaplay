@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { createDb, dramas, episodes, dramaProviders, providers } from "@dramaplay/db";
-import { eq, desc, sql, and } from "drizzle-orm";
+import { eq, desc, asc, sql, and } from "drizzle-orm";
 import type { Env } from "../env";
 
 export const catalog = new Hono<{ Bindings: Env }>();
@@ -27,6 +27,134 @@ function withBadge<T extends { providerCode: string | null; providerName: string
       : undefined,
   };
 }
+
+catalog.get("/home", async (c) => {
+  const hit = cached("home");
+  if (hit) return c.json(hit);
+
+  const db = createDb(c.env.DATABASE_URL);
+  const providerRows = await db
+    .select({
+      id: providers.id,
+      code: providers.code,
+      name: providers.name,
+      priority: providers.priority,
+      config: providers.config,
+    })
+    .from(providers)
+    .where(eq(providers.isEnabled, true))
+    .orderBy(asc(providers.priority), asc(providers.name));
+
+  const shelves = [];
+  for (const p of providerRows) {
+    const rows = await db
+      .select({
+        id: dramas.id,
+        slug: dramas.slug,
+        title: dramas.title,
+        posterUrl: dramas.posterUrl,
+        backdropUrl: dramas.backdropUrl,
+        country: dramas.country,
+        year: dramas.year,
+        genres: dramas.genres,
+        rating: dramas.rating,
+        episodeCount: dramas.episodeCount,
+        popularityScore: dramas.popularityScore,
+        providerCode: providers.code,
+        providerName: providers.name,
+      })
+      .from(dramas)
+      .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+      .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
+      .where(
+        and(
+          eq(providers.id, p.id),
+          eq(dramas.isPublished, true),
+          eq(dramas.visibility, "public"),
+          eq(dramaProviders.isPrimary, true),
+        ),
+      )
+      .orderBy(desc(dramas.popularityScore), desc(dramas.createdAt))
+      .limit(3);
+
+    if (rows.length === 0) continue;
+
+    shelves.push({
+      code: p.code,
+      name: p.name,
+      logoUrl: typeof p.config?.logoUrl === "string" ? p.config.logoUrl : null,
+      dramaCount: rows.length, // ponytail: exact count can wait; sample count is enough for v1
+      episodeCount: rows.reduce((sum, r) => sum + (r.episodeCount ?? 0), 0),
+      items: rows.map(withBadge),
+    });
+  }
+
+  const body = { providers: shelves };
+  store("home", body);
+  return c.json(body);
+});
+
+catalog.get("/providers/:code/dramas", async (c) => {
+  const code = c.req.param("code");
+  const page = Math.max(1, Number(c.req.query("page") ?? 1) || 1);
+  const limit = Math.min(50, Math.max(1, Number(c.req.query("limit") ?? 20) || 20));
+  const key = `provider:${code}:${page}:${limit}`;
+  const hit = cached(key);
+  if (hit) return c.json(hit);
+
+  const db = createDb(c.env.DATABASE_URL);
+  const [provider] = await db
+    .select({ id: providers.id, code: providers.code, name: providers.name, config: providers.config })
+    .from(providers)
+    .where(and(eq(providers.code, code), eq(providers.isEnabled, true)));
+
+  if (!provider) return c.json({ error: "provider_not_found" }, 404);
+
+  const rows = await db
+    .select({
+      id: dramas.id,
+      slug: dramas.slug,
+      title: dramas.title,
+      posterUrl: dramas.posterUrl,
+      backdropUrl: dramas.backdropUrl,
+      country: dramas.country,
+      year: dramas.year,
+      genres: dramas.genres,
+      rating: dramas.rating,
+      episodeCount: dramas.episodeCount,
+      popularityScore: dramas.popularityScore,
+      providerCode: providers.code,
+      providerName: providers.name,
+    })
+    .from(dramas)
+    .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
+    .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
+    .where(
+      and(
+        eq(providers.id, provider.id),
+        eq(dramas.isPublished, true),
+        eq(dramas.visibility, "public"),
+        eq(dramaProviders.isPrimary, true),
+      ),
+    )
+    .orderBy(desc(dramas.popularityScore), desc(dramas.createdAt))
+    .limit(limit + 1)
+    .offset((page - 1) * limit);
+
+  const body = {
+    provider: {
+      code: provider.code,
+      name: provider.name,
+      logoUrl: typeof provider.config?.logoUrl === "string" ? provider.config.logoUrl : null,
+    },
+    items: rows.slice(0, limit).map(withBadge),
+    page,
+    limit,
+    hasMore: rows.length > limit,
+  };
+  store(key, body);
+  return c.json(body);
+});
 
 catalog.get("/trending", async (c) => {
   const hit = cached("trending");

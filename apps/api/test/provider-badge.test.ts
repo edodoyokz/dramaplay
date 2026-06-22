@@ -69,3 +69,93 @@ describe("provider badge in API responses", () => {
     expect(slug("reelshort", sameTitle)).not.toBe(slug("netshort", sameTitle));
   });
 });
+
+// --- Provider homepage shelves ---
+
+function buildHomeShelves(rows: any[], limit = 3) {
+  const grouped = new Map<string, any>();
+  for (const r of rows) {
+    if (!r.providerEnabled || !r.isPublished || r.visibility !== "public" || !r.isPrimary) continue;
+    const key = r.providerCode;
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        code: r.providerCode,
+        name: r.providerName,
+        logoUrl: r.providerLogoUrl ?? null,
+        priority: r.providerPriority,
+        dramaCount: 0,
+        episodeCount: 0,
+        items: [],
+      });
+    }
+    const shelf = grouped.get(key);
+    shelf.dramaCount += 1;
+    shelf.episodeCount += r.episodeCount ?? 0;
+    if (shelf.items.length < limit) {
+      shelf.items.push({
+        id: r.id,
+        slug: r.slug,
+        title: r.title,
+        posterUrl: r.posterUrl,
+        episodeCount: r.episodeCount,
+        provider: { code: r.providerCode, name: r.providerName },
+      });
+    }
+  }
+  return [...grouped.values()].sort((a, b) => a.priority - b.priority || a.name.localeCompare(b.name));
+}
+
+describe("provider homepage shelves", () => {
+  it("groups by enabled provider and keeps max 3 dramas", () => {
+    const rows = Array.from({ length: 4 }, (_, i) => ({
+      id: `d${i}`,
+      slug: `reelshort-d${i}`,
+      title: `Drama ${i}`,
+      posterUrl: "p.jpg",
+      episodeCount: 10,
+      isPublished: true,
+      visibility: "public",
+      isPrimary: true,
+      providerEnabled: true,
+      providerCode: "reelshort",
+      providerName: "ReelShort",
+      providerPriority: 2,
+    }));
+
+    const shelves = buildHomeShelves(rows);
+    expect(shelves).toHaveLength(1);
+    expect(shelves[0].dramaCount).toBe(4);
+    expect(shelves[0].episodeCount).toBe(40);
+    expect(shelves[0].items).toHaveLength(3);
+    expect(shelves[0].items[0].provider).toEqual({ code: "reelshort", name: "ReelShort" });
+  });
+
+  it("omits disabled providers", () => {
+    const shelves = buildHomeShelves([
+      {
+        id: "d1",
+        slug: "x",
+        title: "X",
+        posterUrl: null,
+        episodeCount: 1,
+        isPublished: true,
+        visibility: "public",
+        isPrimary: true,
+        providerEnabled: false,
+        providerCode: "disabled",
+        providerName: "Disabled",
+        providerPriority: 1,
+      },
+    ]);
+    expect(shelves).toEqual([]);
+  });
+
+  it("sorts shelves by priority then name", () => {
+    const rows = [
+      { id: "a", slug: "a", title: "A", posterUrl: null, episodeCount: 1, isPublished: true, visibility: "public", isPrimary: true, providerEnabled: true, providerCode: "netshort", providerName: "NetShort", providerPriority: 34 },
+      { id: "b", slug: "b", title: "B", posterUrl: null, episodeCount: 1, isPublished: true, visibility: "public", isPrimary: true, providerEnabled: true, providerCode: "reelshort", providerName: "ReelShort", providerPriority: 30 },
+    ];
+    const shelves = buildHomeShelves(rows);
+    expect(shelves.map((s) => s.code)).toEqual(["reelshort", "netshort"]);
+  });
+});

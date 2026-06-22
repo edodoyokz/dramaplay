@@ -15,17 +15,19 @@ async function main() {
   await db
     .insert(providers)
     .values([
-      { code: "dramabox", name: "DramaBox", priority: 10, isEnabled: true },
-      { code: "shortmax", name: "ShortMax", priority: 20, isEnabled: true },
-      // ponytail: batch-1 Sapimu providers seeded disabled; enable one-by-one
+      // ponytail: logoUrl lives in config.logoUrl; frontend falls back to
+      // generated initials when unset, so logos can be added later without a
+      // migration. Batch-1 Sapimu providers seeded disabled; enable one-by-one
       // after live smoke testing passes (smoke-sapimu-providers.ts).
-      { code: "reelshort", name: "ReelShort", priority: 30, isEnabled: false },
-      { code: "dramaboxbaru", name: "DramaBox Baru", priority: 31, isEnabled: false },
-      { code: "dramawave", name: "DramaWave", priority: 32, isEnabled: false },
-      { code: "pinedrama", name: "PineDrama", priority: 33, isEnabled: false },
-      { code: "netshort", name: "NetShort", priority: 34, isEnabled: false },
-      { code: "dramanova", name: "DramaNova", priority: 35, isEnabled: false },
-      { code: "melolo", name: "Melolo", priority: 36, isEnabled: false },
+      { code: "dramabox", name: "DramaBox", priority: 10, isEnabled: true, config: {} },
+      { code: "shortmax", name: "ShortMax", priority: 20, isEnabled: true, config: {} },
+      { code: "reelshort", name: "ReelShort", priority: 30, isEnabled: false, config: {} },
+      { code: "dramaboxbaru", name: "DramaBox Baru", priority: 31, isEnabled: false, config: {} },
+      { code: "dramawave", name: "DramaWave", priority: 32, isEnabled: false, config: {} },
+      { code: "pinedrama", name: "PineDrama", priority: 33, isEnabled: false, config: {} },
+      { code: "netshort", name: "NetShort", priority: 34, isEnabled: false, config: {} },
+      { code: "dramanova", name: "DramaNova", priority: 35, isEnabled: false, config: {} },
+      { code: "melolo", name: "Melolo", priority: 36, isEnabled: false, config: {} },
     ])
     .onConflictDoNothing({ target: providers.code });
 
