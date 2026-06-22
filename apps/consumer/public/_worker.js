@@ -25,7 +25,10 @@ export default {
       headers.set("Cache-Control", "no-cache");
 
       if (!isManifest) {
-        headers.set("content-type", ct || "video/mp2t");
+        // Force a media content-type: some CDNs (dramaboxdb) serve .ts as
+        // text/plain + nosniff, which browsers refuse to feed to MSE.
+        const isSegment = target.includes(".ts") || ct.includes("mp2t") || ct.includes("video");
+        headers.set("content-type", isSegment ? "video/mp2t" : ct || "video/mp2t");
         return new Response(upstream.body, { status: upstream.status, headers });
       }
 
