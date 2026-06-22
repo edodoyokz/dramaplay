@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import type { Env } from "../env";
 import { buildProviders } from "../providers/registry";
 import { isUserVip } from "../lib/entitlements";
-import { authMiddleware } from "../middleware/auth";
+import { getUserId } from "../middleware/auth";
 
 export const watch = new Hono<{ Bindings: Env }>();
 
@@ -24,7 +24,7 @@ watch.get("/:slug/:n", async (c) => {
     // Require auth header; if present, verify VIP entitlement.
     const auth = c.req.header("Authorization") ?? "";
     if (auth.startsWith("Bearer ")) {
-      const userId = await resolveUserId(c.env, auth.slice(7));
+      const userId = await getUserId(c.env, auth.slice(7));
       if (userId && (await isUserVip(c.env.DATABASE_URL, userId))) {
         return streamResponse(c.env, drama, episode);
       }
@@ -43,9 +43,7 @@ async function streamResponse(env: Env, drama: typeof dramas.$inferSelect, episo
     .where(eq(episodeProviders.episodeId, episode.id));
 
   const providers = buildProviders(env.PROVIDER_BASE_URL);
-  const provider = primary
-    ? Object.values(providers)[0]
-    : Object.values(providers)[0];
+  const provider = Object.values(providers)[0];
 
   const source = provider ? await provider.resolveStream(primary?.providerEpisodeId ?? "").catch(() => null) : null;
 
@@ -74,15 +72,3 @@ async function streamResponse(env: Env, drama: typeof dramas.$inferSelect, episo
   );
 }
 
-async function resolveUserId(env: Env, token: string): Promise<string | null> {
-  const { createClient } = await import("@supabase/supabase-js");
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return null;
-  return data.user.id;
-}
-
-// Re-export auth middleware for convenience in VIP-only variants.
-export { authMiddleware };

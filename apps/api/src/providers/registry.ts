@@ -1,12 +1,10 @@
 import type { ProviderAdapter } from "@dramaplay/shared";
-import { DramaBoxAdapter } from "./dramabox";
-import { ReelShortAdapter } from "./reelshort";
-import { ShortMaxAdapter } from "./shortmax";
+import { JsonListProviderAdapter } from "./json-list";
 
 export function buildProviders(baseUrl: string): Record<string, ProviderAdapter> {
   return {
-    dramabox: new DramaBoxAdapter(baseUrl),
-    reelshort: new ReelShortAdapter(baseUrl),
-    shortmax: new ShortMaxAdapter(baseUrl),
+    dramabox: new JsonListProviderAdapter("dramabox", baseUrl, "dramabox"),
+    reelshort: new JsonListProviderAdapter("reelshort", baseUrl, "reelshort"),
+    shortmax: new JsonListProviderAdapter("shortmax", baseUrl, "shortmax"),
   };
 }
