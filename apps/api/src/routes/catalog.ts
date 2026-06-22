@@ -269,15 +269,46 @@ catalog.get("/dramas/:slug", async (c) => {
 });
 
 catalog.get("/search", async (c) => {
-  const q = c.req.query("q") ?? "";
-  if (!q) return c.json({ items: [] });
+  const q = (c.req.query("q") ?? "").trim();
+  const providerCode = (c.req.query("provider") ?? "").trim();
+  const page = Math.max(1, Number(c.req.query("page") ?? 1) || 1);
+  const limit = Math.min(50, Math.max(1, Number(c.req.query("limit") ?? 24) || 24));
+  if (q.length < 2) return c.json({ items: [], page, limit, hasMore: false });
+
+  const key = `search:${providerCode || "all"}:${q.toLowerCase()}:${page}:${limit}`;
+  const hit = cached(key);
+  if (hit) return c.json(hit);
+
   const db = createDb(c.env.DATABASE_URL);
+  let selectedProvider: { id: string; code: string; name: string } | undefined;
+  if (providerCode) {
+    [selectedProvider] = await db
+      .select({ id: providers.id, code: providers.code, name: providers.name })
+      .from(providers)
+      .where(and(eq(providers.code, providerCode), eq(providers.isEnabled, true)));
+    if (!selectedProvider) return c.json({ error: "provider_not_found" }, 404);
+  }
+
+  const conditions = [
+    sql`${dramas.title} ilike ${"%" + q + "%"}`,
+    eq(dramas.isPublished, true),
+    eq(dramas.visibility, "public"),
+    eq(dramaProviders.isPrimary, true),
+    eq(providers.isEnabled, true),
+  ];
+  if (selectedProvider) conditions.push(eq(providers.id, selectedProvider.id));
+
   const rows = await db
     .select({
       id: dramas.id,
       slug: dramas.slug,
       title: dramas.title,
       posterUrl: dramas.posterUrl,
+      backdropUrl: dramas.backdropUrl,
+      country: dramas.country,
+      year: dramas.year,
+      genres: dramas.genres,
+      rating: dramas.rating,
       episodeCount: dramas.episodeCount,
       providerCode: providers.code,
       providerName: providers.name,
@@ -285,7 +316,18 @@ catalog.get("/search", async (c) => {
     .from(dramas)
     .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
     .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
-    .where(and(sql`${dramas.title} ilike ${"%" + q + "%"}`, eq(dramaProviders.isPrimary, true)))
-    .limit(20);
-  return c.json({ items: rows.map(withBadge) });
+    .where(and(...conditions))
+    .orderBy(desc(dramas.popularityScore), desc(dramas.createdAt))
+    .limit(limit + 1)
+    .offset((page - 1) * limit);
+
+  const body = {
+    items: rows.slice(0, limit).map(withBadge),
+    page,
+    limit,
+    hasMore: rows.length > limit,
+    ...(selectedProvider ? { provider: { code: selectedProvider.code, name: selectedProvider.name } } : {}),
+  };
+  store(key, body);
+  return c.json(body);
 });
