@@ -24,14 +24,17 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
       play: "/dramawave/api/v1/dramas/{id}/play/{ep}?lang=id-ID",
     }),
 
-    // dramaboxbaru: uses lang=in (Bahasa Indonesia), not id. Feed via /api/search
-    // (home/rank sections also work). Play /api/stream returns raw m3u8 behind
-    // auth → rawStream proxy. Fields: name/bookId/cover/chapterCount/chapterList.
+    // dramaboxbaru: uses lang=in (Bahasa Indonesia). Home/rank/recommend are
+    // real catalog endpoints; search is only for user search fallback.
     dramaboxbaru: mk("dramaboxbaru", {
-      trending: "/dramaboxbaru/api/search?keyword=cinta&lang=in",
-      latest: "/dramaboxbaru/api/search?keyword=raja&lang=in",
-      vip: "/dramaboxbaru/api/search?keyword=a&lang=in",
-      foryou: "/dramaboxbaru/api/search?keyword=cinta&lang=in",
+      trending: "/dramaboxbaru/api/rank?lang=in",
+      latest: "/dramaboxbaru/api/home?lang=in",
+      vip: "/dramaboxbaru/api/recommend/book?lang=in",
+      foryou: "/dramaboxbaru/api/home?lang=in",
+      extra: [
+        "/dramaboxbaru/api/hidden-gems?lang=in",
+        ...Array.from({ length: 15 }, (_, i) => `/dramaboxbaru/api/browse?lang=in&type=0&page=${i + 1}`),
+      ],
       search: "/dramaboxbaru/api/search?keyword={q}&lang=in",
       detail: "/dramaboxbaru/api/drama/{id}?lang=in",
       play: "/dramaboxbaru/api/stream?bookId={id}&episode={ep}&lang=in",

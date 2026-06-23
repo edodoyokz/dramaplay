@@ -197,7 +197,7 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
 // ponytail: field mappings learned from live probe (probe-sapimu.ts);
 // covers all observed field-name variants across batch-1 providers.
 const WRAPPER_KEYS = ["items", "dramas", "books", "list", "chapters", "episodes", "videos", "rows", "data", "lists"];
-const TOP_KEYS = ["data", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists", "bookList"];
+const TOP_KEYS = ["data", "sections", "banners", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists", "bookList"];
 const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id", "t_book_id", "collectionId", "collection_id", "seriesId", "series_id"];
 const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title"];
 const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover", "coverWap"];
@@ -276,6 +276,8 @@ export interface SapimuAdapterConfig {
   detail: string;
   /** If detail response includes episode list, set this to extract episode count field. */
   episodesFromDetail?: boolean;
+  /** Extra list endpoints merged into fetchVip() for providers with several shelves/pages. */
+  extra?: string[];
   /** Episode play path. Use {id} and {ep}. */
   play: string;
   /**
@@ -344,8 +346,9 @@ export function createSapimuAdapter(
       return rowsToSummaries(data);
     }
     async fetchVip() {
-      const data = cfg.vip ? await this.get<unknown>(cfg.vip) : { data: [] };
-      return rowsToSummaries(data);
+      const paths = [cfg.vip, ...(cfg.extra ?? [])].filter(Boolean) as string[];
+      const batches = await Promise.all(paths.map((p) => this.get<unknown>(p).then(rowsToSummaries)));
+      return unique(batches.flat(), (x) => x.providerDramaId);
     }
     async search(query: string) {
       const data = await this.get<unknown>(cfg.search.replace("{q}", q(query)));
