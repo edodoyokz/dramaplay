@@ -39,6 +39,7 @@ export default function VerticalShortPlayer({
   const [isLoading, setIsLoading] = useState(true);
   const [playBlocked, setPlayBlocked] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [retryTick, setRetryTick] = useState(0);
 
   // ── HLS setup ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -113,7 +114,7 @@ export default function VerticalShortPlayer({
       video.removeEventListener("error", onError);
       hls?.destroy();
     };
-  }, [source.streamUrl, source.streamType]);
+  }, [source.streamUrl, source.streamType, retryTick]);
 
   // ── Video event listeners ─────────────────────────────────────────────────
   useEffect(() => {
@@ -161,6 +162,14 @@ export default function VerticalShortPlayer({
 
     if (iconTimer.current) clearTimeout(iconTimer.current);
     iconTimer.current = setTimeout(() => setShowIcon(null), 700);
+  }, []);
+
+  const retrySource = useCallback(() => {
+    wantsPlay.current = true;
+    setHasError(false);
+    setPlayBlocked(false);
+    setIsLoading(true);
+    setRetryTick((v) => v + 1);
   }, []);
 
   // ── Seekbar interaction ───────────────────────────────────────────────────
@@ -255,7 +264,7 @@ export default function VerticalShortPlayer({
           className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/45 text-white"
           onClick={(e) => {
             e.stopPropagation();
-            handleTap();
+            retrySource();
           }}
         >
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur-md">
