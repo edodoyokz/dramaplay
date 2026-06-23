@@ -9,7 +9,20 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        provider:
+          - dramanova
+          - netshort
+          - pinedrama
+          - dramaboxbaru
+          - dramawave
+          - melolo
+          - reelshort
+          - shortmax
+          - goodshort
 
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +36,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Sync all providers
+      - name: Sync ${{ matrix.provider }}
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PROVIDER_BASE_URL: ${{ secrets.PROVIDER_BASE_URL }}
@@ -31,4 +44,4 @@ jobs:
         run: |
           set -e
           cd apps/api
-          pnpm exec tsx scripts/sync-providers.ts
+          pnpm exec tsx scripts/sync-providers.ts ${{ matrix.provider }}
