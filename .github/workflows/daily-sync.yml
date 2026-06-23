@@ -2,19 +2,24 @@ name: Daily Provider Sync
 
 on:
   schedule:
-    # 3 AM WIB = 20:00 UTC
-    - cron: "0 20 * * *"
+    # Staggered daily sync, UTC. WIB = UTC + 7.
+    - cron: "0 20 * * *" # 03:00 WIB dramanova
+    - cron: "0 21 * * *" # 04:00 WIB netshort
+    - cron: "0 22 * * *" # 05:00 WIB pinedrama
+    - cron: "0 23 * * *" # 06:00 WIB dramaboxbaru
+    - cron: "0 0 * * *"  # 07:00 WIB dramawave
+    - cron: "0 1 * * *"  # 08:00 WIB melolo
+    - cron: "0 2 * * *"  # 09:00 WIB reelshort
+    - cron: "0 3 * * *"  # 10:00 WIB shortmax
+    - cron: "0 4 * * *"  # 11:00 WIB goodshort
   workflow_dispatch:
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      max-parallel: 5
-      matrix:
-        provider:
+    inputs:
+      provider:
+        description: "Provider code to sync"
+        required: true
+        default: "shortmax"
+        type: choice
+        options:
           - dramanova
           - netshort
           - pinedrama
@@ -24,6 +29,11 @@ jobs:
           - reelshort
           - shortmax
           - goodshort
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +47,29 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Sync ${{ matrix.provider }}
+      - name: Pick provider
+        id: pick
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            provider="${{ inputs.provider }}"
+          else
+            case "${{ github.event.schedule }}" in
+              "0 20 * * *") provider="dramanova" ;;
+              "0 21 * * *") provider="netshort" ;;
+              "0 22 * * *") provider="pinedrama" ;;
+              "0 23 * * *") provider="dramaboxbaru" ;;
+              "0 0 * * *") provider="dramawave" ;;
+              "0 1 * * *") provider="melolo" ;;
+              "0 2 * * *") provider="reelshort" ;;
+              "0 3 * * *") provider="shortmax" ;;
+              "0 4 * * *") provider="goodshort" ;;
+              *) echo "Unknown schedule: ${{ github.event.schedule }}"; exit 1 ;;
+            esac
+          fi
+          echo "provider=$provider" >> "$GITHUB_OUTPUT"
+          echo "Syncing provider: $provider"
+
+      - name: Sync provider
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PROVIDER_BASE_URL: ${{ secrets.PROVIDER_BASE_URL }}
@@ -45,4 +77,4 @@ jobs:
         run: |
           set -e
           cd apps/api
-          pnpm exec tsx scripts/sync-providers.ts ${{ matrix.provider }}
+          pnpm exec tsx scripts/sync-providers.ts "${{ steps.pick.outputs.provider }}"
