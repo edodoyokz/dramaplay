@@ -9,9 +9,10 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
+      max-parallel: 5
       matrix:
         provider:
           - dramanova
