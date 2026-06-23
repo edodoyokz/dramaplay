@@ -33,4 +33,4 @@ jobs:
         run: |
           set -e
           cd apps/api
-          pnpm tsx scripts/sync-providers.ts
+          pnpm exec tsx scripts/sync-providers.ts
