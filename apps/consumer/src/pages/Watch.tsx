@@ -317,7 +317,7 @@ export default function Watch() {
         />
 
         {/* Floating Side Control Overlay */}
-        <div className="absolute right-3 bottom-20 z-20 flex flex-col items-center gap-4.5">
+        <div className="absolute right-3 bottom-16 z-20 flex flex-col items-center gap-4.5">
           {/* Drama Poster Circle */}
           <Link
             to={`/drama/${data.dramaSlug}`}
@@ -442,15 +442,12 @@ export default function Watch() {
         </div>
 
         {/* Absolute Bottom Information Overlay */}
-        <div className="absolute left-4 bottom-14 right-16 z-20 pointer-events-none flex flex-col gap-1">
+        <div className="absolute left-4 bottom-12 right-16 z-20 pointer-events-none flex flex-col gap-0.5">
           <h2 className="text-sm font-extrabold text-white tracking-tight drop-shadow-md">
             {data.dramaTitle}
           </h2>
           <p className="text-[11px] font-bold text-rose-400 tracking-wide drop-shadow-md">
             Episode {data.episodeNumber}
-          </p>
-          <p className="text-[10px] text-zinc-400 leading-normal line-clamp-2 drop-shadow-md">
-            Ketuk tombol putar untuk menjeda atau menggunakan pengatur kecepatan video.
           </p>
         </div>
       </div>

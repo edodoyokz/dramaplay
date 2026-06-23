@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 
 interface Props {
@@ -9,100 +9,273 @@ interface Props {
   onTimeUpdate?: (sec: number) => void;
 }
 
-export default function VerticalShortPlayer({ source, poster, subtitleUrl, onEnded, onTimeUpdate }: Props) {
-  const ref = useRef<HTMLVideoElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
+function formatTime(sec: number): string {
+  if (!isFinite(sec) || sec < 0) return "0:00";
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
+export default function VerticalShortPlayer({
+  source,
+  poster,
+  subtitleUrl,
+  onEnded,
+  onTimeUpdate,
+}: Props) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const seekBarRef = useRef<HTMLDivElement | null>(null);
+  const iconTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showIcon, setShowIcon] = useState<"play" | "pause" | null>(null);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [buffered, setBuffered] = useState(0);
+
+  // ── HLS setup ────────────────────────────────────────────────────────────
   useEffect(() => {
-    const video = ref.current;
+    const video = videoRef.current;
     if (!video) return;
 
     let hls: Hls | null = null;
     const isHls = source.streamType === "m3u8";
     const nativeHls = video.canPlayType("application/vnd.apple.mpegurl");
-    const keepPlaying = !video.paused || document.fullscreenElement === video;
-    const play = () => {
-      if (keepPlaying) void video.play().catch(() => {});
-    };
+
+    const tryPlay = () => void video.play().catch(() => {});
 
     if (isHls && Hls.isSupported() && !nativeHls) {
-      hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+      hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: false,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+      });
       hls.loadSource(source.streamUrl);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, play);
+      hls.on(Hls.Events.MANIFEST_PARSED, tryPlay);
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (!data.fatal) return;
-        console.error("hls.js fatal", data.type, data.details, source.streamUrl);
         if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls?.startLoad();
         else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls?.recoverMediaError();
         else hls?.destroy();
       });
     } else {
       video.src = source.streamUrl;
-      video.addEventListener("canplay", play, { once: true });
+      video.addEventListener("canplay", tryPlay, { once: true });
     }
 
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    video.addEventListener("play", handlePlay);
-    video.addEventListener("pause", handlePause);
-
     return () => {
-      video.removeEventListener("canplay", play);
-      video.removeEventListener("play", handlePlay);
-      video.removeEventListener("pause", handlePause);
+      video.removeEventListener("canplay", tryPlay);
       hls?.destroy();
     };
   }, [source.streamUrl, source.streamType]);
 
-  const togglePlay = () => {
-    const video = ref.current;
+  // ── Video event listeners ─────────────────────────────────────────────────
+  useEffect(() => {
+    const video = videoRef.current;
     if (!video) return;
+
+    const onDurationChange = () => setDuration(video.duration || 0);
+    const onTimeUpdateHandler = () => {
+      if (!isSeeking) setCurrentTime(video.currentTime);
+      onTimeUpdate?.(video.currentTime);
+      // Buffered
+      if (video.buffered.length > 0 && video.duration) {
+        setBuffered((video.buffered.end(video.buffered.length - 1) / video.duration) * 100);
+      }
+    };
+    const onFullscreenChange = () =>
+      setIsFullscreen(!!document.fullscreenElement);
+
+    video.addEventListener("durationchange", onDurationChange);
+    video.addEventListener("timeupdate", onTimeUpdateHandler);
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+
+    return () => {
+      video.removeEventListener("durationchange", onDurationChange);
+      video.removeEventListener("timeupdate", onTimeUpdateHandler);
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+    };
+  }, [isSeeking, onTimeUpdate]);
+
+  // ── Tap to play/pause with animated feedback ──────────────────────────────
+  const handleTap = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
     if (video.paused) {
       void video.play().catch(() => {});
+      setShowIcon("play");
     } else {
       video.pause();
+      setShowIcon("pause");
     }
-  };
+
+    if (iconTimer.current) clearTimeout(iconTimer.current);
+    iconTimer.current = setTimeout(() => setShowIcon(null), 700);
+  }, []);
+
+  // ── Seekbar interaction ───────────────────────────────────────────────────
+  const calcSeekPercent = useCallback((e: React.PointerEvent | PointerEvent) => {
+    const bar = seekBarRef.current;
+    if (!bar) return null;
+    const rect = bar.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  }, []);
+
+  const onSeekStart = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      setIsSeeking(true);
+      const pct = calcSeekPercent(e as unknown as PointerEvent);
+      if (pct !== null) setCurrentTime(pct * duration);
+      seekBarRef.current?.setPointerCapture(e.pointerId);
+    },
+    [calcSeekPercent, duration]
+  );
+
+  const onSeekMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!isSeeking) return;
+      e.stopPropagation();
+      const pct = calcSeekPercent(e as unknown as PointerEvent);
+      if (pct !== null) setCurrentTime(pct * duration);
+    },
+    [isSeeking, calcSeekPercent, duration]
+  );
+
+  const onSeekEnd = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!isSeeking) return;
+      e.stopPropagation();
+      const pct = calcSeekPercent(e as unknown as PointerEvent);
+      if (pct !== null && videoRef.current) {
+        videoRef.current.currentTime = pct * duration;
+      }
+      setIsSeeking(false);
+    },
+    [isSeeking, calcSeekPercent, duration]
+  );
+
+  // ── Fullscreen ────────────────────────────────────────────────────────────
+  const toggleFullscreen = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    const el = containerRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, []);
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="relative w-full h-full bg-black flex items-center justify-center cursor-pointer" onClick={togglePlay}>
+    <div
+      ref={containerRef}
+      className="relative w-full h-full bg-black flex items-center justify-center select-none overflow-hidden"
+      onClick={handleTap}
+    >
+      {/* ── Video Element ──────────────────────────────────────────── */}
       <video
-        ref={ref}
+        ref={videoRef}
         poster={poster}
         autoPlay
         playsInline
+        // controls only when in native fullscreen (browser adds them)
         onEnded={() => onEnded?.()}
-        onTimeUpdate={(e) => {
-          const video = e.currentTarget;
-          if (video.duration) {
-            setProgress((video.currentTime / video.duration) * 100);
-          }
-          onTimeUpdate?.(video.currentTime);
-        }}
         className="h-full w-full object-contain"
       >
-        {subtitleUrl ? <track src={subtitleUrl} kind="subtitles" srcLang="id" label="Indonesia" default /> : null}
+        {subtitleUrl ? (
+          <track src={subtitleUrl} kind="subtitles" srcLang="id" label="Indonesia" default />
+        ) : null}
       </video>
 
-      {/* Custom Big Play/Pause Icon Overlay */}
-      {!isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/10 pointer-events-none">
-          <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur-sm border border-zinc-800 flex items-center justify-center text-white scale-110 transition-all duration-300">
-            <svg className="w-6 h-6 fill-current ml-0.5" viewBox="0 0 24 24">
+      {/* ── Tap Feedback Icon ──────────────────────────────────────── */}
+      <div
+        className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
+          showIcon ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <div className="w-16 h-16 rounded-full bg-black/55 backdrop-blur-sm flex items-center justify-center shadow-xl">
+          {showIcon === "pause" ? (
+            // Pause icon
+            <svg className="w-7 h-7 text-white fill-current" viewBox="0 0 24 24">
+              <rect x="6" y="4" width="4" height="16" rx="1" />
+              <rect x="14" y="4" width="4" height="16" rx="1" />
+            </svg>
+          ) : (
+            // Play icon
+            <svg className="w-7 h-7 text-white fill-current ml-1" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Slim Custom Bottom Progress Bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-800/80 pointer-events-none">
+      {/* ── Bottom Controls Bar ────────────────────────────────────── */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-10 flex flex-col gap-1.5 px-3 pb-2 pt-6"
+        style={{
+          background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)",
+        }}
+        onClick={(e) => e.stopPropagation()} // prevent tap-toggle on controls
+      >
+        {/* Time + Fullscreen row */}
+        <div className="flex items-center justify-between px-0.5">
+          <span className="text-[10px] font-semibold text-zinc-300 tabular-nums tracking-wide">
+            {formatTime(currentTime)}
+            <span className="text-zinc-600 mx-1">/</span>
+            {formatTime(duration)}
+          </span>
+          <button
+            onClick={toggleFullscreen}
+            className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-300 hover:text-white active:scale-90 transition-transform"
+          >
+            {isFullscreen ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Seekable progress bar */}
         <div
-          className="h-full bg-gradient-to-r from-rose-500 to-orange-500 transition-all duration-100 ease-out"
-          style={{ width: `${progress}%` }}
-        />
+          ref={seekBarRef}
+          className="relative w-full h-4 flex items-center cursor-pointer group"
+          onPointerDown={onSeekStart}
+          onPointerMove={onSeekMove}
+          onPointerUp={onSeekEnd}
+          onPointerCancel={onSeekEnd}
+        >
+          {/* Track background */}
+          <div className="absolute inset-y-0 my-auto h-1 w-full rounded-full bg-zinc-700/70 overflow-hidden">
+            {/* Buffered */}
+            <div
+              className="absolute left-0 top-0 h-full bg-zinc-500/50 rounded-full transition-all duration-300"
+              style={{ width: `${buffered}%` }}
+            />
+            {/* Progress */}
+            <div
+              className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-rose-500 to-orange-400 transition-all duration-100"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          {/* Thumb */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-md shadow-black/50 transition-transform duration-100 group-active:scale-125"
+            style={{ left: `calc(${progress}% - 6px)` }}
+          />
+        </div>
       </div>
     </div>
   );
