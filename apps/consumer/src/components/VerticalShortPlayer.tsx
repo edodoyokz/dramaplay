@@ -39,8 +39,8 @@ export default function VerticalShortPlayer({ source, poster, subtitleUrl, onEnd
 
     return () => {
       hls?.destroy();
-      video.removeAttribute("src");
-      video.load();
+      // Keep the same <video> alive during episode changes so native fullscreen
+      // does not get kicked out just because React swapped the stream URL.
     };
   }, [source.streamUrl, source.streamType]);
 
