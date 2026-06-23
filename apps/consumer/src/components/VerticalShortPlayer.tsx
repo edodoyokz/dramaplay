@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
+import { retryPlay } from "../lib/playback";
 
 interface Props {
   source: { streamUrl: string; streamType: "mp4" | "m3u8" | "other" };
@@ -27,6 +28,7 @@ export default function VerticalShortPlayer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const seekBarRef = useRef<HTMLDivElement | null>(null);
   const iconTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wantsPlay = useRef(true);
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -34,17 +36,32 @@ export default function VerticalShortPlayer({
   const [showIcon, setShowIcon] = useState<"play" | "pause" | null>(null);
   const [isSeeking, setIsSeeking] = useState(false);
   const [buffered, setBuffered] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [playBlocked, setPlayBlocked] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // ── HLS setup ────────────────────────────────────────────────────────────
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    let cancelled = false;
     let hls: Hls | null = null;
     const isHls = source.streamType === "m3u8";
     const nativeHls = video.canPlayType("application/vnd.apple.mpegurl");
 
-    const tryPlay = () => void video.play().catch(() => {});
+    setCurrentTime(0);
+    setDuration(0);
+    setBuffered(0);
+    setIsLoading(true);
+    setPlayBlocked(false);
+    setHasError(false);
+
+    const tryPlay = async () => {
+      if (!wantsPlay.current) return;
+      const ok = await retryPlay(() => video.play(), 4, 300);
+      if (!cancelled) setPlayBlocked(!ok);
+    };
 
     if (isHls && Hls.isSupported() && !nativeHls) {
       hls = new Hls({
@@ -60,15 +77,40 @@ export default function VerticalShortPlayer({
         if (!data.fatal) return;
         if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls?.startLoad();
         else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls?.recoverMediaError();
-        else hls?.destroy();
+        else {
+          setHasError(true);
+          hls?.destroy();
+        }
       });
     } else {
       video.src = source.streamUrl;
+      video.load();
       video.addEventListener("canplay", tryPlay, { once: true });
     }
 
+    const onWaiting = () => setIsLoading(true);
+    const onPlaying = () => {
+      wantsPlay.current = true;
+      setIsLoading(false);
+      setPlayBlocked(false);
+    };
+    const onPause = () => {
+      if (!video.ended) wantsPlay.current = false;
+    };
+    const onError = () => setHasError(true);
+
+    video.addEventListener("waiting", onWaiting);
+    video.addEventListener("playing", onPlaying);
+    video.addEventListener("pause", onPause);
+    video.addEventListener("error", onError);
+
     return () => {
+      cancelled = true;
       video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("waiting", onWaiting);
+      video.removeEventListener("playing", onPlaying);
+      video.removeEventListener("pause", onPause);
+      video.removeEventListener("error", onError);
       hls?.destroy();
     };
   }, [source.streamUrl, source.streamType]);
@@ -107,9 +149,12 @@ export default function VerticalShortPlayer({
     if (!video) return;
 
     if (video.paused) {
-      void video.play().catch(() => {});
+      wantsPlay.current = true;
+      setPlayBlocked(false);
+      void retryPlay(() => video.play(), 4, 250).then((ok) => setPlayBlocked(!ok));
       setShowIcon("play");
     } else {
+      wantsPlay.current = false;
       video.pause();
       setShowIcon("pause");
     }
@@ -186,14 +231,43 @@ export default function VerticalShortPlayer({
         poster={poster}
         autoPlay
         playsInline
+        preload="auto"
         // controls only when in native fullscreen (browser adds them)
-        onEnded={() => onEnded?.()}
+        onEnded={() => {
+          wantsPlay.current = true;
+          onEnded?.();
+        }}
         className="h-full w-full object-contain"
       >
         {subtitleUrl ? (
           <track src={subtitleUrl} kind="subtitles" srcLang="id" label="Indonesia" default />
         ) : null}
       </video>
+
+      {isLoading && !playBlocked && !hasError ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
+          <div className="h-10 w-10 rounded-full border-4 border-white/20 border-t-white animate-spin" />
+        </div>
+      ) : null}
+
+      {(playBlocked || hasError) ? (
+        <button
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/45 text-white"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleTap();
+          }}
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur-md">
+            <svg className="w-8 h-8 fill-current ml-1" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+          <span className="text-xs font-bold tracking-wide">
+            {hasError ? "Coba putar ulang" : "Ketuk untuk lanjut"}
+          </span>
+        </button>
+      ) : null}
 
       {/* ── Tap Feedback Icon ──────────────────────────────────────── */}
       <div
