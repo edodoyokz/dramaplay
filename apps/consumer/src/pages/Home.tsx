@@ -90,9 +90,9 @@ export default function Home() {
       <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-black/60 backdrop-blur-md border-b border-zinc-900/60">
         <div className="flex items-center gap-2" onClick={() => navigate("/")}>
           <img src="/logo-app.png" alt="Dramaplay Logo" className="w-8 h-8 rounded-lg object-cover shadow-md" />
-          <span className="text-xl font-bold tracking-tight text-gradient-sunset">
+          <h1 className="text-xl font-extrabold tracking-tight text-gradient-sunset cursor-pointer">
             Dramaplay
-          </span>
+          </h1>
         </div>
 
         <div className="flex items-center gap-3">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
-import { supabase } from "../lib/supabase";
+import { supabase, getAuthToken } from "../lib/supabase";
 
 interface Plan {
   id: string;
@@ -24,7 +24,7 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
     try {
       setLoadingCode(code);
       const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
+      const token = data.session?.access_token ?? getAuthToken();
       if (!token) {
         alert("Silakan login terlebih dahulu untuk melanjutkan pembayaran.");
         onClose();

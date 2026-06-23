@@ -20,6 +20,11 @@ export default function Profile() {
   const [watchedCount, setWatchedCount] = useState(0);
   const [showPricing, setShowPricing] = useState(false);
 
+  const [activeTab, setActiveTab] = useState<"history" | "likes" | "favorites" | null>(null);
+  const [historyItems, setHistoryItems] = useState<any[]>([]);
+  const [likedItems, setLikedItems] = useState<string[]>([]);
+  const [favoriteItems, setFavoriteItems] = useState<string[]>([]);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       const userEmail = data.user?.email ?? null;
@@ -29,10 +34,15 @@ export default function Profile() {
         try {
           const likes = JSON.parse(localStorage.getItem("dramaplay:likes") || "[]");
           setLikesCount(likes.length);
+          setLikedItems(likes);
+
           const favs = JSON.parse(localStorage.getItem("dramaplay:favorites") || "[]");
           setFavsCount(favs.length);
+          setFavoriteItems(favs);
+
           const watched = JSON.parse(localStorage.getItem("dramaplay:watch_progress") || "[]");
           setWatchedCount(watched.length);
+          setHistoryItems(watched);
         } catch (e) {
           console.error(e);
         }
@@ -170,20 +180,141 @@ export default function Profile() {
       </div>
 
       {/* Local Statistics Grid */}
-      <div className="grid grid-cols-3 gap-2.5 mb-6">
-        <div className="bg-zinc-900/60 border border-zinc-900 rounded-xl p-3 flex flex-col items-center text-center">
+      <div className="grid grid-cols-3 gap-2.5 mb-5">
+        <button
+          onClick={() => setActiveTab(activeTab === "history" ? null : "history")}
+          className={`border rounded-xl p-3 flex flex-col items-center text-center transition-all ${
+            activeTab === "history"
+              ? "bg-rose-500/10 border-rose-500/30 scale-95"
+              : "bg-zinc-900/60 border-zinc-900 hover:border-zinc-800"
+          }`}
+        >
           <span className="text-lg font-extrabold text-rose-500">{watchedCount}</span>
           <span className="text-[9px] font-semibold text-zinc-400 mt-0.5">Menonton</span>
-        </div>
-        <div className="bg-zinc-900/60 border border-zinc-900 rounded-xl p-3 flex flex-col items-center text-center">
+        </button>
+        <button
+          onClick={() => setActiveTab(activeTab === "likes" ? null : "likes")}
+          className={`border rounded-xl p-3 flex flex-col items-center text-center transition-all ${
+            activeTab === "likes"
+              ? "bg-rose-500/10 border-rose-500/30 scale-95"
+              : "bg-zinc-900/60 border-zinc-900 hover:border-zinc-800"
+          }`}
+        >
           <span className="text-lg font-extrabold text-rose-500">{likesCount}</span>
           <span className="text-[9px] font-semibold text-zinc-400 mt-0.5">Disukai</span>
-        </div>
-        <div className="bg-zinc-900/60 border border-zinc-900 rounded-xl p-3 flex flex-col items-center text-center">
+        </button>
+        <button
+          onClick={() => setActiveTab(activeTab === "favorites" ? null : "favorites")}
+          className={`border rounded-xl p-3 flex flex-col items-center text-center transition-all ${
+            activeTab === "favorites"
+              ? "bg-rose-500/10 border-rose-500/30 scale-95"
+              : "bg-zinc-900/60 border-zinc-900 hover:border-zinc-800"
+          }`}
+        >
           <span className="text-lg font-extrabold text-rose-500">{favsCount}</span>
           <span className="text-[9px] font-semibold text-zinc-400 mt-0.5">Favorit</span>
-        </div>
+        </button>
       </div>
+
+      {/* Active Tab Panel */}
+      {activeTab && (
+        <div className="mb-6 p-4 rounded-xl border border-zinc-900 bg-zinc-900/20 space-y-3">
+          <div className="flex items-center justify-between border-b border-zinc-900 pb-2">
+            <h4 className="text-xs font-bold text-zinc-300 uppercase tracking-wide">
+              {activeTab === "history" && "Riwayat Menonton"}
+              {activeTab === "likes" && "Episode Disukai"}
+              {activeTab === "favorites" && "Drama Favorit"}
+            </h4>
+            <button
+              onClick={() => setActiveTab(null)}
+              className="text-[10px] text-zinc-500 hover:text-zinc-300 font-medium"
+            >
+              Tutup
+            </button>
+          </div>
+
+          {activeTab === "history" && (
+            <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+              {historyItems.length === 0 ? (
+                <p className="text-xs text-zinc-500 text-center py-4">Belum ada riwayat menonton.</p>
+              ) : (
+                historyItems.map((item, idx) => (
+                  <Link
+                    key={idx}
+                    to={`/drama/${item.slug}/episode/${item.episodeNumber || 1}`}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-900/40"
+                  >
+                    <img
+                      src={item.posterUrl || "/placeholder.jpg"}
+                      alt={item.title}
+                      className="w-10 h-14 object-cover rounded-md bg-zinc-950 flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-xs font-bold text-zinc-100 truncate">{item.title}</p>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">Episode {item.episodeNumber}</p>
+                      {item.percent !== undefined && (
+                        <div className="mt-1.5 w-full bg-zinc-800 rounded-full h-1">
+                          <div className="bg-rose-500 h-1 rounded-full" style={{ width: `${item.percent}%` }}></div>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
+          )}
+
+          {activeTab === "likes" && (
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+              {likedItems.length === 0 ? (
+                <p className="text-xs text-zinc-500 text-center py-4">Belum ada episode yang disukai.</p>
+              ) : (
+                likedItems.map((key, idx) => {
+                  const parts = key.split("-");
+                  const slug = parts.slice(0, -1).join("-");
+                  const episode = parts[parts.length - 1];
+                  const prettyName = slug
+                    .replace(/-/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase());
+                  return (
+                    <Link
+                      key={idx}
+                      to={`/drama/${slug}/episode/${episode}`}
+                      className="block p-3 rounded-lg bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-900/40 text-xs font-medium text-zinc-200 text-left"
+                    >
+                      <span className="text-rose-500 font-bold mr-1">♥</span> {prettyName} — Episode {episode}
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {activeTab === "favorites" && (
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+              {favoriteItems.length === 0 ? (
+                <p className="text-xs text-zinc-500 text-center py-4">Belum ada drama favorit.</p>
+              ) : (
+                favoriteItems.map((slug, idx) => {
+                  const prettyName = slug
+                    .replace(/-/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase());
+                  return (
+                    <Link
+                      key={idx}
+                      to={`/drama/${slug}`}
+                      className="flex items-center justify-between p-3 rounded-lg bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors border border-zinc-900/40 text-xs font-medium text-zinc-200 text-left"
+                    >
+                      <span className="truncate">{prettyName}</span>
+                      <span className="text-[10px] text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 flex-shrink-0 ml-2">Lihat Detail</span>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Transaction History Section */}
       <div className="mt-6">

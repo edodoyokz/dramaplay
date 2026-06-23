@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { createDb, plans, payments } from "@dramaplay/db";
-import { asc, eq } from "drizzle-orm";
+import { createDb, plans, payments, subscriptions } from "@dramaplay/db";
+import { and, asc, eq } from "drizzle-orm";
 import type { Env } from "../env";
 import { authMiddleware } from "../middleware/auth";
 
@@ -46,6 +46,7 @@ billing.post("/checkout", authMiddleware, async (c) => {
 billing.get("/me", authMiddleware, async (c) => {
   const userId = c.get("user").id;
   const db = createDb(c.env.DATABASE_URL);
+  await reconcilePendingPayments(c.env, userId);
   const rows = await db
     .select()
     .from(payments)
@@ -53,3 +54,60 @@ billing.get("/me", authMiddleware, async (c) => {
     .orderBy(payments.createdAt);
   return c.json({ items: rows });
 });
+
+async function reconcilePendingPayments(env: Env, userId: string) {
+  const db = createDb(env.DATABASE_URL);
+  const pending = await db
+    .select()
+    .from(payments)
+    .where(and(eq(payments.userId, userId), eq(payments.status, "pending")));
+
+  for (const payment of pending) {
+    if (!payment.pakasirReference) continue;
+    const completed = await verifyTransaction(env, payment.pakasirReference, payment.amountIdr);
+    if (!completed) continue;
+
+    const [paidPayment] = await db
+      .update(payments)
+      .set({
+        status: "paid",
+        pakasirTransactionId: payment.pakasirReference,
+        paidAt: new Date(),
+      })
+      .where(and(eq(payments.id, payment.id), eq(payments.status, "pending")))
+      .returning();
+    if (!paidPayment) continue;
+
+    const [plan] = await db.select().from(plans).where(eq(plans.id, paidPayment.planId));
+    if (!plan) continue;
+    const now = new Date();
+    await db.insert(subscriptions).values({
+      userId,
+      planId: plan.id,
+      status: "active",
+      startedAt: now,
+      expiresAt: new Date(now.getTime() + plan.durationDays * 86400000),
+    });
+  }
+}
+
+async function verifyTransaction(env: Env, orderId: string, amount: number) {
+  const url = new URL("https://app.pakasir.com/api/transactiondetail");
+  url.searchParams.set("project", env.PAKASIR_PROJECT_SLUG);
+  url.searchParams.set("amount", String(amount));
+  url.searchParams.set("order_id", orderId);
+  url.searchParams.set("api_key", env.PAKASIR_API_KEY);
+
+  const res = await fetch(url);
+  if (!res.ok) return false;
+  const data = await res.json<{
+    transaction?: { status?: string; amount?: number; order_id?: string; project?: string };
+  }>();
+  const trx = data.transaction;
+  return (
+    trx?.status === "completed" &&
+    trx.amount === amount &&
+    trx.order_id === orderId &&
+    trx.project === env.PAKASIR_PROJECT_SLUG
+  );
+}

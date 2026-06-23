@@ -34,6 +34,40 @@ export default function Watch() {
   const [reportReason, setReportReason] = useState("video_error");
   const [reportMessage, setReportMessage] = useState("");
   const lastProgressSave = useRef(0);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const countdownInterval = useRef<any>(null);
+
+  const cancelCountdown = () => {
+    if (countdownInterval.current) {
+      clearInterval(countdownInterval.current);
+      countdownInterval.current = null;
+    }
+    setCountdown(null);
+  };
+
+  const triggerNextEpisode = (stream: StreamResponse) => {
+    updateWatchProgress(stream, 100);
+    const next = stream.nextEpisode ?? Number(n ?? 1) + 1;
+    navigate(`/drama/${slug}/episode/${next}`);
+  };
+
+  const startNextEpisodeCountdown = (stream: StreamResponse) => {
+    if (!stream.nextEpisode) return;
+    setCountdown(3);
+    let count = 3;
+    if (countdownInterval.current) clearInterval(countdownInterval.current);
+    countdownInterval.current = setInterval(() => {
+      count -= 1;
+      if (count <= 0) {
+        if (countdownInterval.current) clearInterval(countdownInterval.current);
+        countdownInterval.current = null;
+        setCountdown(null);
+        triggerNextEpisode(stream);
+      } else {
+        setCountdown(count);
+      }
+    }, 1000);
+  };
 
   const updateWatchProgress = (stream: StreamResponse, percent: number) => {
     try {
@@ -62,11 +96,11 @@ export default function Watch() {
 
   useEffect(() => {
     let active = true;
+    cancelCountdown();
 
     (async () => {
       await Promise.resolve();
       if (!active) return;
-      setData(null);
       setBlocked(false);
       setLiked(false);
       setFavorited(false);
@@ -111,6 +145,7 @@ export default function Watch() {
 
     return () => {
       active = false;
+      cancelCountdown();
     };
   }, [slug, n, retryTick]);
 
@@ -306,8 +341,9 @@ export default function Watch() {
           subtitleUrl={data.subtitleUrl}
           onEnded={() => {
             updateWatchProgress(data, 100);
-            const next = data.nextEpisode ?? Number(n ?? 1) + 1;
-            navigate(`/drama/${slug}/episode/${next}`);
+            if (data.nextEpisode) {
+              startNextEpisodeCountdown(data);
+            }
           }}
           onTimeUpdate={(sec) => {
             const now = Date.now();
@@ -494,6 +530,36 @@ export default function Watch() {
                 Kirim
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Next Episode Countdown Overlay */}
+      {countdown !== null && data && (
+        <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm px-6 text-center">
+          <div className="w-16 h-16 rounded-full border-4 border-rose-500 border-t-zinc-800 animate-spin flex items-center justify-center mb-5">
+            <span className="text-xl font-black text-rose-500">{countdown}</span>
+          </div>
+          <h3 className="text-sm font-bold text-zinc-100">Memutar Episode Berikutnya</h3>
+          <p className="text-[11px] text-zinc-400 mt-1 max-w-[200px] truncate">
+            Episode {data.nextEpisode}
+          </p>
+          <div className="flex gap-2.5 mt-6 w-full max-w-[240px]">
+            <button
+              onClick={cancelCountdown}
+              className="flex-1 py-2.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold text-xs active:scale-95 duration-100 pointer-events-auto"
+            >
+              Batalkan
+            </button>
+            <button
+              onClick={() => {
+                cancelCountdown();
+                triggerNextEpisode(data);
+              }}
+              className="flex-1 py-2.5 rounded-full bg-gradient-sunset text-white font-bold text-xs shadow-lg shadow-rose-500/10 active:scale-95 duration-100 pointer-events-auto"
+            >
+              Putar Sekarang
+            </button>
           </div>
         </div>
       )}

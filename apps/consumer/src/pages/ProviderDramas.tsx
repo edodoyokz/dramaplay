@@ -59,8 +59,14 @@ export default function ProviderDramas() {
   return (
     <div className="min-h-screen bg-[#030303] text-zinc-100 pb-12">
       <header className="sticky top-0 z-50 flex items-center gap-3 px-4 py-3 bg-black/60 backdrop-blur-md border-b border-zinc-900/60">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-zinc-300 hover:text-white" aria-label="Kembali">
-          ←
+        <button 
+          onClick={() => navigate(-1)} 
+          className="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-700 transition-all duration-200" 
+          aria-label="Kembali"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
         <ProviderLogo name={provider?.name ?? code} logoUrl={provider?.logoUrl} />
         <div>
