@@ -97,6 +97,13 @@ describe("watch caching + VIP control", () => {
     expect(isUserVip).toHaveBeenCalledTimes(2); // re-checked, not from cache
   });
 
+  it("VIP without auth is denied", async () => {
+    _epToReturn = vipEp;
+    reset();
+    const r = await watch.request("/test/2", {}, env);
+    expect(r.status).toBe(403);
+  });
+
   it("VIP without valid entitlement is denied", async () => {
     _epToReturn = vipEp;
     _isVip = false;

@@ -79,26 +79,26 @@ export function buildBatch1Adapters(baseUrl: string, token: string): Record<stri
     // (separate from detail); play /book/:id/chapter/:chapter_id/video returns
     // videos[].PlayURL. chapter_id (not episode number) is the play param.
     reelshort: mk("reelshort", {
-      trending: "/reelshort/api/v1/feed/0",
-      latest: "/reelshort/api/v1/feed/0",
-      vip: "/reelshort/api/v1/completed",
-      foryou: "/reelshort/api/v1/feed/0",
-      search: "/reelshort/api/v1/search?q={q}",
-      detail: "/reelshort/api/v1/book/{id}",
+      trending: "/reelshort/api/v1/feed/0?lang=in",
+      latest: "/reelshort/api/v1/feed/0?lang=in",
+      vip: "/reelshort/api/v1/completed?lang=in",
+      foryou: "/reelshort/api/v1/feed/0?lang=in",
+      search: "/reelshort/api/v1/search?q={q}&lang=in",
+      detail: "/reelshort/api/v1/book/{id}?lang=in",
       episodes: "/reelshort/api/v1/book/{id}/chapters?lang=in",
-      play: "/reelshort/api/v1/book/{id}/chapter/{ep}/video",
+      play: "/reelshort/api/v1/book/{id}/chapter/{ep}/video?lang=in",
       episodePlayField: ["chapter_id"],
     }),
 
     // melolo: bookmall cell.cell_data[*].books; detail /series; play /multi-video
     melolo: mk("melolo", {
-      trending: "/melolo/api/v1/bookmall?tab=0",
-      latest: "/melolo/api/v1/bookmall?tab=0",
-      vip: "/melolo/api/v1/bookmall?tab=0",
-      foryou: "/melolo/api/v1/bookmall?tab=0",
-      search: "/melolo/api/v1/search?q={q}",
-      detail: "/melolo/api/v1/series?id={id}",
-      play: "/melolo/api/v1/multi-video?id={id}&episode={ep}",
+      trending: "/melolo/api/v1/bookmall?tab=0&lang=id",
+      latest: "/melolo/api/v1/bookmall?tab=0&lang=id",
+      vip: "/melolo/api/v1/bookmall?tab=0&lang=id",
+      foryou: "/melolo/api/v1/bookmall?tab=0&lang=id",
+      search: "/melolo/api/v1/search?q={q}&lang=id",
+      detail: "/melolo/api/v1/series?id={id}&lang=id",
+      play: "/melolo/api/v1/multi-video?id={id}&episode={ep}&lang=id",
     }),
   };
 }

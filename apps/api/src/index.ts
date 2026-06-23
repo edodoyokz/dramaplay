@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import type { Env } from "./env";
 import { catalog } from "./routes/catalog";
 import { watch } from "./routes/watch";
@@ -7,12 +8,16 @@ import { pakasir } from "./routes/pakasir";
 import { admin } from "./routes/admin";
 import { events } from "./routes/events";
 import { auth } from "./routes/auth";
+import { reportRoutes } from "./routes/reports";
+import { sitemapRoutes } from "./routes/sitemap";
 import { createDb } from "@dramaplay/db";
 import { providers, analyticsEvents } from "@dramaplay/db";
 import { eq, lt, sql } from "drizzle-orm";
 import { syncProvider } from "./sync/sync";
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.use("*", cors({ origin: ["https://dramaplay.my.id", "https://admin.dramaplay.my.id"] }));
 
 app.get("/health", async (c) => {
   let db = "up";
@@ -31,6 +36,8 @@ app.route("/pakasir", pakasir);
 app.route("/events", events);
 app.route("/admin", admin);
 app.route("/auth", auth);
+app.route("/reports", reportRoutes);
+sitemapRoutes(app);
 
 // Proxy for Sapimu providers whose play endpoint returns a raw manifest behind
 // auth (e.g. dramaboxbaru /api/stream → m3u8 text). The manifest is small;
@@ -58,7 +65,8 @@ app.get("/proxy/sapimu-stream", async (c) => {
       .map((line) => {
         const t = line.trim();
         if (!t) return line;
-        if (t.startsWith("#")) return line.replace(/URI="([^"]+)"/g, (_, ref) => `URI="${proxy(ref)}"`);
+        if (t.startsWith("#"))
+          return line.replace(/URI="([^"]+)"/g, (_, ref) => `URI="${proxy(ref)}"`);
         return /^https?:\/\//.test(t) ? proxy(t) : line;
       })
       .join("\n");
@@ -84,16 +92,13 @@ export default {
         // Anti-pause keep-alive (Supabase pauses after 7 days idle).
         await db.execute(sql`select 1`);
         // Analytics retention: purge events older than 7 days (caps 500MB DB).
-        await db.delete(analyticsEvents).where(lt(analyticsEvents.createdAt, new Date(Date.now() - 7 * 86400_000)));
-        const enabled = await db.select().from(providers).where(eq(providers.isEnabled, true));
-        for (const p of enabled) {
-          try {
-            await syncProvider(env.DATABASE_URL, p.code, env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN);
-          } catch {
-            // errors already logged inside syncProvider
-          }
-        }
-      })()
+        await db
+          .delete(analyticsEvents)
+          .where(lt(analyticsEvents.createdAt, new Date(Date.now() - 7 * 86400_000)));
+        // ponytail: sync runs manually via scripts/sync-providers.ts;
+        // free tier (10ms CPU, 50 subrequests) can't handle 200+ API calls per provider.
+        // Add per-provider cron + Workers Standard ($5/mo) when needed.
+      })(),
     );
   },
 } satisfies ExportedHandler<Env>;

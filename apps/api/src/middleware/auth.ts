@@ -3,11 +3,15 @@ import { createMiddleware } from "hono/factory";
 import type { Env } from "../env";
 
 export async function getUserId(env: Env, token: string): Promise<string | null> {
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-  const { data, error } = await supabase.auth.getUser();
-  return error || !data.user ? null : data.user.id;
+  try {
+    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+    const { data, error } = await supabase.auth.getUser();
+    return error || !data.user ? null : data.user.id;
+  } catch {
+    return null;
+  }
 }
 
 export const authMiddleware = createMiddleware<{

@@ -1,5 +1,13 @@
-import { createDb, providers, syncLogs, dramas, dramaProviders, episodes, episodeProviders } from "@dramaplay/db";
-import { eq } from "drizzle-orm";
+import {
+  createDb,
+  providers,
+  syncLogs,
+  dramas,
+  dramaProviders,
+  episodes,
+  episodeProviders,
+} from "@dramaplay/db";
+import { and, eq, sql } from "drizzle-orm";
 import { buildProviders } from "../providers/registry";
 import { slugifyTitle } from "../lib/slug";
 import type { ProviderDramaSummary, ProviderEpisodeSummary } from "@dramaplay/shared";
@@ -19,11 +27,31 @@ interface SyncResult {
   errorCount: number;
 }
 
+export async function fetchAllProviderSummaries(
+  adapter: ReturnType<typeof buildProviders>[string],
+): Promise<ProviderDramaSummary[]> {
+  const batches = await Promise.all([
+    adapter.fetchForYou().then((r) => r.items),
+    adapter.fetchTrending(),
+    adapter.fetchLatest(),
+    adapter.fetchVip(),
+  ]);
+
+  return [
+    ...new Map(
+      batches
+        .flat()
+        .filter((x) => x.providerDramaId)
+        .map((x) => [x.providerDramaId, x]),
+    ).values(),
+  ];
+}
+
 export async function syncProvider(
   dbUrl: string,
   providerCode: string,
   providerBaseUrl: string,
-  providerToken?: string
+  providerToken?: string,
 ): Promise<SyncResult> {
   const db = createDb(dbUrl);
   const adapters = buildProviders(providerBaseUrl, providerToken);
@@ -37,7 +65,7 @@ export async function syncProvider(
   if (!providerRow) throw new Error("provider not registered");
 
   try {
-    const items: ProviderDramaSummary[] = await adapter.fetchLatest();
+    const items: ProviderDramaSummary[] = await fetchAllProviderSummaries(adapter);
     for (const item of items) {
       try {
         const slug = providerSlug(providerCode, item.title);
@@ -98,7 +126,7 @@ export async function syncProvider(
                   title: ep.title,
                   thumbnailUrl: ep.thumbnailUrl,
                   durationSeconds: ep.durationSeconds,
-                }))
+                })),
               )
               .returning({ id: episodes.id, episodeNumber: episodes.episodeNumber });
             result.episodeNew += inserted.length;
@@ -112,7 +140,7 @@ export async function syncProvider(
                     eps.find((e) => e.episodeNumber === row.episodeNumber)?.providerEpisodeId ??
                     `${item.providerDramaId}:${row.episodeNumber}`,
                   isPrimary: true,
-                }))
+                })),
               )
               .onConflictDoNothing();
           }
@@ -122,6 +150,22 @@ export async function syncProvider(
             .update(dramas)
             .set({ episodeCount: have.size + toInsert.length, updatedAt: new Date() })
             .where(eq(dramas.id, dramaId));
+
+          // Re-apply free/VIP threshold. 10% of episodes are free, minimum 2.
+          const total = have.size + toInsert.length;
+          const threshold = Math.max(2, Math.ceil(total * 0.1));
+          await db
+            .update(episodes)
+            .set({ accessType: "free" })
+            .where(
+              and(eq(episodes.dramaId, dramaId), sql`${episodes.episodeNumber} <= ${threshold}`),
+            );
+          await db
+            .update(episodes)
+            .set({ accessType: "vip" })
+            .where(
+              and(eq(episodes.dramaId, dramaId), sql`${episodes.episodeNumber} > ${threshold}`),
+            );
         }
       } catch {
         result.errorCount++;
@@ -130,7 +174,10 @@ export async function syncProvider(
 
     await db
       .update(providers)
-      .set({ lastSyncAt: new Date(), lastSyncStatus: result.errorCount === 0 ? "success" : "partial" })
+      .set({
+        lastSyncAt: new Date(),
+        lastSyncStatus: result.errorCount === 0 ? "success" : "partial",
+      })
       .where(eq(providers.id, providerRow.id));
 
     await db.insert(syncLogs).values({

@@ -42,7 +42,7 @@ export default function Profile() {
     supabase.auth.getSession().then(({ data }) => {
       const token = data.session?.access_token;
       if (!token) return;
-      
+
       // Fetch VIP state
       api<{ user: { isVip: boolean } }>("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
@@ -109,16 +109,27 @@ export default function Profile() {
     return (
       <div className="min-h-screen bg-[#030303] flex flex-col items-center justify-center p-6 text-zinc-100">
         <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 glow-sunset mb-4">
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
           </svg>
         </div>
         <h2 className="text-lg font-bold text-white">Akun Dramaplay</h2>
         <p className="text-xs text-zinc-400 text-center mt-1.5 max-w-xs leading-relaxed">
-          Silakan masuk atau daftarkan akun baru Anda untuk menikmati fitur simpan favorit, riwayat menonton, dan akses VIP.
+          Silakan masuk atau daftarkan akun baru Anda untuk menikmati fitur simpan favorit, riwayat
+          menonton, dan akses VIP.
         </p>
-        <Link 
-          to="/auth" 
+        <Link
+          to="/auth"
           className="w-full max-w-xs mt-6 py-3 rounded-full bg-gradient-sunset text-white text-center font-bold text-sm tracking-wide shadow-lg shadow-rose-500/15 active:scale-95 duration-100"
         >
           Masuk / Daftar Akun
@@ -130,9 +141,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-[#030303] text-zinc-100 p-4 pb-12">
       {/* Page Title */}
-      <h1 className="text-xl font-extrabold text-white tracking-tight mb-4 mt-2">
-        Profil Saya
-      </h1>
+      <h1 className="text-xl font-extrabold text-white tracking-tight mb-4 mt-2">Profil Saya</h1>
 
       {/* User Header Profile Card */}
       <div className="glass-card rounded-2xl p-5 mb-5 flex flex-col items-center text-center">
@@ -141,7 +150,7 @@ export default function Profile() {
           {email.slice(0, 2).toUpperCase()}
         </div>
         <h2 className="text-sm font-bold text-zinc-100">{email}</h2>
-        
+
         {/* VIP Status */}
         {userVip ? (
           <div className="mt-2.5 flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-gold text-zinc-950 font-extrabold text-[10px] uppercase tracking-wider glow-gold shadow-md">
@@ -181,7 +190,7 @@ export default function Profile() {
         <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
           Riwayat Pembayaran
         </h3>
-        
+
         {payments.length === 0 ? (
           <div className="text-center py-6 border border-dashed border-zinc-900 rounded-2xl bg-zinc-900/10">
             <p className="text-xs text-zinc-500">Belum ada riwayat transaksi.</p>
@@ -189,19 +198,17 @@ export default function Profile() {
         ) : (
           <div className="space-y-2">
             {payments.map((p) => (
-              <div 
-                key={p.id} 
+              <div
+                key={p.id}
                 className="bg-zinc-900/60 border border-zinc-900 rounded-xl p-3.5 flex items-center justify-between text-xs"
               >
                 <div>
                   <p className="font-bold text-zinc-200">
                     Rp {p.amountIdr.toLocaleString("id-ID")}
                   </p>
-                  <p className="text-[10px] text-zinc-500 mt-0.5">
-                    {formatDate(p.createdAt)}
-                  </p>
+                  <p className="text-[10px] text-zinc-500 mt-0.5">{formatDate(p.createdAt)}</p>
                 </div>
-                
+
                 {getStatusBadge(p.status)}
               </div>
             ))}
@@ -209,8 +216,20 @@ export default function Profile() {
         )}
       </div>
 
+      <div className="mt-8 flex justify-center gap-4 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+        <Link to="/terms" className="hover:text-zinc-300">
+          Ketentuan
+        </Link>
+        <Link to="/privacy" className="hover:text-zinc-300">
+          Privasi
+        </Link>
+        <Link to="/refund" className="hover:text-zinc-300">
+          Refund
+        </Link>
+      </div>
+
       {/* Log Out button */}
-      <div className="mt-10">
+      <div className="mt-8">
         <button
           onClick={signOut}
           className="w-full py-3 rounded-xl border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 hover:bg-zinc-900/30 text-xs font-bold transition-all duration-200"

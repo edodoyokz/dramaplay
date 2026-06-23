@@ -8,4 +8,6 @@ export interface Env {
   SUPABASE_SERVICE_ROLE_KEY: string;
   PAKASIR_API_KEY: string;
   PAKASIR_PROJECT_SLUG: string;
+  RESEND_API_KEY?: string;
+  REPORT_EMAIL_TO?: string;
 }

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { createDb, payments, subscriptions, plans } from "@dramaplay/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { Env } from "../env";
 
 export const pakasir = new Hono<{ Bindings: Env }>();
@@ -29,7 +29,7 @@ pakasir.post("/webhook", async (c) => {
   const verified = await verifyTransaction(c.env, body.order_id, body.amount);
   if (!verified) return c.json({ error: "transaction_not_completed" }, 400);
 
-  await db
+  const [paidPayment] = await db
     .update(payments)
     .set({
       status: "paid",
@@ -37,14 +37,17 @@ pakasir.post("/webhook", async (c) => {
       payload: JSON.stringify(body),
       paidAt: body.completed_at ? new Date(body.completed_at) : new Date(),
     })
-    .where(eq(payments.id, payment.id));
+    .where(and(eq(payments.id, payment.id), eq(payments.status, "pending")))
+    .returning();
 
-  const [plan] = await db.select().from(plans).where(eq(plans.id, payment.planId));
+  if (!paidPayment) return c.json({ ok: true });
+
+  const [plan] = await db.select().from(plans).where(eq(plans.id, paidPayment.planId));
   if (plan) {
     const now = new Date();
     const expires = new Date(now.getTime() + plan.durationDays * 86400000);
     await db.insert(subscriptions).values({
-      userId: payment.userId,
+      userId: paidPayment.userId,
       planId: plan.id,
       status: "active",
       startedAt: now,

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { posterSrc } from "../lib/img";
+import { SeoHead } from "../lib/seo";
 
 interface Episode {
   id: string;
@@ -72,6 +73,12 @@ export default function DramaDetail() {
 
   return (
     <div className="min-h-screen bg-[#030303] text-zinc-100 pb-10">
+      <SeoHead
+        title={drama.title}
+        description={drama.synopsis || `Nonton ${drama.title} — ${episodes.length} episode gratis. `}
+        canonical={`https://dramaplay.my.id/drama/${drama.slug}`}
+        ogImage={drama.posterUrl ? posterSrc(drama.posterUrl) : undefined}
+      />
       {/* Immersive Blurred Header Image */}
       <div className="relative w-full h-[260px] bg-zinc-950 overflow-hidden">
         {/* Blurred Backdrop */}
@@ -87,7 +94,7 @@ export default function DramaDetail() {
         {/* Floating Controls */}
         <div className="absolute top-4 left-4 z-20">
           <button 
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="w-10 h-10 rounded-full bg-black/55 backdrop-blur-md border border-zinc-800 flex items-center justify-center text-white hover:bg-black/80 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">

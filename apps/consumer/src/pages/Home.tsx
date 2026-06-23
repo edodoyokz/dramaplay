@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
+import { SeoHead } from "../lib/seo";
 
 interface Drama {
   id: string;
@@ -84,6 +85,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#030303] text-zinc-100 pb-12">
+      <SeoHead title="Streaming Drama Pendek Indonesia Gratis" description="Nonton dracin, short drama, dan series vertikal terbaik gratis setiap hari. Koleksi lengkap drama China, Korea, dan Indonesia." />
       {/* Immersive Glass Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-black/60 backdrop-blur-md border-b border-zinc-900/60">
         <div className="flex items-center gap-2" onClick={() => navigate("/")}>

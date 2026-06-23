@@ -8,19 +8,20 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "smoke:providers": "tsx scripts/smoke-sapimu-providers.ts"
+    "smoke:providers": "tsx scripts/smoke-sapimu-providers.ts",
+    "smoke:subscription": "tsx scripts/smoke-subscription.ts"
   },
   "dependencies": {
     "@dramaplay/db": "workspace:*",
     "@dramaplay/shared": "workspace:*",
     "@supabase/supabase-js": "^2.45.4",
-    "drizzle-orm": "^0.36.0",
+    "drizzle-orm": "^0.45.2",
     "hono": "^4.6.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241011.0",
     "tsx": "^4.22.4",
-    "vitest": "^2.1.3",
-    "wrangler": "^3.80.0"
+    "vitest": "^3.2.6",
+    "wrangler": "^4.103.0"
   }
 }

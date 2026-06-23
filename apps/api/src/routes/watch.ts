@@ -1,5 +1,14 @@
 import { Hono } from "hono";
-import { createDb, dramas, episodes, subtitles, episodeProviders, dramaProviders, providers, type Database } from "@dramaplay/db";
+import {
+  createDb,
+  dramas,
+  episodes,
+  subtitles,
+  episodeProviders,
+  dramaProviders,
+  providers,
+  type Database,
+} from "@dramaplay/db";
 import { and, eq } from "drizzle-orm";
 import type { Env } from "../env";
 import { buildProviders } from "../providers/registry";
@@ -13,7 +22,10 @@ const watchCache = new Map<string, { data: unknown; ts: number }>();
 const CACHE_TTL = 60_000;
 const CACHE_MAX = 500;
 
-async function getPrimaryProvider(db: Database, dramaId: string): Promise<{ code: string; name: string } | null> {
+async function getPrimaryProvider(
+  db: Database,
+  dramaId: string,
+): Promise<{ code: string; name: string } | null> {
   const [row] = await db
     .select({ code: providers.code, name: providers.name })
     .from(dramaProviders)
@@ -29,19 +41,27 @@ async function makeStreamResponse(
   dramaId: string,
   drama: typeof dramas.$inferSelect,
   episode: typeof episodes.$inferSelect,
-  providerInfo: { code: string; name: string } | null
+  providerInfo: { code: string; name: string } | null,
 ) {
   const [[primary], [nextEpisode], [sub]] = await Promise.all([
     db.select().from(episodeProviders).where(eq(episodeProviders.episodeId, episode.id)).limit(1),
     db
       .select({ episodeNumber: episodes.episodeNumber })
       .from(episodes)
-      .where(and(eq(episodes.dramaId, drama.id), eq(episodes.episodeNumber, episode.episodeNumber + 1)))
+      .where(
+        and(eq(episodes.dramaId, drama.id), eq(episodes.episodeNumber, episode.episodeNumber + 1)),
+      )
       .limit(1),
     db
       .select()
       .from(subtitles)
-      .where(and(eq(subtitles.episodeId, episode.id), eq(subtitles.language, "id"), eq(subtitles.isEnabled, true)))
+      .where(
+        and(
+          eq(subtitles.episodeId, episode.id),
+          eq(subtitles.language, "id"),
+          eq(subtitles.isEnabled, true),
+        ),
+      )
       .limit(1),
   ]);
 
@@ -53,10 +73,10 @@ async function makeStreamResponse(
     : null;
 
   if (!source?.streamUrl) {
-    return new Response(
-      JSON.stringify({ error: "stream_unavailable", provider: providerInfo }),
-      { status: 502, headers: { "content-type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "stream_unavailable", provider: providerInfo }), {
+      status: 502,
+      headers: { "content-type": "application/json" },
+    });
   }
 
   return new Response(
@@ -72,7 +92,7 @@ async function makeStreamResponse(
       nextEpisode: nextEpisode?.episodeNumber ?? null,
       provider: providerInfo ?? undefined,
     }),
-    { status: 200, headers: { "content-type": "application/json" } }
+    { status: 200, headers: { "content-type": "application/json" } },
   );
 }
 
@@ -98,16 +118,25 @@ watch.get("/:slug/:n", async (c) => {
   if (!episode) return c.json({ error: "not_found" }, 404);
 
   // Fetch provider badge concurrently with the episode lookup.
-  const [providerInfo] = await Promise.all([
-    getPrimaryProvider(db, drama.id),
-  ]);
+  const [providerInfo] = await Promise.all([getPrimaryProvider(db, drama.id)]);
 
   if (episode.accessType === "vip") {
     const auth = c.req.header("Authorization") ?? "";
+    let userId: string | null = null;
     if (auth.startsWith("Bearer ")) {
-      const userId = await getUserId(c.env, auth.slice(7));
-      if (userId && (await isUserVip(db, userId))) {
-        return makeStreamResponse(db, c.env, drama.id, drama, episode, providerInfo);
+      try {
+        userId = await getUserId(c.env, auth.slice(7));
+      } catch {
+        userId = null;
+      }
+    }
+    if (userId) {
+      try {
+        if (await isUserVip(db, userId)) {
+          return makeStreamResponse(db, c.env, drama.id, drama, episode, providerInfo);
+        }
+      } catch {
+        // DB error — fall through to 403 rather than crash
       }
     }
     return c.json({ accessType: "vip", episodeNumber: episode.episodeNumber }, 403);
