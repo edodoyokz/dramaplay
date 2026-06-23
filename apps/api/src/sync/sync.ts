@@ -52,6 +52,7 @@ export async function syncProvider(
   providerCode: string,
   providerBaseUrl: string,
   providerToken?: string,
+  options: { fast?: boolean } = {},
 ): Promise<SyncResult> {
   const db = createDb(dbUrl);
   const adapters = buildProviders(providerBaseUrl, providerToken);
@@ -72,7 +73,9 @@ export async function syncProvider(
         const existing = await db.select().from(dramas).where(eq(dramas.slug, slug)).limit(1);
         let dramaId: string;
 
+        let existingEpisodeCount = 0;
         if (existing.length > 0) {
+          existingEpisodeCount = existing[0].episodeCount;
           const [updated] = await db
             .update(dramas)
             .set({ title: item.title, posterUrl: item.posterUrl, updatedAt: new Date() })
@@ -105,6 +108,10 @@ export async function syncProvider(
             isPrimary: true,
           })
           .onConflictDoNothing();
+
+        // ponytail: daily fast sync only updates catalog/new dramas.
+        // Full episode refresh is slow; run without SYNC_FAST when needed.
+        if (options.fast && existingEpisodeCount > 0) continue;
 
         const eps: ProviderEpisodeSummary[] = await adapter.fetchEpisodes(item.providerDramaId);
         if (eps.length) {

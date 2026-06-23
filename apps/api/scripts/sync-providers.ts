@@ -27,7 +27,7 @@ async function main() {
   for (const code of codes) {
     process.stdout.write(`  syncing ${code}...`);
     try {
-      const r = await syncProvider(dbUrl, code, baseUrl, token);
+      const r = await syncProvider(dbUrl, code, baseUrl, token, { fast: process.env.SYNC_FAST !== "0" });
       console.log(
         ` done: +${r.dramaNew} dramas (${r.dramaUpdated} upd), +${r.episodeNew} eps, ${r.errorCount} errs`
       );
@@ -37,4 +37,9 @@ async function main() {
   }
 }
 
-main();
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

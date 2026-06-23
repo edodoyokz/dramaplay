@@ -74,6 +74,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PROVIDER_BASE_URL: ${{ secrets.PROVIDER_BASE_URL }}
           PROVIDER_API_TOKEN: ${{ secrets.PROVIDER_API_TOKEN }}
+          SYNC_FAST: "1"
         run: |
           set -e
           cd apps/api
