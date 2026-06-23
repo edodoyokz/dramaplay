@@ -10,5 +10,5 @@ ENVIRONMENT = "production"
 pattern = "api.dramaplay.my.id/*"
 zone_name = "dramaplay.my.id"
 
-[[triggers]]
+[triggers]
 crons = ["*/15 * * * *"]
