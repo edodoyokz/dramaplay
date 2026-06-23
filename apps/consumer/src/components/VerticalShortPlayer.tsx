@@ -227,6 +227,7 @@ export default function VerticalShortPlayer({
   }, []);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const needsUserAction = playBlocked || hasError;
 
   return (
     <div
@@ -259,7 +260,7 @@ export default function VerticalShortPlayer({
         </div>
       ) : null}
 
-      {(playBlocked || hasError) ? (
+      {needsUserAction ? (
         <button
           className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/45 text-white"
           onClick={(e) => {
@@ -281,7 +282,7 @@ export default function VerticalShortPlayer({
       {/* ── Tap Feedback Icon ──────────────────────────────────────── */}
       <div
         className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-          showIcon ? "opacity-100" : "opacity-0"
+          showIcon && !needsUserAction ? "opacity-100" : "opacity-0"
         }`}
       >
         <div className="w-16 h-16 rounded-full bg-black/55 backdrop-blur-sm flex items-center justify-center shadow-xl">
