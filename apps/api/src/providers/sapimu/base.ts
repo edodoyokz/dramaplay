@@ -213,10 +213,11 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
 const WRAPPER_KEYS = ["items", "dramas", "books", "list", "chapters", "episodes", "videos", "rows", "data", "lists"];
 const TOP_KEYS = ["data", "sections", "banners", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists", "bookList"];
 const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id", "t_book_id", "collectionId", "collection_id", "seriesId", "series_id"];
+export const BACKDROP_FIELDS = ["horizontalCover", "backdrop", "backdropUrl", "backdrop_url", "banner", "bannerUrl", "horizontal_cover", "h_cover", "coverHorizontal"];
 const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title", "chapter_name"];
 const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover", "coverWap"];
-const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc"];
-const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters", "totalChapterNum"];
+export const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc"];
+export const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters", "totalChapterNum"];
 
 export function pickString(row: Row, fields: string[]): string | undefined {
   for (const f of fields) {
@@ -236,7 +237,7 @@ export function pickNumber(row: Row, fields: string[]): number | undefined {
   return undefined;
 }
 
-function pickGenres(row: Row): string[] | undefined {
+export function pickGenres(row: Row): string[] | undefined {
   for (const f of ["tag", "tags", "genre", "genres", "content_tags", "category", "categories", "labels", "categoryNames", "theme", "content_tags"]) {
     const v = row[f];
     if (Array.isArray(v) && v.length) return v.map(String);
@@ -244,11 +245,10 @@ function pickGenres(row: Row): string[] | undefined {
   return undefined;
 }
 
-const EP_ID_FIELDS = ["episodeId", "episode_id", "chapterId", "chapter_id", "videoId", "video_id", "fileId", "file_id"];
-const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter", "serial_number", "serialNumber"];
+export const EP_ID_FIELDS = ["episodeId", "episode_id", "chapterId", "chapter_id", "videoId", "video_id", "fileId", "file_id"];
+export const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter", "serial_number", "serialNumber"];
 
-/** Find the first object that looks like a drama row (has both a title and an id). */
-function findDetailRow(data: unknown): Row | null {
+export function findDetailRow(data: unknown): Row | null {
   function walk(o: unknown): Row | null {
     if (!o || typeof o !== "object") return null;
     if (Array.isArray(o)) {
@@ -264,7 +264,7 @@ function findDetailRow(data: unknown): Row | null {
 }
 
 /** Find the first array whose items look like episodes (have an episode id or number). */
-function findEpisodeList(data: unknown): Row[] {
+export function findEpisodeList(data: unknown): Row[] {
   function walk(o: unknown): Row[] {
     if (Array.isArray(o)) {
       if (o.length && typeof o[0] === "object" && o[0] !== null) {
@@ -316,7 +316,7 @@ export interface SapimuAdapterConfig {
   episodePlayField?: string[];
 }
 
-function rowToSummary(row: Row): ProviderDramaSummary {
+export function rowToSummary(row: Row): ProviderDramaSummary {
   return {
     providerDramaId: String(pickString(row, ID_FIELDS) ?? ""),
     title: String(pickString(row, TITLE_FIELDS) ?? "Untitled"),
@@ -325,7 +325,7 @@ function rowToSummary(row: Row): ProviderDramaSummary {
   };
 }
 
-function rowsToSummaries(data: unknown): ProviderDramaSummary[] {
+export function rowsToSummaries(data: unknown): ProviderDramaSummary[] {
   return unique(firstArray(data).map((r) => rowToSummary(r as Row)), (x) => x.providerDramaId);
 }
 
