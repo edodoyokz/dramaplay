@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findStreamUrl, streamTypeFromUrl, firstArray, s, n, unique } from "../src/providers/sapimu/base";
+import { findStreamUrl, streamTypeFromUrl, firstArray, s, n, unique, pickString, pickNumber, findSubtitleUrl } from "../src/providers/sapimu/base";
 
 describe("Sapimu base helpers", () => {
   describe("findStreamUrl", () => {
@@ -85,5 +85,17 @@ describe("Sapimu base helpers", () => {
     it("keeps first occurrence", () => {
       expect(unique([{ id: "a", v: 1 }, { id: "a", v: 2 }], (x) => x.id)).toEqual([{ id: "a", v: 1 }]);
     });
+  });
+});
+
+describe("field pickers", () => {
+  it("pickString returns first present non-empty string field", () => {
+    expect(pickString({ a: "", b: "x" }, ["a", "b"])).toBe("x");
+  });
+  it("pickNumber coerces numeric string", () => {
+    expect(pickNumber({ n: "3" }, ["n"])).toBe(3);
+  });
+  it("findSubtitleUrl finds .vtt in subtitle_list", () => {
+    expect(findSubtitleUrl({ subtitle_list: [{ vtt: "https://x/a.vtt" }] })).toBe("https://x/a.vtt");
   });
 });

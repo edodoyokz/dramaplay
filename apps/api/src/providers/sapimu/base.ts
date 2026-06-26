@@ -103,15 +103,29 @@ export function streamTypeFromUrl(url: string): ProviderStreamSource["streamType
   return "other";
 }
 
-function findSubtitleUrl(value: unknown, preferred = "id"): string | undefined {
+// Subtitle URL fields vary per provider. Prefer .vtt (browser <track> needs
+// WebVTT; SRT does not render) and fall back to a plain url/subtitle field.
+const SUBTITLE_URL_FIELDS = ["vtt", "vttUrl", "url", "subtitle", "subtitleUrl", "src", "file"];
+
+function pickSubtitleUrl(row: Row): string | undefined {
+  for (const f of SUBTITLE_URL_FIELDS) {
+    const v = s(row[f]);
+    if (v) return v;
+  }
+  return undefined;
+}
+
+export function findSubtitleUrl(value: unknown, preferred = "id"): string | undefined {
   if (!value || typeof value !== "object") return undefined;
   if (Array.isArray(value)) {
     const rows = value.filter((v): v is Row => !!v && typeof v === "object");
+    // Match the preferred language by lang/language code (e.g. "id-ID").
     const row = rows.find((r) => String(r.lang ?? r.language ?? "").toLowerCase().startsWith(preferred)) ?? rows[0];
-    return s(row?.url);
+    return row ? pickSubtitleUrl(row) : undefined;
   }
   const row = value as Row;
-  for (const key of ["subtitles", "subtitle", "captions", "caption"]) {
+  // subtitle_list: dramawave; others use subtitles/subtitle/captions/caption.
+  for (const key of ["subtitle_list", "subtitles", "subtitle", "captions", "caption"]) {
     const found = findSubtitleUrl(row[key], preferred);
     if (found) return found;
   }
@@ -199,12 +213,12 @@ export function unique<T>(items: T[], key: (item: T) => string): T[] {
 const WRAPPER_KEYS = ["items", "dramas", "books", "list", "chapters", "episodes", "videos", "rows", "data", "lists"];
 const TOP_KEYS = ["data", "sections", "banners", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists", "bookList"];
 const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id", "t_book_id", "collectionId", "collection_id", "seriesId", "series_id"];
-const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title"];
+const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title", "chapter_name"];
 const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover", "coverWap"];
 const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc"];
 const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters", "totalChapterNum"];
 
-function pickString(row: Row, fields: string[]): string | undefined {
+export function pickString(row: Row, fields: string[]): string | undefined {
   for (const f of fields) {
     const v = row[f];
     if (typeof v === "string" && v) return v;
@@ -213,7 +227,7 @@ function pickString(row: Row, fields: string[]): string | undefined {
   return undefined;
 }
 
-function pickNumber(row: Row, fields: string[]): number | undefined {
+export function pickNumber(row: Row, fields: string[]): number | undefined {
   for (const f of fields) {
     const v = row[f];
     if (typeof v === "number") return v;
@@ -374,7 +388,8 @@ export function createSapimuAdapter(
       const list = findEpisodeList(data);
       if (list.length) {
         return list.map((e, i) => {
-          const num = pickNumber(e, EP_NUM_FIELDS) ?? i + 1;
+          const pickedNum = pickNumber(e, EP_NUM_FIELDS);
+          const num = pickedNum && pickedNum > 0 ? pickedNum : i + 1;
           const playParam = pickString(e, cfg.episodePlayField ?? []) ?? String(num);
           return {
             providerEpisodeId: `${id}:${playParam}`,
@@ -405,6 +420,19 @@ export function createSapimuAdapter(
         };
       }
       const data = await this.get<unknown>(playPath);
+      // ponytail: melolo /multi-video returns ALL episodes; filter to the
+      // requested one so findStreamUrl picks the right video.
+      if (code === "melolo" && data && typeof data === "object" && Array.isArray((data as any).episodes)) {
+        const epNum = parseInt(ep, 10);
+        const match = (data as any).episodes.find((e: any) => e.index === epNum);
+        if (match) {
+          const url = findStreamUrl(match);
+          if (url) {
+            const subtitleUrl = findSubtitleUrl(match);
+            return { streamUrl: url, streamType: streamTypeFromUrl(url), subtitleUrl };
+          }
+        }
+      }
       const url = findStreamUrl(data);
       if (!url) return null;
       let subtitleUrl = findSubtitleUrl(data);
