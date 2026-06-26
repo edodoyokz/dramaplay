@@ -169,8 +169,8 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
   async resolveStream(episodeId: string): Promise<ProviderStreamSource | null> {
     const [id, ep = "1"] = episodeId.split(":");
     const epNum = parseInt(ep, 10);
-    const ctx = this.ctx({ episodeId, episodeNumber: epNum });
     const playPath = this.def.endpoints.play.replace("{id}", q(id)).replace("{ep}", q(ep));
+    const ctx = this.ctx({ episodeId, episodeNumber: epNum, _playPath: playPath });
 
     if (this.def.rawStream) {
       return {
@@ -188,7 +188,8 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
 
     const url = findStreamUrl(payload);
     if (!url) return null;
-    const subtitleUrl = this.def.overrides?.extractSubtitle?.(data, ctx)?.url ?? findSubtitleUrl(payload);
+    const customSub = await Promise.resolve(this.def.overrides?.extractSubtitle?.(data, ctx));
+    const subtitleUrl = customSub?.url ?? findSubtitleUrl(payload);
     return { streamUrl: url, streamType: streamTypeFromUrl(url), subtitleUrl };
   }
 

@@ -13,9 +13,9 @@ export interface ProviderSubtitle {
 }
 
 export interface FieldMap {
-  id: string[];
-  title: string[];
-  poster: string[];
+  id?: string[];
+  title?: string[];
+  poster?: string[];
   backdrop?: string[];
   episodeNumber?: string[];
 }
@@ -37,6 +37,8 @@ export interface SapimuCtx {
   get<T>(path: string): Promise<T>;
   episodeId?: string;
   episodeNumber?: number;
+  /** Resolved play endpoint path (available in stream overrides). */
+  _playPath?: string;
   fields: FieldMap;
 }
 
@@ -46,7 +48,7 @@ export interface SapimuOverrides {
   extractEpisodes?(data: unknown, ctx: SapimuCtx): ProviderEpisodeSummary[] | undefined;
   selectStreamPayload?(data: unknown, ctx: SapimuCtx): unknown;
   normalizeStream?(data: unknown, ctx: SapimuCtx): ProviderStreamSource | undefined;
-  extractSubtitle?(data: unknown, ctx: SapimuCtx): ProviderSubtitle | undefined;
+  extractSubtitle?(data: unknown, ctx: SapimuCtx): ProviderSubtitle | Promise<ProviderSubtitle | undefined> | undefined;
 }
 
 export interface SapimuProviderDef {
