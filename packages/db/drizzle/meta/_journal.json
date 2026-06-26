@@ -15,6 +15,20 @@
       "when": 1782179260000,
       "tag": "0001_payment_reference_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782350652894,
+      "tag": "0002_odd_wendell_rand",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782437401982,
+      "tag": "0003_broken_oracle",
+      "breakpoints": true
     }
   ]
 }

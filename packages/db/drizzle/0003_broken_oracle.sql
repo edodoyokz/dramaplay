@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "subtitles_episode_lang_source_uq" ON "subtitles" USING btree ("episode_id","language","source");
