@@ -12,6 +12,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import type { Env } from "../env";
 import { buildProviders } from "../providers/registry";
+import { subtitleFormatFromUrl, isRenderableSubtitle } from "../providers/sapimu/core/media";
 import { isUserVip } from "../lib/entitlements";
 import { getUserId } from "../middleware/auth";
 
@@ -79,11 +80,35 @@ async function makeStreamResponse(
     });
   }
 
+  // Write-through: persist subtitle to DB for future requests if not already stored.
+  if (source.subtitleUrl && !sub) {
+    const fmt = subtitleFormatFromUrl(source.subtitleUrl);
+    await db
+      .insert(subtitles)
+      .values({
+        episodeId: episode.id,
+        language: source.subtitleLanguage ?? "id",
+        source: "provider",
+        format: fmt,
+        url: source.subtitleUrl,
+        isDefault: true,
+      })
+      .onConflictDoNothing()
+      .catch(() => {}); // ponytail: best-effort, don't block response
+  }
+
+  // SRT guard: only serve renderable subtitles (VTT) to browser <track>
+  const servedSubUrl = sub?.url
+    ? (isRenderableSubtitle(sub.url) ? sub.url : undefined)
+    : source.subtitleUrl
+      ? (isRenderableSubtitle(source.subtitleUrl) ? source.subtitleUrl : undefined)
+      : undefined;
+
   return new Response(
     JSON.stringify({
       streamUrl: source.streamUrl,
       streamType: source.streamType ?? "mp4",
-      subtitleUrl: sub?.url ?? source.subtitleUrl ?? undefined,
+      subtitleUrl: servedSubUrl,
       posterUrl: drama.posterUrl ?? undefined,
       dramaTitle: drama.title,
       dramaSlug: drama.slug,

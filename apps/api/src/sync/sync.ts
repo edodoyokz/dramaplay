@@ -6,10 +6,12 @@ import {
   dramaProviders,
   episodes,
   episodeProviders,
+  subtitles,
 } from "@dramaplay/db";
 import { and, eq, sql } from "drizzle-orm";
 import { buildProviders } from "../providers/registry";
 import { slugifyTitle } from "../lib/slug";
+import { subtitleFormatFromUrl } from "../providers/sapimu/core/media";
 import type { ProviderDramaSummary, ProviderEpisodeSummary } from "@dramaplay/shared";
 
 /**
@@ -80,7 +82,7 @@ export async function syncProvider(
           existingEpisodeCount = existing[0].episodeCount;
           const [updated] = await db
             .update(dramas)
-            .set({ title: item.title, posterUrl: item.posterUrl, updatedAt: new Date() })
+            .set({ title: item.title, posterUrl: item.posterUrl, backdropUrl: item.backdropUrl, updatedAt: new Date() })
             .where(eq(dramas.id, existing[0].id))
             .returning();
           dramaId = updated.id;
@@ -125,8 +127,9 @@ export async function syncProvider(
             .where(eq(episodes.dramaId, dramaId));
           const have = new Set(existing.map((e) => e.n));
           const toInsert = eps.filter((e) => !have.has(e.episodeNumber));
+          let inserted: { id: string; episodeNumber: number }[] = [];
           if (toInsert.length) {
-            const inserted = await db
+            inserted = await db
               .insert(episodes)
               .values(
                 toInsert.map((ep) => ({
@@ -175,8 +178,37 @@ export async function syncProvider(
             .where(
               and(eq(episodes.dramaId, dramaId), sql`${episodes.episodeNumber} > ${threshold}`),
             );
+
+          // ponytail: resolve subtitles for newly-inserted FREE episodes only.
+          // VIP episodes get subtitles via watch write-through.
+          if (options.engine === "v2" && toInsert.length) {
+            const freeNew = inserted.filter((r: { id: string; episodeNumber: number }) => r.episodeNumber <= threshold);
+            for (const row of freeNew) {
+              try {
+                const epProvider = eps.find((e) => e.episodeNumber === row.episodeNumber);
+                if (!epProvider) continue;
+                const stream = await adapter.resolveStream(epProvider.providerEpisodeId);
+                if (!stream?.subtitleUrl) continue;
+                const fmt = subtitleFormatFromUrl(stream.subtitleUrl);
+                await db
+                  .insert(subtitles)
+                  .values({
+                    episodeId: row.id,
+                    language: stream.subtitleLanguage ?? "id",
+                    source: "provider",
+                    format: fmt,
+                    url: stream.subtitleUrl,
+                    isDefault: true,
+                  })
+                  .onConflictDoNothing();
+              } catch (e) {
+                console.error(`[sync] subtitle ${providerCode}/${item.providerDramaId}:${row.episodeNumber}: ${e}`);
+              }
+            }
+          }
         }
-      } catch {
+      } catch (e) {
+        console.error(`[sync] ${providerCode}/${item.providerDramaId}: ${e}`);
         result.errorCount++;
       }
     }
