@@ -5,6 +5,8 @@ main = "src/index.ts"
 
 [vars]
 ENVIRONMENT = "production"
+CONSUMER_URL = "https://dramaplay.my.id"
+SAPIMU_PROVIDER_ENGINE = "v2"
 
 [[routes]]
 pattern = "api.dramaplay.my.id/*"
