@@ -55,6 +55,19 @@ describe("SapimuPresetAdapter", () => {
     expect(await a.resolveStream("1:1")).toBeNull();
   });
 
+  it("def.fields.id overrides global — shortmax 'code' field", async () => {
+    const d = defineSapimuProvider({
+      ...def,
+      code: "shortmax",
+      fields: { id: ["code"], title: ["name"], poster: ["cover"] },
+    });
+    const a = new SapimuPresetAdapter(d, "http://base", "tok");
+    // @ts-expect-error override get
+    a.get = async () => [{ code: "abc", name: "X", cover: "c" }];
+    const out = await a.fetchTrending();
+    expect(out[0].providerDramaId).toBe("abc");
+  });
+
   it("override selectStreamPayload is used for stream extraction", async () => {
     const d = defineSapimuProvider({
       ...def,

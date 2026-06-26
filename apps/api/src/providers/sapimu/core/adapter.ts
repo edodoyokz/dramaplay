@@ -11,7 +11,10 @@ import {
   COUNT_FIELDS,
   EP_ID_FIELDS,
   EP_NUM_FIELDS,
+  ID_FIELDS,
+  POSTER_FIELDS,
   SYNOPSIS_FIELDS,
+  TITLE_FIELDS,
   findDetailRow,
   findEpisodeList,
   findStreamUrl,
@@ -19,7 +22,6 @@ import {
   firstArray,
   pickNumber,
   pickString,
-  rowToSummary,
   streamTypeFromUrl,
   unique,
 } from "../base";
@@ -29,13 +31,25 @@ type Row = Record<string, unknown>;
 
 const q = (v: string) => encodeURIComponent(v);
 
-function backdropOf(row: Row, def: SapimuProviderDef): string | undefined {
-  return pickString(row, [...(def.fields.backdrop ?? []), ...BACKDROP_FIELDS]);
+/** Merge per-provider field names (tried first) with global common-name fallbacks. */
+function fieldsFor(def: SapimuProviderDef) {
+  return {
+    id: [...(def.fields.id ?? []), ...ID_FIELDS],
+    title: [...(def.fields.title ?? []), ...TITLE_FIELDS],
+    poster: [...(def.fields.poster ?? []), ...POSTER_FIELDS],
+    backdrop: [...(def.fields.backdrop ?? []), ...BACKDROP_FIELDS],
+    episodeNumber: [...(def.fields.episodeNumber ?? []), ...EP_NUM_FIELDS],
+  };
 }
 
-/** Summary with backdrop layered on top of the shared rowToSummary. */
 function rowToSummaryV2(row: Row, def: SapimuProviderDef): ProviderDramaSummary {
-  return { ...rowToSummary(row), backdropUrl: backdropOf(row, def) };
+  const f = fieldsFor(def);
+  return {
+    providerDramaId: String(pickString(row, f.id) ?? ""),
+    title: String(pickString(row, f.title) ?? "Untitled"),
+    posterUrl: pickString(row, f.poster),
+    backdropUrl: pickString(row, f.backdrop),
+  };
 }
 
 function rowsToSummariesV2(data: unknown, def: SapimuProviderDef): ProviderDramaSummary[] {
@@ -111,6 +125,7 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
     const row = findDetailRow(data);
     if (!row) return null;
     const episodes = await this.fetchEpisodes(id);
+    const f = fieldsFor(this.def);
     return {
       ...rowToSummaryV2(row, this.def),
       synopsis: pickString(row, SYNOPSIS_FIELDS),
@@ -128,15 +143,16 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
     const path = (this.def.endpoints.episodes ?? this.def.endpoints.detail).replace("{id}", q(id));
     const data = await this.get<unknown>(path);
     const list = findEpisodeList(data);
+    const f = fieldsFor(this.def);
     if (list.length) {
       return list.map((e, i) => {
-        const pickedNum = pickNumber(e, EP_NUM_FIELDS);
+        const pickedNum = pickNumber(e, f.episodeNumber);
         const num = pickedNum && pickedNum > 0 ? pickedNum : i + 1;
         const playParam = pickString(e, this.def.episodePlayField ?? []) ?? String(num);
         return {
           providerEpisodeId: `${id}:${playParam}`,
           episodeNumber: num,
-          title: pickString(e, ["title", "name", "chapter_name", "book_sub_title"]) ?? `Episode ${num}`,
+          title: pickString(e, f.title) ?? `Episode ${num}`,
         };
       });
     }
