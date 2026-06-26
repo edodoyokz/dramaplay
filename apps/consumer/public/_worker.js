@@ -14,6 +14,10 @@ const ALLOWED_STREAM_DOMAINS = [
   "crazymaplestudios.com",
   "reelshort.com",
   "dramaboxdb.com",
+  "montagehub.xyz",
+  "netshort.com",
+  "tiktokcdn.com",
+  "inicdn.net",
 ];
 
 function isAllowedStreamTarget(raw) {
@@ -45,9 +49,21 @@ export default {
       if (!target) return new Response("missing u", { status: 400 });
       if (!isAllowedStreamTarget(target)) return new Response("forbidden target", { status: 403 });
 
+      // Forward Range so MP4 seeking works: without it the CDN returns the
+      // whole file (200) and the <video> element restarts from 0 on every seek.
+      const range = request.headers.get("Range");
       const upstream = await fetch(target, {
-        headers: { "User-Agent": "Mozilla/5.0", Referer: "https://shorttv.live/" },
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+          Referer: "https://shorttv.live/",
+          ...(range ? { Range: range } : {}),
+        },
       });
+      // Re-validate after redirects: an allowlisted host can 302 to an
+      // arbitrary host, so the final URL must also be on the allowlist.
+      // (SSRF / allowlist-bypass guard.)
+      const finalUrl = upstream.url || target;
+      if (!isAllowedStreamTarget(finalUrl)) return new Response("forbidden redirect", { status: 403 });
       const ct = upstream.headers.get("content-type") ?? "";
       const isManifest = target.includes(".m3u8") || ct.includes("mpegurl");
 
@@ -60,10 +76,16 @@ export default {
         // text/plain + nosniff. Do not relabel MP4 as TS.
         const isTs = target.includes(".ts") || ct.includes("mp2t");
         headers.set("content-type", isTs ? "video/mp2t" : ct || "application/octet-stream");
+        // Pass through byte-range support so seeking works on progressive MP4.
+        headers.set("Accept-Ranges", "bytes");
+        for (const h of ["content-range", "content-length"]) {
+          const v = upstream.headers.get(h);
+          if (v) headers.set(h, v);
+        }
         return new Response(upstream.body, { status: upstream.status, headers });
       }
 
-      const base = new URL(target);
+      const base = new URL(finalUrl);
       const text = await upstream.text();
       const proxy = (ref) => `/stream?u=${encodeURIComponent(new URL(ref, base).toString())}`;
       const rewritten = text
