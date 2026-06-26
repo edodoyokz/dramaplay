@@ -29,12 +29,14 @@ interface SyncResult {
 
 export async function fetchAllProviderSummaries(
   adapter: ReturnType<typeof buildProviders>[string],
+  searchKeywords: string[] = [],
 ): Promise<ProviderDramaSummary[]> {
   const batches = await Promise.all([
     adapter.fetchForYou().then((r) => r.items),
     adapter.fetchTrending(),
     adapter.fetchLatest(),
     adapter.fetchVip(),
+    ...searchKeywords.map((q) => adapter.search(q)),
   ]);
 
   return [
@@ -52,10 +54,10 @@ export async function syncProvider(
   providerCode: string,
   providerBaseUrl: string,
   providerToken?: string,
-  options: { fast?: boolean } = {},
+  options: { fast?: boolean; searchKeywords?: string[]; maxItems?: number; engine?: "v2" | "legacy" } = {},
 ): Promise<SyncResult> {
   const db = createDb(dbUrl);
-  const adapters = buildProviders(providerBaseUrl, providerToken);
+  const adapters = buildProviders(providerBaseUrl, providerToken, { engine: options.engine });
   const adapter = adapters[providerCode];
   if (!adapter) throw new Error(`unknown provider ${providerCode}`);
 
@@ -66,8 +68,8 @@ export async function syncProvider(
   if (!providerRow) throw new Error("provider not registered");
 
   try {
-    const items: ProviderDramaSummary[] = await fetchAllProviderSummaries(adapter);
-    for (const item of items) {
+    const items: ProviderDramaSummary[] = await fetchAllProviderSummaries(adapter, options.searchKeywords);
+    for (const item of options.maxItems ? items.slice(0, options.maxItems) : items) {
       try {
         const slug = providerSlug(providerCode, item.title);
         const existing = await db.select().from(dramas).where(eq(dramas.slug, slug)).limit(1);

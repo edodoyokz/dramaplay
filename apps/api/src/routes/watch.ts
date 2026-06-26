@@ -65,7 +65,7 @@ async function makeStreamResponse(
       .limit(1),
   ]);
 
-  const providers = buildProviders(env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN);
+  const providers = buildProviders(env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN, { engine: env.SAPIMU_PROVIDER_ENGINE });
   const adapter = providerInfo ? providers[providerInfo.code] : Object.values(providers)[0];
 
   const source = adapter

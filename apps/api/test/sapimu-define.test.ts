@@ -25,10 +25,8 @@ describe("defineSapimuProvider", () => {
       defineSapimuProvider({ ...valid, endpoints: { ...valid.endpoints, play: "" } as never }),
     ).toThrow();
   });
-  it("throws on missing required field", () => {
-    expect(() =>
-      defineSapimuProvider({ ...valid, fields: { id: [], title: ["t"], poster: ["c"] } }),
-    ).toThrow();
+  it("accepts empty fields (global fallbacks apply)", () => {
+    expect(defineSapimuProvider({ ...valid, fields: {} }).code).toBe("x");
   });
   it("throws on missing subtitlePolicy", () => {
     expect(() =>
