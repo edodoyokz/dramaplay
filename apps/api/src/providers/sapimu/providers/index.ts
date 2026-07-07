@@ -1,5 +1,5 @@
 /**
- * Provider V2 registry: builds all 9 provider adapters from modular definitions.
+ * Provider V2 registry: builds all provider adapters from modular definitions.
  * ponytail: 8 use SapimuPresetAdapter from defineSapimuProvider; goodshort keeps its custom adapter.
  */
 import type { ProviderAdapter } from "@dramaplay/shared";
@@ -14,6 +14,8 @@ import { pinedrama } from "./pinedrama";
 import { reelshort } from "./reelshort";
 import { melolo } from "./melolo";
 import { shortmax } from "./shortmax";
+import { freereels } from "./freereels";
+import { idrama } from "./idrama";
 
 export const ALL_PROVIDER_DEFS = [
   dramawave,
@@ -24,6 +26,8 @@ export const ALL_PROVIDER_DEFS = [
   reelshort,
   melolo,
   shortmax,
+  freereels,
+  idrama,
 ] as const;
 
 export function buildV2Providers(baseUrl: string, token: string): Record<string, ProviderAdapter> {
@@ -45,4 +49,6 @@ export {
   reelshort,
   melolo,
   shortmax,
+  freereels,
+  idrama,
 };

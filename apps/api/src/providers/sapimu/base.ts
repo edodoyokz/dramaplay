@@ -32,6 +32,21 @@ export abstract class SapimuBaseAdapter extends BaseProviderAdapter {
       },
     });
   }
+
+  /**
+   * @internal — public for test double pattern.
+   * POST variant of {@link get} for providers whose play endpoint is a POST
+   * (e.g. idrama `/unlock/:dramaId`). Same auth headers as GET.
+   */
+  post<T>(path: string): Promise<T> {
+    return this.getJson<T>(path, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+  }
 }
 
 /** True if a URL looks like an image (not a video stream). */

@@ -88,4 +88,28 @@ describe("SapimuPresetAdapter", () => {
     const s = await a.resolveStream("5:2");
     expect(s?.streamUrl).toBe("https://x/ep2.mp4");
   });
+
+  it("uses POST for play endpoints when playMethod is POST", async () => {
+    const d = defineSapimuProvider({
+      ...def,
+      code: "postplay",
+      playMethod: "POST",
+    });
+    const a = new SapimuPresetAdapter(d, "http://base", "tok");
+    const calls: string[] = [];
+    // @ts-expect-error override injected post for test (no network)
+    a.post = async (p: string) => {
+      calls.push(p);
+      return { url: "https://x/post.m3u8" };
+    };
+    // @ts-expect-error GET must not be used for POST play provider
+    a.get = async () => {
+      throw new Error("GET should not be called");
+    };
+
+    const s = await a.resolveStream("9:2");
+
+    expect(calls).toEqual(["/p/9/2"]);
+    expect(s).toMatchObject({ streamUrl: "https://x/post.m3u8", streamType: "m3u8" });
+  });
 });

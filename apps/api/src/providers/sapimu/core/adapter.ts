@@ -79,6 +79,7 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
     return {
       code: this.def.code,
       get: <T>(path: string) => this.get<T>(path),
+      post: <T>(path: string) => this.post<T>(path),
       fields: this.def.fields,
       ...partial,
     };
@@ -179,7 +180,8 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
       };
     }
 
-    const data = await this.get<unknown>(playPath);
+    const data =
+      this.def.playMethod === "POST" ? await this.post<unknown>(playPath) : await this.get<unknown>(playPath);
     const payload = this.def.overrides?.selectStreamPayload?.(data, ctx) ?? data;
 
     if (this.def.overrides?.normalizeStream) {

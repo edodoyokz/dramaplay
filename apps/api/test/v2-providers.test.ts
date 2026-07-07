@@ -2,14 +2,16 @@ import { describe, expect, it } from "vitest";
 import { buildV2Providers } from "../src/providers/sapimu/providers";
 
 describe("buildV2Providers", () => {
-  it("returns all 9 provider adapters", () => {
+  it("returns all provider adapters", () => {
     const result = buildV2Providers("https://captain.sapimu.au", "tok");
     const codes = Object.keys(result).sort();
     expect(codes).toEqual([
       "dramaboxbaru",
       "dramanova",
       "dramawave",
+      "freereels",
       "goodshort",
+      "idrama",
       "melolo",
       "netshort",
       "pinedrama",

@@ -35,6 +35,7 @@ export interface EndpointMap {
 export interface SapimuCtx {
   code: string;
   get<T>(path: string): Promise<T>;
+  post<T>(path: string): Promise<T>;
   episodeId?: string;
   episodeNumber?: number;
   /** Resolved play endpoint path (available in stream overrides). */
@@ -62,5 +63,7 @@ export interface SapimuProviderDef {
   rawStream?: boolean;
   /** Field(s) used as the per-episode play param (default: episode number). e.g. ["chapter_id"], ["fileId"]. */
   episodePlayField?: string[];
+  /** HTTP method for the play endpoint. Defaults to "GET"; some providers (idrama unlock) require "POST". */
+  playMethod?: "GET" | "POST";
   overrides?: SapimuOverrides;
 }
