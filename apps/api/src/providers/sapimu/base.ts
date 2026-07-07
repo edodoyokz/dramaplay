@@ -229,10 +229,10 @@ const WRAPPER_KEYS = ["items", "dramas", "books", "list", "chapters", "episodes"
 const TOP_KEYS = ["data", "sections", "banners", "items", "list", "rows", "records", "result", "dramas", "episodes", "cell", "collections", "cell_data", "lists", "bookList"];
 export const ID_FIELDS = ["key", "id", "bookId", "dramaId", "_id", "shortId", "book_id", "drama_id", "t_book_id", "collectionId", "collection_id", "seriesId", "series_id"];
 export const BACKDROP_FIELDS = ["horizontalCover", "backdrop", "backdropUrl", "backdrop_url", "banner", "bannerUrl", "horizontal_cover", "h_cover", "coverHorizontal"];
-export const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title", "chapter_name"];
-export const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover", "coverWap"];
-export const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc"];
-export const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters", "totalChapterNum"];
+export const TITLE_FIELDS = ["title", "name", "bookName", "dramaName", "book_name", "drama_name", "bookTitle", "book_title", "book_sub_title", "chapter_name", "short_play_name"];
+export const POSTER_FIELDS = ["cover", "poster", "image", "thumb", "thumbnail", "coverUrl", "posterUrl", "img", "pic", "book_pic", "book_cover", "cover_pic", "thumb_url", "first_chapter_cover", "coverWap", "cover_url"];
+export const SYNOPSIS_FIELDS = ["desc", "description", "synopsis", "summary", "intro", "content", "abstract", "special_desc", "introduction"];
+export const COUNT_FIELDS = ["episodes", "episodeCount", "episode_count", "totalEpisodes", "total_episodes", "chapterCount", "chapters", "chapter_count", "total_chapters", "totalChapterNum", "current_count"];
 
 export function pickString(row: Row, fields: string[]): string | undefined {
   for (const f of fields) {
@@ -261,7 +261,7 @@ export function pickGenres(row: Row): string[] | undefined {
 }
 
 export const EP_ID_FIELDS = ["episodeId", "episode_id", "chapterId", "chapter_id", "videoId", "video_id", "fileId", "file_id"];
-export const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter", "serial_number", "serialNumber"];
+export const EP_NUM_FIELDS = ["episodeNo", "episode_no", "episode", "episodeNumber", "episode_number", "number", "sort", "index", "indexStr", "chapterNo", "chapter_no", "chapter", "serial_number", "serialNumber", "episode_order"];
 
 export function findDetailRow(data: unknown): Row | null {
   function walk(o: unknown): Row | null {

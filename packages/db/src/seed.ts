@@ -84,6 +84,20 @@ async function main() {
         isEnabled: false,
         config: { logoUrl: "/logos/melolo.png" },
       },
+      {
+        code: "freereels",
+        name: "FreeReels",
+        priority: 37,
+        isEnabled: false,
+        config: { logoUrl: "/logos/freereels.png" },
+      },
+      {
+        code: "idrama",
+        name: "iDrama",
+        priority: 38,
+        isEnabled: true,
+        config: { logoUrl: "/logos/idrama.png" },
+      },
     ])
     .onConflictDoUpdate({
       target: providers.code,

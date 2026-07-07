@@ -2,9 +2,12 @@ import { defineSapimuProvider } from "../core/define";
 
 const L = "lang=id";
 
-// idrama playback uses POST /unlock/:dramaId?episode=N — playMethod set below.
-// Global v2 field fallbacks cover common id/title/poster shapes; add fields/
-// overrides here only if live payload proves otherwise.
+// iDrama API quirks:
+// - List endpoints return { books, short_plays: [...] } (ranking/popular/latest/hits)
+//   and { results, guess_plays: [...] } (search) — extractList handles both.
+// - Playback is POST /unlock/:dramaId?episode=N — playMethod: "POST".
+// - Detail is a flat object (no wrapper); episode_list has episode_order ep numbers.
+// - Global field fallbacks cover short_play_name/cover_url/introduction/episode_order.
 export const idrama = defineSapimuProvider({
   code: "idrama",
   endpoints: {
@@ -17,6 +20,17 @@ export const idrama = defineSapimuProvider({
     play: `/idrama/api/v1/unlock/{id}?episode={ep}&${L}`,
   },
   playMethod: "POST",
-  fields: {},
+  fields: {
+    id: ["id"],
+    title: ["short_play_name"],
+    poster: ["cover_url"],
+  },
   subtitlePolicy: "unknown",
+  overrides: {
+    extractList(data) {
+      const d = data as Record<string, unknown>;
+      const arr = d.short_plays ?? d.guess_plays ?? d.results ?? [];
+      return Array.isArray(arr) ? arr as unknown[] : [];
+    },
+  },
 });
