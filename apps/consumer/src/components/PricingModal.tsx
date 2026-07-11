@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../lib/api";
 import { supabase, getAuthToken } from "../lib/supabase";
 
@@ -11,25 +11,52 @@ interface Plan {
 }
 
 export default function PricingModal({ onClose }: { onClose: () => void }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
+  const [plansError, setPlansError] = useState(false);
   const [loadingCode, setLoadingCode] = useState<string | null>(null);
   const [coupon, setCoupon] = useState("");
   const [redeeming, setRedeeming] = useState(false);
-  const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
+
+  function loadPlans() {
+    setPlansLoading(true);
+    setPlansError(false);
+    api<{ items: Plan[] }>("/billing/plans")
+      .then((r) => {
+        setPlans(r.items);
+        setPlansError(false);
+      })
+      .catch(() => {
+        setPlans([]);
+        setPlansError(true);
+      })
+      .finally(() => setPlansLoading(false));
+  }
 
   useEffect(() => {
-    api<{ items: Plan[] }>("/billing/plans")
-      .then((r) => setPlans(r.items))
-      .catch(() => setPlans([]));
+    loadPlans();
+    const el = dialogRef.current;
+    if (!el) return;
+    if (!el.open) el.showModal();
+    const onCancel = (e: Event) => {
+      e.preventDefault();
+      if (loadingCode) return;
+      onClose();
+    };
+    el.addEventListener("cancel", onCancel);
+    return () => el.removeEventListener("cancel", onCancel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function subscribe(code: string) {
     try {
       setLoadingCode(code);
+      setFeedback(null);
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token ?? getAuthToken();
       if (!token) {
-        onClose();
         const returnTo = window.location.pathname + window.location.search;
         window.location.assign(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
         return;
@@ -43,10 +70,11 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
 
       if (res?.checkoutUrl) {
         window.location.assign(res.checkoutUrl);
+        return;
       }
-    } catch (e) {
-      console.error("Checkout failed", e);
-      alert("Terjadi kesalahan. Silakan coba masuk kembali terlebih dahulu.");
+      setFeedback({ ok: false, text: "Checkout gagal. Silakan coba lagi." });
+    } catch {
+      setFeedback({ ok: false, text: "Checkout gagal. Silakan coba masuk kembali." });
     } finally {
       setLoadingCode(null);
     }
@@ -55,13 +83,12 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
   async function redeemCoupon() {
     const value = coupon.trim();
     if (!value) return;
-    setCouponMsg(null);
+    setFeedback(null);
     setRedeeming(true);
     try {
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token ?? getAuthToken();
       if (!token) {
-        onClose();
         const returnTo = window.location.pathname + window.location.search;
         window.location.assign(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
         return;
@@ -71,7 +98,7 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
         body: JSON.stringify({ code: value }),
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCouponMsg({
+      setFeedback({
         ok: true,
         text: `Kupon aktif! ${res.planName} (${res.durationDays} hari) telah ditambahkan.`,
       });
@@ -85,107 +112,130 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
           : msg.includes("coupon_expired")
             ? "Kupon sudah kedaluwarsa."
             : "Kupon tidak valid.";
-      setCouponMsg({ ok: false, text });
+      setFeedback({ ok: false, text });
     } finally {
       setRedeeming(false);
     }
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-sm animate-fadeIn">
-      {/* Click outside to close */}
-      <div className="absolute inset-0" onClick={onClose} />
+  function handleBackdropClick(e: React.MouseEvent<HTMLDialogElement>) {
+    if (loadingCode || redeeming) return;
+    if (e.target === dialogRef.current) onClose();
+  }
 
-      {/* Bottom Drawer Sheet */}
-      <div className="relative w-full max-w-md rounded-t-[32px] bg-zinc-950/95 border-t border-zinc-900 px-6 py-6 pb-10 text-white shadow-2xl flex flex-col z-10 transition-transform duration-300">
-        {/* Drawer Handle */}
-        <div className="w-12 h-1.5 bg-zinc-800 rounded-full mx-auto mb-5" onClick={onClose} />
+  return (
+    <dialog
+      ref={dialogRef}
+      onClick={handleBackdropClick}
+      aria-labelledby="pricing-title"
+      className="fixed inset-0 z-50 m-0 flex h-full max-h-none w-full max-w-none items-end justify-center border-0 bg-black/75 p-0 text-white backdrop:bg-black/75 open:flex"
+    >
+      <div className="relative w-full max-w-md rounded-t-[32px] bg-zinc-950/95 border-t border-zinc-900 px-6 py-6 pb-10 text-white shadow-2xl flex flex-col">
+        <div className="w-12 h-1.5 bg-zinc-800 rounded-full mx-auto mb-5" aria-hidden="true" />
 
         <div className="text-center mb-6">
           <span className="px-2.5 py-1 rounded-full text-[9px] font-extrabold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-widest">
             💎 Akses Premium
           </span>
-          <h2 className="text-xl font-extrabold mt-2 text-gradient-gold">Aktifkan VIP Premium</h2>
+          <h2 id="pricing-title" className="text-xl font-extrabold mt-2 text-gradient-gold">
+            Aktifkan VIP Premium
+          </h2>
           <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
-            Dapatkan pengalaman terbaik menonton vertical short drama tanpa batas.
+            Buka episode VIP selama masa aktif paket. Pembayaran sekali, tidak diperpanjang otomatis.
           </p>
         </div>
 
-        {/* Benefits Checklist */}
         <div className="space-y-3 mb-6 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-900">
-          <BenefitItem text="Tonton semua episode VIP tanpa terkunci" icon="🔓" />
-          <BenefitItem text="Bebas iklan pengganggu & buffering lambat" icon="🚫" />
-          <BenefitItem text="Streaming dengan kualitas Full HD jernih" icon="🚀" />
-          <BenefitItem text="Subtitle lengkap Bahasa Indonesia terakurat" icon="🇮🇩" />
+          <BenefitItem text="Buka semua episode VIP selama masa aktif" icon="🔓" />
+          <BenefitItem text="Pembayaran satu kali, tidak diperpanjang otomatis" icon="💳" />
+          <BenefitItem text="Perpanjang kapan saja dengan membeli paket lagi" icon="🔁" />
         </div>
 
-        {/* Plan Cards */}
         <div className="space-y-3">
-          {plans.map((p) => {
-            const isLoading = loadingCode === p.code;
-            const badge =
-              p.durationDays <= 1
-                ? { label: "Coba Dulu", cls: "bg-blue-500/10 text-blue-400 border-blue-500/20" }
-                : p.durationDays <= 7
-                  ? { label: "Populer", cls: "bg-amber-500/10 text-amber-400 border-amber-500/20" }
-                  : {
-                      label: "Paling Hemat",
-                      cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-                    };
-            const highlight =
-              p.durationDays <= 7
-                ? "bg-zinc-900 border-amber-500/40 hover:border-amber-400 hover:bg-zinc-900/90"
-                : "bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900";
-            return (
+          {plansLoading ? (
+            <p className="py-6 text-center text-xs text-zinc-500">Memuat paket...</p>
+          ) : null}
+          {plansError ? (
+            <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-center text-sm text-zinc-300">
+              <p>Paket gagal dimuat.</p>
               <button
-                key={p.code}
-                disabled={loadingCode !== null}
-                onClick={() => subscribe(p.code)}
-                className={`relative w-full rounded-2xl p-4 text-left transition-all flex items-center justify-between border ${highlight}`}
+                type="button"
+                onClick={loadPlans}
+                className="mt-3 rounded-full bg-rose-500 px-4 py-2 text-xs font-bold text-white"
               >
-                <span
-                  className={`absolute -top-2.5 right-4 px-2 py-0.5 rounded-full text-[8px] font-extrabold border uppercase tracking-wider ${badge.cls}`}
-                >
-                  {badge.label}
-                </span>
-                <div>
-                  <h4 className="font-extrabold text-sm text-zinc-100 flex items-center gap-1.5">
-                    {p.name}
-                  </h4>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">
-                    Durasi Aktif: {p.durationDays} Hari
-                  </p>
-                </div>
-                <div className="text-right flex items-center gap-2">
-                  <p className="font-extrabold text-sm text-amber-400">
-                    Rp {p.priceIdr.toLocaleString("id-ID")}
-                  </p>
-                  {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-amber-400/20 border-t-amber-400 rounded-full animate-spin"></div>
-                  ) : (
-                    <svg
-                      className="w-4 h-4 text-zinc-400 group-hover:text-amber-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2.5"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  )}
-                </div>
+                Coba Lagi
               </button>
-            );
-          })}
+            </div>
+          ) : null}
+          {!plansLoading && !plansError && plans.length === 0 ? (
+            <p className="py-4 text-center text-xs text-zinc-500">Belum ada paket tersedia.</p>
+          ) : null}
+          {!plansLoading && !plansError
+            ? plans.map((p) => {
+                const isLoading = loadingCode === p.code;
+                const badge =
+                  p.durationDays <= 1
+                    ? { label: "Coba Dulu", cls: "bg-blue-500/10 text-blue-400 border-blue-500/20" }
+                    : p.durationDays <= 7
+                      ? { label: "Populer", cls: "bg-amber-500/10 text-amber-400 border-amber-500/20" }
+                      : {
+                          label: "Paling Hemat",
+                          cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                        };
+                const highlight =
+                  p.durationDays <= 7
+                    ? "bg-zinc-900 border-amber-500/40 hover:border-amber-400 hover:bg-zinc-900/90"
+                    : "bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900";
+                return (
+                  <button
+                    key={p.code}
+                    type="button"
+                    disabled={loadingCode !== null || plansLoading}
+                    onClick={() => subscribe(p.code)}
+                    className={`relative w-full rounded-2xl p-4 text-left transition-all flex items-center justify-between border ${highlight} disabled:opacity-60`}
+                  >
+                    <span
+                      className={`absolute -top-2.5 right-4 px-2 py-0.5 rounded-full text-[8px] font-extrabold border uppercase tracking-wider ${badge.cls}`}
+                    >
+                      {badge.label}
+                    </span>
+                    <div>
+                      <h4 className="font-extrabold text-sm text-zinc-100">{p.name}</h4>
+                      <p className="text-[11px] text-zinc-400 mt-0.5">
+                        Bayar sekali • aktif {p.durationDays} hari
+                      </p>
+                    </div>
+                    <div className="text-right flex items-center gap-2">
+                      <p className="font-extrabold text-sm text-amber-400">
+                        Rp {p.priceIdr.toLocaleString("id-ID")}
+                      </p>
+                      {isLoading ? (
+                        <div className="w-5 h-5 border-2 border-amber-400/20 border-t-amber-400 rounded-full animate-spin" />
+                      ) : (
+                        <svg
+                          className="w-4 h-4 text-zinc-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2.5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                );
+              })
+            : null}
         </div>
 
-        {/* Coupon redeem */}
         <div className="mt-5 pt-5 border-t border-zinc-900">
-          <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">
+          <label htmlFor="coupon-code" className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 block">
             Punya kode kupon?
-          </p>
+          </label>
           <div className="flex gap-2">
             <input
+              id="coupon-code"
               value={coupon}
               onChange={(e) => setCoupon(e.target.value)}
               placeholder="Masukkan kode kupon"
@@ -193,38 +243,45 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
               className="flex-1 rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-amber-500/50 focus:outline-none uppercase"
             />
             <button
+              type="button"
               onClick={redeemCoupon}
-              disabled={redeeming || !coupon.trim()}
+              disabled={redeeming || !coupon.trim() || loadingCode !== null}
               className="rounded-xl bg-amber-500/90 px-4 py-2.5 text-sm font-extrabold text-zinc-950 disabled:opacity-40 active:scale-95 duration-100"
             >
               {redeeming ? "..." : "Tukar"}
             </button>
           </div>
-          {couponMsg ? (
+          {feedback ? (
             <p
-              className={`mt-2 text-[11px] font-semibold ${couponMsg.ok ? "text-emerald-400" : "text-rose-400"}`}
+              role="status"
+              aria-live="polite"
+              className={`mt-2 text-[11px] font-semibold ${feedback.ok ? "text-emerald-400" : "text-rose-400"}`}
             >
-              {couponMsg.text}
+              {feedback.text}
             </p>
           ) : null}
         </div>
 
         <button
+          type="button"
           onClick={onClose}
           disabled={loadingCode !== null}
-          className="mt-6 w-full text-center text-xs font-semibold text-zinc-500 hover:text-zinc-300 py-1"
+          aria-label="Tutup paket VIP"
+          className="mt-6 w-full text-center text-xs font-semibold text-zinc-500 hover:text-zinc-300 py-2 disabled:opacity-40"
         >
           Kembali ke Drama
         </button>
       </div>
-    </div>
+    </dialog>
   );
 }
 
 function BenefitItem({ text, icon }: { text: string; icon: string }) {
   return (
     <div className="flex items-start gap-2.5">
-      <span className="text-sm shrink-0 mt-0.5">{icon}</span>
+      <span className="text-sm shrink-0 mt-0.5" aria-hidden="true">
+        {icon}
+      </span>
       <span className="text-xs text-zinc-300 font-medium leading-normal">{text}</span>
     </div>
   );
