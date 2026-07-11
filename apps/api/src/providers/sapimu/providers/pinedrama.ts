@@ -5,11 +5,11 @@ import type { SapimuCtx } from "../core/types";
 export const pinedrama = defineSapimuProvider({
   code: "pinedrama",
   endpoints: {
-    trending: "/pinedrama/api/drama/search?keyword=cinta&lang=id",
-    latest: "/pinedrama/api/drama/search?keyword=suami&lang=id",
-    vip: "/pinedrama/api/drama/search?keyword=ceo&lang=id",
-    foryou: "/pinedrama/api/drama/search?keyword=cinta&lang=id",
-    search: "/pinedrama/api/drama/search?keyword={q}&lang=id",
+    trending: "/pinedrama/api/drama/search?keyword=cinta&language=id&region=ID",
+    latest: "/pinedrama/api/drama/search?keyword=suami&language=id&region=ID",
+    vip: "/pinedrama/api/drama/search?keyword=ceo&language=id&region=ID",
+    foryou: "/pinedrama/api/drama/search?keyword=cinta&language=id&region=ID",
+    search: "/pinedrama/api/drama/search?keyword={q}&language=id&region=ID",
     detail: "/pinedrama/api/drama/detail?collection_id={id}&language=id&region=ID",
     play: "/pinedrama/api/drama/play?collection_id={id}&episode={ep}&language=in&region=ID",
   },

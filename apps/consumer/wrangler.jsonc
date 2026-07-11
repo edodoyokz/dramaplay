@@ -1,0 +1,12 @@
+{
+  "$schema": "../api/node_modules/wrangler/config-schema.json",
+  "name": "dramaplay-consumer",
+  "compatibility_date": "2026-07-11",
+  "pages_build_output_dir": "dist",
+  "r2_buckets": [
+    {
+      "binding": "IMAGE_CACHE",
+      "bucket_name": "dramaplay-image-cache"
+    }
+  ]
+}

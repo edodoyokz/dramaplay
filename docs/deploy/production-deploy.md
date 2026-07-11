@@ -370,7 +370,18 @@ open https://admin.dramaplay.my.id
 
 ## 8. Deploy Consumer PWA (Cloudflare Pages)
 
-### 8.1 Setup Environment Variables
+### 8.1 Cache Poster Provider di R2
+
+PineDrama dan provider lain dapat mengirim signed image URL yang kedaluwarsa. Consumer Pages Function menyimpan byte poster melalui binding R2 `IMAGE_CACHE`, memakai key stabil tanpa query signature.
+
+```bash
+# Jalankan sekali dari root repo.
+pnpm --dir apps/api exec wrangler r2 bucket create dramaplay-image-cache
+```
+
+Konfigurasi binding ada di `apps/consumer/wrangler.jsonc`. Deploy consumer dari direktori `apps/consumer` agar Wrangler membaca konfigurasi tersebut. Setelah deploy pertama, jalankan sync PineDrama untuk mengisi URL yang masih fresh dan warm poster melalui aplikasi.
+
+### 8.2 Setup Environment Variables
 
 ```bash
 wrangler pages project create dramaplay-consumer --production-branch main

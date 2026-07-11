@@ -39,6 +39,11 @@ function isAllowedImgTarget(raw) {
   return ALLOWED_IMG_DOMAINS.some((d) => host === d || host.endsWith("." + d));
 }
 
+export function imgCacheKeyForUrl(raw) {
+  const t = new URL(raw);
+  return encodeURIComponent(t.hostname + t.pathname);
+}
+
 function isAllowedStreamTarget(raw) {
   let u;
   try {
@@ -226,17 +231,32 @@ export default {
 
     // Image proxy for signed/expiring CDN covers: cache bytes by stable path
     // so rotating signatures don't evict the entry. Same image => same cache
-    // key across signature refreshes/expiries; once cached, served forever.
+    // key across signature refreshes/expiries; once cached, served from R2.
     if (url.pathname === "/img") {
       const target = url.searchParams.get("u");
       if (!target) return new Response("missing u", { status: 400 });
       if (!isAllowedImgTarget(target)) return new Response("forbidden target", { status: 403 });
 
       const t = new URL(target);
-      const cacheKey = new Request(`https://img-cache/${encodeURIComponent(t.hostname + t.pathname)}`, { method: "GET" });
+      const key = imgCacheKeyForUrl(target);
+      const cacheKey = new Request(`https://img-cache/${key}`, { method: "GET" });
       const cache = caches.default;
       const cached = await cache.match(cacheKey);
       if (cached) return cached;
+
+      const r2 = env.IMAGE_CACHE;
+      if (r2) {
+        const object = await r2.get(key);
+        if (object) {
+          const headers = new Headers();
+          object.writeHttpMetadata(headers);
+          headers.set("Cache-Control", "public, max-age=31536000, immutable");
+          headers.set("Access-Control-Allow-Origin", "*");
+          const resp = new Response(object.body, { status: 200, headers });
+          if (ctx) ctx.waitUntil(cache.put(cacheKey, resp.clone()));
+          return resp;
+        }
+      }
 
       // HEIC isn't browser-renderable; convert via wsrv. Other formats fetch direct.
       const isHeic = /\.heic(\?|$|#)/i.test(t.pathname);
@@ -245,14 +265,21 @@ export default {
         : await fetch(target, { headers: { "User-Agent": "Mozilla/5.0" } });
       if (!upstream.ok) return new Response("upstream error", { status: 502 });
 
+      const contentType = isHeic ? "image/webp" : upstream.headers.get("content-type") || "image/jpeg";
+      const cacheControl = "public, max-age=31536000, immutable";
       const headers = new Headers();
-      headers.set("content-type", isHeic ? "image/webp" : upstream.headers.get("content-type") || "image/jpeg");
-      headers.set("Cache-Control", "public, max-age=31536000, immutable");
+      headers.set("content-type", contentType);
+      headers.set("Cache-Control", cacheControl);
       headers.set("Access-Control-Allow-Origin", "*");
       const resp = new Response(upstream.body, { status: 200, headers });
-      // ponytail: cache by path (not signature) so the entry survives signature
-      // expiry; the image bytes are stable. Switch to R2 if cache churn grows.
-      if (ctx) ctx.waitUntil(cache.put(cacheKey, resp.clone()));
+
+      const writes = [cache.put(cacheKey, resp.clone())];
+      if (r2) {
+        writes.push(r2.put(key, resp.clone().body, { httpMetadata: { contentType, cacheControl } }));
+      }
+      // ponytail: the response does not depend on a best-effort cache write.
+      if (ctx) ctx.waitUntil(Promise.all(writes).catch(() => undefined));
+      else await Promise.all(writes).catch(() => undefined);
       return resp;
     }
 
