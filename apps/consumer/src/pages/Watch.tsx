@@ -11,6 +11,7 @@ import {
   toggleLike,
   upsertWatchProgress,
 } from "../lib/local-engagement";
+import { progressPercent } from "../lib/ux";
 import VerticalShortPlayer from "../components/VerticalShortPlayer";
 import PricingModal from "../components/PricingModal";
 
@@ -37,10 +38,12 @@ export default function Watch() {
   const [favorited, setFavorited] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [retryTick, setRetryTick] = useState(0);
-  const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("video_error");
   const [reportMessage, setReportMessage] = useState("");
+  const [reportSending, setReportSending] = useState(false);
+  const reportDialogRef = useRef<HTMLDialogElement>(null);
   const lastProgressSave = useRef(0);
+  const episodeNumber = Number(n ?? 1) || 1;
 
   const updateWatchProgress = (stream: StreamResponse, percent: number) => {
     upsertWatchProgress({
@@ -115,17 +118,35 @@ export default function Watch() {
     triggerToast(nextFav ? "Ditambahkan ke Favorit" : "Dihapus dari Favorit");
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    triggerToast("Link episode berhasil disalin!");
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ title: data?.dramaTitle ?? "Dramaplay", url });
+        triggerToast("Berhasil dibagikan");
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      triggerToast("Link episode berhasil disalin!");
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      triggerToast("Gagal membagikan link");
+    }
   };
 
-  const handleReport = () => {
-    setShowReport(true);
+  const openReport = () => {
+    const el = reportDialogRef.current;
+    if (!el) return;
+    if (!el.open) el.showModal();
+  };
+
+  const closeReport = () => {
+    reportDialogRef.current?.close();
   };
 
   const submitReport = async () => {
-    if (!data) return;
+    if (!data || reportSending) return;
+    setReportSending(true);
     try {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
@@ -144,11 +165,13 @@ export default function Watch() {
           },
         }),
       });
-      setShowReport(false);
+      closeReport();
       setReportMessage("");
       triggerToast("Laporan terkirim. Terima kasih!");
     } catch {
       triggerToast("Terjadi kesalahan mengirim laporan");
+    } finally {
+      setReportSending(false);
     }
   };
 
@@ -169,17 +192,19 @@ export default function Watch() {
           Episode VIP Terkunci
         </h1>
         <p className="text-center text-xs text-zinc-400 max-w-xs leading-relaxed">
-          Berlangganan VIP Premium sekarang untuk membuka semua episode drama favorit Anda tanpa
-          hambatan.
+          Beli VIP sekali untuk membuka episode terkunci selama masa aktif paket. Tidak diperpanjang
+          otomatis.
         </p>
         <div className="flex flex-col gap-2.5 w-full max-w-xs mt-4">
           <button
+            type="button"
             onClick={() => setShowPricing(true)}
             className="w-full py-3 rounded-full bg-gradient-sunset text-white font-bold text-sm tracking-wide shadow-lg shadow-rose-500/20 active:scale-95 duration-100"
           >
             Aktifkan VIP Premium
           </button>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="w-full py-3 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold text-sm active:scale-95 duration-100"
           >
@@ -207,6 +232,7 @@ export default function Watch() {
         </p>
         <div className="flex flex-col gap-2.5 w-full max-w-xs mt-4">
           <button
+            type="button"
             onClick={() => {
               setFailed(false);
               setData(null);
@@ -217,6 +243,7 @@ export default function Watch() {
             Coba Lagi
           </button>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="w-full py-3 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold text-sm active:scale-95 duration-100"
           >
@@ -241,8 +268,10 @@ export default function Watch() {
       {/* Absolute Header Overlay */}
       <div className="absolute top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
         <button
+          type="button"
           onClick={() => navigate(`/drama/${data.dramaSlug}`)}
-          className="w-10 h-10 rounded-full bg-black/45 backdrop-blur-md border border-zinc-800 flex items-center justify-center text-white hover:bg-black/75 transition-colors pointer-events-auto shadow-lg"
+          aria-label="Kembali ke detail drama"
+          className="w-11 h-11 rounded-full bg-black/45 backdrop-blur-md border border-zinc-800 flex items-center justify-center text-white hover:bg-black/75 transition-colors pointer-events-auto shadow-lg"
         >
           <svg
             className="w-5 h-5"
@@ -272,22 +301,27 @@ export default function Watch() {
           subtitleUrl={subtitleProxyUrl(data.subtitleUrl)}
           onEnded={() => {
             updateWatchProgress(data, 100);
-            const next = data.nextEpisode ?? Number(n ?? 1) + 1;
-            navigate(`/drama/${slug}/episode/${next}`);
+            if (data.nextEpisode != null) {
+              navigate(`/drama/${slug}/episode/${data.nextEpisode}`);
+              return;
+            }
+            triggerToast("Episode terakhir selesai");
+            navigate(`/drama/${data.dramaSlug}`);
           }}
-          onTimeUpdate={(sec) => {
+          onTimeUpdate={(currentTime, duration) => {
             const now = Date.now();
             if (now - lastProgressSave.current < 10_000) return;
             lastProgressSave.current = now;
-            updateWatchProgress(data, Math.min(Math.floor(sec * 3), 98));
+            const pct = progressPercent(currentTime, duration);
+            updateWatchProgress(data, pct === 0 ? 5 : Math.min(pct, 98));
           }}
         />
 
         {/* Floating Side Control Overlay */}
         <div className="absolute right-3 bottom-16 z-20 flex flex-col items-center gap-4.5">
-          {/* Drama Poster Circle */}
           <Link
             to={`/drama/${data.dramaSlug}`}
+            aria-label={`Detail ${data.dramaTitle}`}
             className="w-11 h-11 rounded-full border-2 border-zinc-300 overflow-hidden shadow-lg animate-spin-slow bg-zinc-900 group"
           >
             <img
@@ -297,9 +331,10 @@ export default function Watch() {
             />
           </Link>
 
-          {/* Like Action */}
           <button
+            type="button"
             onClick={handleLike}
+            aria-label={liked ? "Batal suka" : "Suka episode"}
             className="flex flex-col items-center gap-1 group active:scale-90 transition-transform pointer-events-auto"
           >
             <div
@@ -322,14 +357,15 @@ export default function Watch() {
                 />
               </svg>
             </div>
-            <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200">
+            <span className="text-[11px] font-bold text-zinc-400 group-hover:text-zinc-200">
               {liked ? "Disukai" : "Suka"}
             </span>
           </button>
 
-          {/* Favorite Action */}
           <button
+            type="button"
             onClick={handleFavorite}
+            aria-label={favorited ? "Hapus favorit" : "Simpan favorit"}
             className="flex flex-col items-center gap-1 group active:scale-90 transition-transform pointer-events-auto"
           >
             <div
@@ -352,14 +388,15 @@ export default function Watch() {
                 />
               </svg>
             </div>
-            <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200">
+            <span className="text-[11px] font-bold text-zinc-400 group-hover:text-zinc-200">
               Simpan
             </span>
           </button>
 
-          {/* Share Action */}
           <button
+            type="button"
             onClick={handleShare}
+            aria-label="Bagikan episode"
             className="flex flex-col items-center gap-1 group active:scale-90 transition-transform pointer-events-auto"
           >
             <div className="w-11 h-11 rounded-full bg-black/40 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center backdrop-blur-md shadow-md transition-all">
@@ -377,14 +414,15 @@ export default function Watch() {
                 />
               </svg>
             </div>
-            <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200">
+            <span className="text-[11px] font-bold text-zinc-400 group-hover:text-zinc-200">
               Bagikan
             </span>
           </button>
 
-          {/* Report Action */}
           <button
-            onClick={handleReport}
+            type="button"
+            onClick={openReport}
+            aria-label="Laporkan masalah"
             className="flex flex-col items-center gap-1 group active:scale-90 transition-transform pointer-events-auto"
           >
             <div className="w-11 h-11 rounded-full bg-black/40 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center backdrop-blur-md shadow-md transition-all">
@@ -402,13 +440,44 @@ export default function Watch() {
                 />
               </svg>
             </div>
-            <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200">
+            <span className="text-[11px] font-bold text-zinc-400 group-hover:text-zinc-200">
               Lapor
             </span>
           </button>
+
+          {episodeNumber > 1 ? (
+            <button
+              type="button"
+              onClick={() => navigate(`/drama/${slug}/episode/${episodeNumber - 1}`)}
+              aria-label="Episode sebelumnya"
+              className="flex flex-col items-center gap-1 group active:scale-90 transition-transform pointer-events-auto"
+            >
+              <div className="w-11 h-11 rounded-full bg-black/40 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center backdrop-blur-md shadow-md">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </div>
+              <span className="text-[11px] font-bold text-zinc-400">Prev</span>
+            </button>
+          ) : null}
+
+          {data.nextEpisode != null ? (
+            <button
+              type="button"
+              onClick={() => navigate(`/drama/${slug}/episode/${data.nextEpisode}`)}
+              aria-label="Episode berikutnya"
+              className="flex flex-col items-center gap-1 group active:scale-90 transition-transform pointer-events-auto"
+            >
+              <div className="w-11 h-11 rounded-full bg-black/40 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center backdrop-blur-md shadow-md">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <span className="text-[11px] font-bold text-zinc-400">Next</span>
+            </button>
+          ) : null}
         </div>
 
-        {/* Absolute Bottom Information Overlay */}
         <div className="absolute left-4 bottom-12 right-16 z-20 pointer-events-none flex flex-col gap-0.5">
           <h2 className="text-sm font-extrabold text-white tracking-tight drop-shadow-md">
             {data.dramaTitle}
@@ -419,56 +488,78 @@ export default function Watch() {
         </div>
       </div>
 
-      {showReport && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 px-5 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-2xl">
-            <h3 className="text-base font-extrabold text-white">Laporkan masalah</h3>
-            <p className="mt-1 text-xs text-zinc-400">
-              Kirim detail error ke tim Dramaplay. Jangan masukkan password atau data pembayaran.
-            </p>
-            <select
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              className="mt-4 w-full rounded-xl border border-zinc-800 bg-black px-3 py-2 text-sm text-white outline-none"
+      <dialog
+        ref={reportDialogRef}
+        onCancel={(e) => {
+          e.preventDefault();
+          if (!reportSending) closeReport();
+        }}
+        aria-labelledby="report-title"
+        aria-describedby="report-privacy"
+        className="fixed inset-0 z-50 m-0 flex h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-black/70 p-5 text-white backdrop:bg-black/70 open:flex"
+      >
+        <div className="w-full max-w-sm rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-2xl">
+          <h3 id="report-title" className="text-base font-extrabold text-white">
+            Laporkan masalah
+          </h3>
+          <p id="report-privacy" className="mt-1 text-xs text-zinc-400">
+            Kirim detail error ke tim Dramaplay. Jangan masukkan password atau data pembayaran.
+          </p>
+          <label htmlFor="report-reason" className="mt-4 block text-[11px] font-semibold text-zinc-400">
+            Alasan
+          </label>
+          <select
+            id="report-reason"
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-zinc-800 bg-black px-3 py-2 text-sm text-white outline-none"
+          >
+            <option value="video_error">Video tidak bisa diputar</option>
+            <option value="subtitle_error">Subtitle bermasalah</option>
+            <option value="wrong_episode">Episode salah</option>
+            <option value="payment_error">Masalah VIP/pembayaran</option>
+            <option value="other">Lainnya</option>
+          </select>
+          <label htmlFor="report-message" className="mt-3 block text-[11px] font-semibold text-zinc-400">
+            Catatan (opsional)
+          </label>
+          <textarea
+            id="report-message"
+            value={reportMessage}
+            onChange={(e) => setReportMessage(e.target.value.slice(0, 500))}
+            placeholder="Catatan opsional"
+            className="mt-1 h-24 w-full resize-none rounded-xl border border-zinc-800 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-zinc-600"
+          />
+          <div className="mt-4 flex gap-2">
+            <button
+              type="button"
+              onClick={closeReport}
+              disabled={reportSending}
+              className="flex-1 rounded-full border border-zinc-800 py-2 text-sm font-bold text-zinc-300 disabled:opacity-50"
             >
-              <option value="video_error">Video tidak bisa diputar</option>
-              <option value="subtitle_error">Subtitle bermasalah</option>
-              <option value="wrong_episode">Episode salah</option>
-              <option value="payment_error">Masalah VIP/pembayaran</option>
-              <option value="other">Lainnya</option>
-            </select>
-            <textarea
-              value={reportMessage}
-              onChange={(e) => setReportMessage(e.target.value.slice(0, 500))}
-              placeholder="Catatan opsional"
-              className="mt-3 h-24 w-full resize-none rounded-xl border border-zinc-800 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-zinc-600"
-            />
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => setShowReport(false)}
-                className="flex-1 rounded-full border border-zinc-800 py-2 text-sm font-bold text-zinc-300"
-              >
-                Batal
-              </button>
-              <button
-                onClick={submitReport}
-                className="flex-1 rounded-full bg-rose-600 py-2 text-sm font-bold text-white"
-              >
-                Kirim
-              </button>
-            </div>
+              Batal
+            </button>
+            <button
+              type="button"
+              onClick={submitReport}
+              disabled={reportSending}
+              className="flex-1 rounded-full bg-rose-600 py-2 text-sm font-bold text-white disabled:opacity-50"
+            >
+              {reportSending ? "Mengirim..." : "Kirim"}
+            </button>
           </div>
         </div>
-      )}
+      </dialog>
 
-
-
-      {/* Floating Toast Notification */}
-      {toastMessage && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-white font-semibold text-xs shadow-xl animate-fadeIn pointer-events-none whitespace-nowrap">
+      {toastMessage ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="absolute top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-white font-semibold text-xs shadow-xl animate-fadeIn pointer-events-none whitespace-nowrap"
+        >
           {toastMessage}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

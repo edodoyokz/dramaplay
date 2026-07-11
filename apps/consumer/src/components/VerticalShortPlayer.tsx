@@ -7,7 +7,7 @@ interface Props {
   poster?: string;
   subtitleUrl?: string;
   onEnded?: () => void;
-  onTimeUpdate?: (sec: number) => void;
+  onTimeUpdate?: (currentTime: number, duration: number) => void;
 }
 
 function formatTime(sec: number): string {
@@ -132,7 +132,7 @@ export default function VerticalShortPlayer({
     const onDurationChange = () => setDuration(video.duration || 0);
     const onTimeUpdateHandler = () => {
       if (!isSeeking) setCurrentTime(video.currentTime);
-      onTimeUpdate?.(video.currentTime);
+      onTimeUpdate?.(video.currentTime, video.duration || 0);
       // Buffered
       if (video.buffered.length > 0 && video.duration) {
         setBuffered((video.buffered.end(video.buffered.length - 1) / video.duration) * 100);
@@ -322,14 +322,16 @@ export default function VerticalShortPlayer({
       >
         {/* Time + Fullscreen row */}
         <div className="flex items-center justify-between px-0.5">
-          <span className="text-[10px] font-semibold text-zinc-300 tabular-nums tracking-wide">
+          <span className="text-[11px] font-semibold text-zinc-300 tabular-nums tracking-wide">
             {formatTime(currentTime)}
             <span className="text-zinc-600 mx-1">/</span>
             {formatTime(duration)}
           </span>
           <button
+            type="button"
             onClick={toggleFullscreen}
-            className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-300 hover:text-white active:scale-90 transition-transform"
+            aria-label={isFullscreen ? "Keluar layar penuh" : "Layar penuh"}
+            className="w-11 h-11 flex items-center justify-center rounded-md text-zinc-300 hover:text-white active:scale-90 transition-transform"
           >
             {isFullscreen ? (
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -346,6 +348,13 @@ export default function VerticalShortPlayer({
         {/* Seekable progress bar */}
         <div
           ref={seekBarRef}
+          role="slider"
+          tabIndex={0}
+          aria-label="Posisi video"
+          aria-valuemin={0}
+          aria-valuemax={Math.round(duration) || 0}
+          aria-valuenow={Math.round(currentTime)}
+          aria-valuetext={`${formatTime(currentTime)} dari ${formatTime(duration)}`}
           className="relative w-full h-4 flex items-center cursor-pointer group"
           onPointerDown={onSeekStart}
           onPointerMove={onSeekMove}
