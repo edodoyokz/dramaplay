@@ -13,6 +13,9 @@ interface Plan {
 export default function PricingModal({ onClose }: { onClose: () => void }) {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loadingCode, setLoadingCode] = useState<string | null>(null);
+  const [coupon, setCoupon] = useState("");
+  const [redeeming, setRedeeming] = useState(false);
+  const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     api<{ items: Plan[] }>("/billing/plans")
@@ -46,6 +49,45 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
       alert("Terjadi kesalahan. Silakan coba masuk kembali terlebih dahulu.");
     } finally {
       setLoadingCode(null);
+    }
+  }
+
+  async function redeemCoupon() {
+    const value = coupon.trim();
+    if (!value) return;
+    setCouponMsg(null);
+    setRedeeming(true);
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token ?? getAuthToken();
+      if (!token) {
+        alert("Silakan login terlebih dahulu untuk menukar kupon.");
+        onClose();
+        window.location.assign("/auth");
+        return;
+      }
+      const res = await api<{ planName: string; durationDays: number }>("/billing/redeem", {
+        method: "POST",
+        body: JSON.stringify({ code: value }),
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCouponMsg({
+        ok: true,
+        text: `Kupon aktif! ${res.planName} (${res.durationDays} hari) telah ditambahkan.`,
+      });
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      const text = msg.includes("already_redeemed")
+        ? "Kupon ini sudah pernah kamu pakai."
+        : msg.includes("coupon_exhausted")
+          ? "Kuota kupon sudah habis."
+          : msg.includes("coupon_expired")
+            ? "Kupon sudah kedaluwarsa."
+            : "Kupon tidak valid.";
+      setCouponMsg({ ok: false, text });
+    } finally {
+      setRedeeming(false);
     }
   }
 
@@ -135,6 +177,36 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
               </button>
             );
           })}
+        </div>
+
+        {/* Coupon redeem */}
+        <div className="mt-5 pt-5 border-t border-zinc-900">
+          <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">
+            Punya kode kupon?
+          </p>
+          <div className="flex gap-2">
+            <input
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+              placeholder="Masukkan kode kupon"
+              autoCapitalize="characters"
+              className="flex-1 rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-amber-500/50 focus:outline-none uppercase"
+            />
+            <button
+              onClick={redeemCoupon}
+              disabled={redeeming || !coupon.trim()}
+              className="rounded-xl bg-amber-500/90 px-4 py-2.5 text-sm font-extrabold text-zinc-950 disabled:opacity-40 active:scale-95 duration-100"
+            >
+              {redeeming ? "..." : "Tukar"}
+            </button>
+          </div>
+          {couponMsg ? (
+            <p
+              className={`mt-2 text-[11px] font-semibold ${couponMsg.ok ? "text-emerald-400" : "text-rose-400"}`}
+            >
+              {couponMsg.text}
+            </p>
+          ) : null}
         </div>
 
         <button

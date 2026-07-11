@@ -21,4 +21,16 @@ describe("fetchAllProviderSummaries", () => {
     ]);
     expect(items.find((x) => x.providerDramaId === "same")?.title).toBe("new");
   });
+
+  it("includes optional search keywords", async () => {
+    const items = await fetchAllProviderSummaries({
+      fetchForYou: async () => ({ items: [] }),
+      fetchTrending: async () => [],
+      fetchLatest: async () => [],
+      fetchVip: async () => [],
+      search: async (q: string) => [item(`search-${q}`)],
+    } as any, ["sistem"]);
+
+    expect(items.map((x) => x.providerDramaId)).toEqual(["search-sistem"]);
+  });
 });

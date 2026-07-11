@@ -48,8 +48,8 @@ export default function VerticalShortPlayer({
 
     let cancelled = false;
     let hls: Hls | null = null;
+    let recoveries = 0;
     const isHls = source.streamType === "m3u8";
-    const nativeHls = video.canPlayType("application/vnd.apple.mpegurl");
 
     setCurrentTime(0);
     setDuration(0);
@@ -64,7 +64,7 @@ export default function VerticalShortPlayer({
       if (!cancelled) setPlayBlocked(!ok);
     };
 
-    if (isHls && Hls.isSupported() && !nativeHls) {
+    if (isHls && Hls.isSupported()) {
       hls = new Hls({
         enableWorker: true,
         lowLatencyMode: false,
@@ -76,6 +76,14 @@ export default function VerticalShortPlayer({
       hls.on(Hls.Events.MANIFEST_PARSED, tryPlay);
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (!data.fatal) return;
+        // Cap recovery so a permanently broken stream surfaces the retry UI
+        // instead of looping forever (battery drain + stuck spinner).
+        if (recoveries >= 3) {
+          setHasError(true);
+          hls?.destroy();
+          return;
+        }
+        recoveries += 1;
         if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls?.startLoad();
         else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls?.recoverMediaError();
         else {
@@ -265,7 +273,10 @@ export default function VerticalShortPlayer({
           className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/45 text-white"
           onClick={(e) => {
             e.stopPropagation();
-            retrySource();
+            wantsPlay.current = true;
+            setPlayBlocked(false);
+            if (hasError) retrySource();
+            else void retryPlay(() => videoRef.current?.play() ?? Promise.reject(), 4, 250).then((ok) => setPlayBlocked(!ok));
           }}
         >
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur-md">

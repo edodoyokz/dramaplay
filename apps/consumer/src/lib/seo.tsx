@@ -7,11 +7,13 @@ export function SeoHead({
   description,
   canonical,
   ogImage,
+  noindex,
 }: {
   title: string;
   description?: string;
   canonical?: string;
   ogImage?: string;
+  noindex?: boolean;
 }) {
   useEffect(() => {
     const t = `${title} — Dramaplay`;
@@ -38,7 +40,10 @@ export function SeoHead({
       link.href = canonical;
       setMeta("og:url", canonical);
     }
-  }, [title, description, canonical, ogImage]);
+    if (noindex) {
+      setMeta("robots", "noindex, nofollow");
+    }
+  }, [title, description, canonical, ogImage, noindex]);
   return null;
 }
 

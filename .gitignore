@@ -38,3 +38,7 @@ apps/consumer/android/.gradle/
 # worktrees
 .worktrees/
 worktrees/
+
+# python venvs (skill automation)
+.venv/
+**/.venv/

@@ -897,7 +897,7 @@ git commit -m "feat(db): seed vip plans"
 - Set site URL to `http://localhost:5173` for dev.
 - Configure redirect URLs:
   - `http://localhost:5173/auth/callback`
-  - `https://dramaplay.id/auth/callback`
+  - `https://dramaplay.my.id/auth/callback`
 
 **Step 1: Document in `docs/setup/supabase-auth.md`**
 
@@ -2610,7 +2610,7 @@ git commit -m "feat(api): analytics events ingest"
 **Step 1: Add Plausible snippet (or GA) in `<head>`**
 
 ```html
-<script defer data-domain="dramaplay.id" src="https://plausible.io/js/script.js"></script>
+<script defer data-domain="dramaplay.my.id" src="https://plausible.io/js/script.js"></script>
 ```
 
 **Step 2: Commit**
@@ -2850,7 +2850,7 @@ git commit -m "feat(consumer): sync android project"
 ```bash
 #!/usr/bin/env bash
 set -e
-API=${API_URL:-https://api.dramaplay.id}
+API=${API_URL:-https://api.dramaplay.my.id}
 
 curl -fsS "$API/health" | grep -q '"ok":true'
 curl -fsS "$API/catalog/trending" | grep -q 'items'
@@ -2886,7 +2886,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: bash scripts/smoke.sh
         env:
-          API_URL: https://api.dramaplay.id
+          API_URL: https://api.dramaplay.my.id
 ```
 
 **Step 1: Commit**

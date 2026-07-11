@@ -10,3 +10,13 @@ export function playableUrl(data: StreamLike) {
   }
   return data.streamUrl;
 }
+
+// Subtitles load as a same-origin <track>: cross-origin VTT hosts (dramawave)
+// lack CORS headers, so proxy them through /stream (which adds ACAO + keeps
+// the response same-origin). Relative/proxy URLs pass through unchanged.
+export function subtitleProxyUrl(url?: string): string | undefined {
+  if (!url) return undefined;
+  if (url.startsWith("/")) return url;
+  if (/^https?:\/\//.test(url)) return `/stream?u=${encodeURIComponent(url)}`;
+  return url;
+}

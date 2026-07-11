@@ -2,7 +2,6 @@ export interface Env {
   ENVIRONMENT: string;
   PROVIDER_BASE_URL: string;
   PROVIDER_API_TOKEN?: string;
-  SAPIMU_PROVIDER_ENGINE?: "v2" | "legacy";
   DATABASE_URL: string;
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;

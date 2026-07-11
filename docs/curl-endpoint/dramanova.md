@@ -1,0 +1,7 @@
+curl -X GET "https://captain.sapimu.au/dramanova/api/v1/languages" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramanova/api/v1/dramas?lang=in&page=1&size=20" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramanova/api/v1/drama/2016071217226772480?lang=in" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramanova/api/video?id=v1830bg00000d5tg6fn3ksl47jhrvcj0" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramanova/api/v1/search?q=love&lang=in" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramanova/api/v1/modules?lang=in" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramanova/api/v1/recommend?lang=in&categoryKey=dramanova_hot&page=1&size=5&limit=6" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"

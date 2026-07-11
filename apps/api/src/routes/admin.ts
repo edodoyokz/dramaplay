@@ -38,7 +38,6 @@ admin.post("/providers/:code/sync", async (c) => {
     c.req.param("code"),
     c.env.PROVIDER_BASE_URL,
     c.env.PROVIDER_API_TOKEN,
-    { engine: c.env.SAPIMU_PROVIDER_ENGINE },
   );
   return c.json({ ok: true, ...result });
 });

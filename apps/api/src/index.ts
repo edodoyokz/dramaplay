@@ -59,7 +59,11 @@ app.get("/proxy/sapimu-stream", async (c) => {
     // video/mp2t content-type instead of the CDN's text/plain + nosniff, which
     // some browsers/extensions refuse to feed to MSE.
     const text = await upstream.text();
-    const proxy = (ref: string) => `/stream?u=${encodeURIComponent(ref)}`;
+    // ponytail: rewrite to absolute consumer origin so hls.js (loading the
+    // manifest from api.dramaplay.my.id) resolves /stream against the consumer
+    // Pages worker that actually handles it.
+    const consumerOrigin = c.env.CONSUMER_URL.replace(/\/$/, "");
+    const proxy = (ref: string) => `${consumerOrigin}/stream?u=${encodeURIComponent(ref)}`;
     const rewritten = text
       .split("\n")
       .map((line) => {

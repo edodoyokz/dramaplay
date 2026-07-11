@@ -3,7 +3,14 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
-import { playableUrl } from "../lib/playable";
+import { playableUrl, subtitleProxyUrl } from "../lib/playable";
+import {
+  isFavorited,
+  isLiked,
+  toggleFavorite,
+  toggleLike,
+  upsertWatchProgress,
+} from "../lib/local-engagement";
 import VerticalShortPlayer from "../components/VerticalShortPlayer";
 import PricingModal from "../components/PricingModal";
 
@@ -36,28 +43,13 @@ export default function Watch() {
   const lastProgressSave = useRef(0);
 
   const updateWatchProgress = (stream: StreamResponse, percent: number) => {
-    try {
-      const stored = localStorage.getItem("dramaplay:watch_progress") || "[]";
-      let progressList = JSON.parse(stored);
-      if (!Array.isArray(progressList)) progressList = [];
-
-      // Remove existing for same drama
-      progressList = progressList.filter((p: { slug: string }) => p.slug !== stream.dramaSlug);
-
-      // Add to front
-      progressList.unshift({
-        slug: stream.dramaSlug,
-        title: stream.dramaTitle,
-        posterUrl: stream.posterUrl || null,
-        episodeNumber: stream.episodeNumber,
-        percent: percent || 5, // minimum 5% to show bar
-      });
-
-      // Limit to 10 items
-      localStorage.setItem("dramaplay:watch_progress", JSON.stringify(progressList.slice(0, 10)));
-    } catch (e) {
-      console.error("Watch progress save error", e);
-    }
+    upsertWatchProgress({
+      slug: stream.dramaSlug,
+      title: stream.dramaTitle,
+      posterUrl: stream.posterUrl || null,
+      episodeNumber: stream.episodeNumber,
+      percent: percent || 5, // minimum 5% to show bar
+    });
   };
 
   useEffect(() => {
@@ -89,12 +81,8 @@ export default function Watch() {
         setData(res);
         setFailed(false);
 
-        // Track liked and favorited from local storage
-        const likes = JSON.parse(localStorage.getItem("dramaplay:likes") || "[]");
-        setLiked(likes.includes(`${slug}-${n}`));
-
-        const favs = JSON.parse(localStorage.getItem("dramaplay:favorites") || "[]");
-        setFavorited(favs.includes(slug));
+        setLiked(isLiked(slug, n));
+        setFavorited(isFavorited(slug));
 
         // Initial entry in watch history
         updateWatchProgress(res, 0);
@@ -114,36 +102,15 @@ export default function Watch() {
   }, [slug, n, retryTick]);
 
   const handleLike = () => {
-    if (!data) return;
-    const key = `${slug}-${n}`;
-    const likes = JSON.parse(localStorage.getItem("dramaplay:likes") || "[]");
-    const nextLiked = !liked;
-    if (nextLiked) {
-      likes.push(key);
-      localStorage.setItem("dramaplay:likes", JSON.stringify(likes));
-    } else {
-      localStorage.setItem(
-        "dramaplay:likes",
-        JSON.stringify(likes.filter((k: string) => k !== key)),
-      );
-    }
+    if (!data || !slug || !n) return;
+    const nextLiked = toggleLike(slug, n);
     setLiked(nextLiked);
     triggerToast(nextLiked ? "Disukai!" : "Batal menyukai");
   };
 
   const handleFavorite = () => {
     if (!data) return;
-    const favs = JSON.parse(localStorage.getItem("dramaplay:favorites") || "[]");
-    const nextFav = !favorited;
-    if (nextFav) {
-      favs.push(data.dramaSlug);
-      localStorage.setItem("dramaplay:favorites", JSON.stringify(favs));
-    } else {
-      localStorage.setItem(
-        "dramaplay:favorites",
-        JSON.stringify(favs.filter((k: string) => k !== data.dramaSlug)),
-      );
-    }
+    const nextFav = toggleFavorite(data.dramaSlug);
     setFavorited(nextFav);
     triggerToast(nextFav ? "Ditambahkan ke Favorit" : "Dihapus dari Favorit");
   };
@@ -302,7 +269,7 @@ export default function Watch() {
             streamType: data.streamType === "other" ? "mp4" : data.streamType,
           }}
           poster={posterSrc(data.posterUrl)}
-          subtitleUrl={data.subtitleUrl}
+          subtitleUrl={subtitleProxyUrl(data.subtitleUrl)}
           onEnded={() => {
             updateWatchProgress(data, 100);
             const next = data.nextEpisode ?? Number(n ?? 1) + 1;

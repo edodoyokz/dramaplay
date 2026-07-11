@@ -1,0 +1,5 @@
+curl -X GET "https://captain.sapimu.au/dramawave/api/v1/feed/popular?page=1&lang=id-ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramawave/api/v1/search?q=love&limit=10" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramawave/api/v1/dramas/quv2y2O9gA?lang=id-ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramawave/api/v1/dramas/quv2y2O9gA/play/15?lang=id-ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/dramawave/api/v1/languages" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"

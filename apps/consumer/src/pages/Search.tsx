@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { posterSrc } from "../lib/img";
+import { SeoHead } from "../lib/seo";
 
 interface Drama {
   id: string;
@@ -117,6 +118,7 @@ export default function Search() {
 
   return (
     <div className="min-h-screen bg-[#030303] text-zinc-100 pb-10">
+      <SeoHead title="Cari Drama" noindex />
       <div className="sticky top-0 z-40 bg-black/65 backdrop-blur-md px-4 py-3 border-b border-zinc-900/60">
         <div className="flex items-center gap-3">
           <button

@@ -1,0 +1,7 @@
+curl -X GET "https://captain.sapimu.au/pinedrama/api/languages" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/pinedrama/api/drama/categories?language=id&region=ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/pinedrama/api/drama/center?scene=1&category_id=0&count=20&language=id&region=ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/pinedrama/api/drama/search?keyword=cinta&language=id&region=ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/pinedrama/api/drama/detail?collection_id=7633642976383783953&language=id&region=ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/pinedrama/api/drama/episodes?collection_id=7633642976383783953&language=id&region=ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/pinedrama/api/drama/play?collection_id=7633642976383783953&episode=1&language=id&region=ID" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"

@@ -1,7 +1,9 @@
 import { Hono } from "hono";
-import { createDb, payments, subscriptions, plans } from "@dramaplay/db";
+import { createDb, payments, plans } from "@dramaplay/db";
 import { and, eq } from "drizzle-orm";
 import type { Env } from "../env";
+import { grantOrExtendSubscription } from "../lib/entitlements";
+import { verifyTransaction } from "../lib/pakasir";
 
 export const pakasir = new Hono<{ Bindings: Env }>();
 
@@ -40,41 +42,17 @@ pakasir.post("/webhook", async (c) => {
     .where(and(eq(payments.id, payment.id), eq(payments.status, "pending")))
     .returning();
 
+  // Lost race with another webhook/reconcile — payment already paid.
   if (!paidPayment) return c.json({ ok: true });
 
   const [plan] = await db.select().from(plans).where(eq(plans.id, paidPayment.planId));
   if (plan) {
-    const now = new Date();
-    const expires = new Date(now.getTime() + plan.durationDays * 86400000);
-    await db.insert(subscriptions).values({
+    await grantOrExtendSubscription(db, {
       userId: paidPayment.userId,
       planId: plan.id,
-      status: "active",
-      startedAt: now,
-      expiresAt: expires,
+      durationDays: plan.durationDays,
     });
   }
 
   return c.json({ ok: true });
 });
-
-async function verifyTransaction(env: Env, orderId: string, amount: number) {
-  const url = new URL("https://app.pakasir.com/api/transactiondetail");
-  url.searchParams.set("project", env.PAKASIR_PROJECT_SLUG);
-  url.searchParams.set("amount", String(amount));
-  url.searchParams.set("order_id", orderId);
-  url.searchParams.set("api_key", env.PAKASIR_API_KEY);
-
-  const res = await fetch(url);
-  if (!res.ok) return false;
-  const data = await res.json<{
-    transaction?: { status?: string; amount?: number; order_id?: string; project?: string };
-  }>();
-  const trx = data.transaction;
-  return (
-    trx?.status === "completed" &&
-    trx.amount === amount &&
-    trx.order_id === orderId &&
-    trx.project === env.PAKASIR_PROJECT_SLUG
-  );
-}

@@ -3,12 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 let payment: any;
 let updateReturns: any[];
 let subscriptionsInserted: any[];
+let subscriptionsUpdated: any[];
+let activeSub: any | null;
 let selectCount = 0;
 
 function chain(rows: any[]) {
   return {
     from: () => chain(rows),
     where: () => chain(rows),
+    orderBy: () => chain(rows),
     limit: () => Promise.resolve(rows),
     then: (r: any) => Promise.resolve(rows).then(r),
   };
@@ -18,16 +21,35 @@ function makeDb() {
   return {
     select: () => {
       selectCount++;
-      return chain(selectCount === 1 ? [payment] : [{ id: "plan1", durationDays: 7 }]);
+      // 1: payment by order_id
+      // 2: plan by id
+      // 3: active subscription lookup inside grantOrExtendSubscription
+      if (selectCount === 1) return chain([payment]);
+      if (selectCount === 2) return chain([{ id: "plan1", durationDays: 7 }]);
+      return chain(activeSub ? [activeSub] : []);
     },
-    update: () => ({
-      set: () => ({
-        where: () => ({ returning: () => Promise.resolve(updateReturns) }),
+    update: (table: any) => ({
+      set: (value: any) => ({
+        where: () => ({
+          returning: () => {
+            if (table.__name === "subscriptions") {
+              subscriptionsUpdated.push(value);
+              return Promise.resolve([{ id: activeSub?.id ?? "sub1", expiresAt: value.expiresAt }]);
+            }
+            return Promise.resolve(updateReturns);
+          },
+        }),
       }),
     }),
     insert: (table: any) => ({
       values: (value: any) => {
-        if (table.__name === "subscriptions") subscriptionsInserted.push(value);
+        if (table.__name === "subscriptions") {
+          subscriptionsInserted.push(value);
+          return {
+            returning: () =>
+              Promise.resolve([{ id: "sub-new", expiresAt: value.expiresAt }]),
+          };
+        }
         return Promise.resolve();
       },
     }),
@@ -42,7 +64,13 @@ vi.mock("@dramaplay/db", () => ({
     pakasirReference: "payment.ref",
     __name: "payments",
   },
-  subscriptions: { __name: "subscriptions" },
+  subscriptions: {
+    id: "subscriptions.id",
+    userId: "subscriptions.user_id",
+    status: "subscriptions.status",
+    expiresAt: "subscriptions.expires_at",
+    __name: "subscriptions",
+  },
   plans: { id: "plans.id", __name: "plans" },
 }));
 
@@ -54,6 +82,8 @@ const body = { amount: 15000, order_id: "ref1", project: "dramaplay", status: "c
 beforeEach(() => {
   selectCount = 0;
   subscriptionsInserted = [];
+  subscriptionsUpdated = [];
+  activeSub = null;
   payment = {
     id: "pay1",
     userId: "u1",
@@ -94,6 +124,7 @@ describe("pakasir webhook idempotency", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
     expect(subscriptionsInserted).toEqual([]);
+    expect(subscriptionsUpdated).toEqual([]);
   });
 
   it("does not create subscription when conditional payment update loses race", async () => {
@@ -108,6 +139,7 @@ describe("pakasir webhook idempotency", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
     expect(subscriptionsInserted).toEqual([]);
+    expect(subscriptionsUpdated).toEqual([]);
   });
 
   it("creates one subscription after pending payment update succeeds", async () => {
@@ -125,5 +157,29 @@ describe("pakasir webhook idempotency", () => {
       planId: "plan1",
       status: "active",
     });
+    expect(subscriptionsUpdated).toEqual([]);
+  });
+
+  it("extends existing active subscription instead of stacking", async () => {
+    activeSub = {
+      id: "sub-old",
+      userId: "u1",
+      planId: "plan1",
+      status: "active",
+      expiresAt: new Date(Date.now() + 2 * 86_400_000),
+    };
+
+    const res = await pakasir.request(
+      "/webhook",
+      { method: "POST", body: JSON.stringify(body) },
+      env,
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(subscriptionsInserted).toEqual([]);
+    expect(subscriptionsUpdated).toHaveLength(1);
+    expect(subscriptionsUpdated[0].planId).toBe("plan1");
+    expect(subscriptionsUpdated[0].expiresAt.getTime()).toBeGreaterThan(activeSub.expiresAt.getTime());
   });
 });

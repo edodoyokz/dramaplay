@@ -1,7 +1,13 @@
+/**
+ * UNUSED at runtime. Consumer engagement (likes / favorites / watch progress)
+ * lives in localStorage via apps/consumer/src/lib/local-engagement.ts.
+ * Tables may still exist in Postgres from the initial migration — do not
+ * assume API routes write here. Wire server-side only when cross-device sync
+ * is a real product requirement; then drop the localStorage path.
+ */
 import {
   pgTable,
   uuid,
-  text,
   integer,
   timestamp,
   boolean,

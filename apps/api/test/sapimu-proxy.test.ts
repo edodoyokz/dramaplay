@@ -8,11 +8,11 @@ describe("sapimu raw manifest proxy", () => {
 
     const res = await app.fetch(
       new Request("https://api.test/proxy/sapimu-stream?path=/dramaboxbaru/api/stream?bookId=1"),
-      { PROVIDER_BASE_URL: "https://provider.test", PROVIDER_API_TOKEN: "token" } as any,
+      { PROVIDER_BASE_URL: "https://provider.test", PROVIDER_API_TOKEN: "token", CONSUMER_URL: "https://dramaplay.my.id" } as any,
       {} as any,
     );
 
-    expect(await res.text()).toContain("/stream?u=https%3A%2F%2Fcdn.example%2Fvideo.ts");
+    expect(await res.text()).toContain("https://dramaplay.my.id/stream?u=https%3A%2F%2Fcdn.example%2Fvideo.ts");
     globalThis.fetch = oldFetch;
   });
 });

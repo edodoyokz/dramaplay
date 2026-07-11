@@ -72,22 +72,13 @@ async function main() {
   }
 
   const providers = buildProviders(BASE_URL, TOKEN);
-  const batch1 = [
-    "dramaboxbaru",
-    "dramawave",
-    "pinedrama",
-    "reelshort",
-    "netshort",
-    "dramanova",
-    "melolo",
-    "shortmax",
-  ];
+  const codes = Object.keys(providers).sort();
 
   console.log(`\n=== Sapimu Provider Smoke Test ===`);
   console.log(`Base: ${BASE_URL}\n`);
 
   const results: GateResult[] = [];
-  for (const code of batch1) {
+  for (const code of codes) {
     const adapter = providers[code];
     if (!adapter) {
       results.push({ provider: code, passed: false, details: "adapter not registered" });

@@ -56,10 +56,10 @@ export async function syncProvider(
   providerCode: string,
   providerBaseUrl: string,
   providerToken?: string,
-  options: { fast?: boolean; searchKeywords?: string[]; maxItems?: number; engine?: "v2" | "legacy" } = {},
+  options: { fast?: boolean; searchKeywords?: string[]; maxItems?: number } = {},
 ): Promise<SyncResult> {
   const db = createDb(dbUrl);
-  const adapters = buildProviders(providerBaseUrl, providerToken, { engine: options.engine });
+  const adapters = buildProviders(providerBaseUrl, providerToken);
   const adapter = adapters[providerCode];
   if (!adapter) throw new Error(`unknown provider ${providerCode}`);
 
@@ -181,7 +181,7 @@ export async function syncProvider(
 
           // ponytail: resolve subtitles for newly-inserted FREE episodes only.
           // VIP episodes get subtitles via watch write-through.
-          if (options.engine === "v2" && toInsert.length) {
+          if (toInsert.length) {
             const freeNew = inserted.filter((r: { id: string; episodeNumber: number }) => r.episodeNumber <= threshold);
             for (const row of freeNew) {
               try {

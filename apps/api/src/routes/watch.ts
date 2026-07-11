@@ -26,14 +26,19 @@ const CACHE_MAX = 500;
 async function getPrimaryProvider(
   db: Database,
   dramaId: string,
-): Promise<{ code: string; name: string } | null> {
+): Promise<{ id: string; code: string; name: string; providerDramaId: string } | null> {
   const [row] = await db
-    .select({ code: providers.code, name: providers.name })
+    .select({
+      id: providers.id,
+      code: providers.code,
+      name: providers.name,
+      providerDramaId: dramaProviders.providerDramaId,
+    })
     .from(dramaProviders)
     .innerJoin(providers, eq(dramaProviders.providerId, providers.id))
     .where(and(eq(dramaProviders.dramaId, dramaId), eq(dramaProviders.isPrimary, true)))
     .limit(1);
-  return row ? { code: row.code ?? "unknown", name: row.name ?? "Unknown" } : null;
+  return row ? { id: row.id, code: row.code ?? "unknown", name: row.name ?? "Unknown", providerDramaId: row.providerDramaId } : null;
 }
 
 async function makeStreamResponse(
@@ -42,7 +47,7 @@ async function makeStreamResponse(
   dramaId: string,
   drama: typeof dramas.$inferSelect,
   episode: typeof episodes.$inferSelect,
-  providerInfo: { code: string; name: string } | null,
+  providerInfo: { id: string; code: string; name: string; providerDramaId: string } | null,
 ) {
   const [[primary], [nextEpisode], [sub]] = await Promise.all([
     db.select().from(episodeProviders).where(eq(episodeProviders.episodeId, episode.id)).limit(1),
@@ -66,12 +71,28 @@ async function makeStreamResponse(
       .limit(1),
   ]);
 
-  const providers = buildProviders(env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN, { engine: env.SAPIMU_PROVIDER_ENGINE });
+  const providers = buildProviders(env.PROVIDER_BASE_URL, env.PROVIDER_API_TOKEN);
   const adapter = providerInfo ? providers[providerInfo.code] : Object.values(providers)[0];
 
-  const source = adapter
+  let source = adapter
     ? await adapter.resolveStream(primary?.providerEpisodeId ?? "").catch(() => null)
     : null;
+
+  if (!source?.streamUrl && adapter && providerInfo?.code === "dramanova") {
+    // ponytail: Dramanova fileIds rotate; refresh just this episode instead of a full resync.
+    const fresh = (await adapter.fetchEpisodes(providerInfo.providerDramaId).catch(() => []))
+      .find((e) => e.episodeNumber === episode.episodeNumber);
+    if (fresh?.providerEpisodeId && fresh.providerEpisodeId !== primary?.providerEpisodeId) {
+      source = await adapter.resolveStream(fresh.providerEpisodeId).catch(() => null);
+      if (source?.streamUrl && primary) {
+        await db
+          .update(episodeProviders)
+          .set({ providerEpisodeId: fresh.providerEpisodeId })
+          .where(and(eq(episodeProviders.episodeId, episode.id), eq(episodeProviders.providerId, providerInfo.id)))
+          .catch(() => {});
+      }
+    }
+  }
 
   if (!source?.streamUrl) {
     return new Response(JSON.stringify({ error: "stream_unavailable", provider: providerInfo }), {
@@ -115,7 +136,7 @@ async function makeStreamResponse(
       episodeNumber: episode.episodeNumber,
       accessType: episode.accessType,
       nextEpisode: nextEpisode?.episodeNumber ?? null,
-      provider: providerInfo ?? undefined,
+      provider: providerInfo ? { code: providerInfo.code, name: providerInfo.name } : undefined,
     }),
     { status: 200, headers: { "content-type": "application/json" } },
   );

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { posterSrc } from "../lib/img";
+import { getProgressForSlug } from "../lib/local-engagement";
 import { SeoHead } from "../lib/seo";
 
 interface Episode {
@@ -40,22 +41,8 @@ export default function DramaDetail() {
     api<DetailResponse>(`/catalog/dramas/${slug}`)
       .then((res) => {
         setData(res);
-        try {
-          const stored = localStorage.getItem("dramaplay:watch_progress");
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed)) {
-              const match = parsed.find(
-                (p: { slug: string; episodeNumber: number }) => p.slug === slug
-              );
-              if (match) {
-                setLastWatchedEp(match.episodeNumber);
-              }
-            }
-          }
-        } catch (e) {
-          console.error(e);
-        }
+        const match = getProgressForSlug(slug);
+        if (match) setLastWatchedEp(match.episodeNumber);
       })
       .catch(() => setData(null));
   }, [slug]);

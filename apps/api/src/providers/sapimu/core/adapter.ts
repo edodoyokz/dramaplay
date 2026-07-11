@@ -60,9 +60,7 @@ function rowsToSummariesV2(data: unknown, def: SapimuProviderDef): ProviderDrama
 }
 
 /**
- * Generic Sapimu provider adapter built from a SapimuProviderDef. Extraction
- * reuses the same global helpers as the legacy createSapimuAdapter so v2 and
- * legacy produce identical list/detail/stream output (parity for migration).
+ * Generic Sapimu provider adapter built from a SapimuProviderDef.
  * Provider-specific quirks (melolo episode filter, pinedrama dual-locale,
  * rawStream proxy) live in the definition config + optional overrides.
  */

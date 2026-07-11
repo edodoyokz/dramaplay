@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { api } from "../lib/api";
+import {
+  getFavorites,
+  getLikes,
+  getWatchProgress,
+} from "../lib/local-engagement";
 import PricingModal from "../components/PricingModal";
 
 interface Payment {
@@ -30,22 +35,17 @@ export default function Profile() {
       const userEmail = data.user?.email ?? null;
       setEmail(userEmail);
       if (userEmail) {
-        // Load stats
-        try {
-          const likes = JSON.parse(localStorage.getItem("dramaplay:likes") || "[]");
-          setLikesCount(likes.length);
-          setLikedItems(likes);
+        const likes = getLikes();
+        setLikesCount(likes.length);
+        setLikedItems(likes);
 
-          const favs = JSON.parse(localStorage.getItem("dramaplay:favorites") || "[]");
-          setFavsCount(favs.length);
-          setFavoriteItems(favs);
+        const favs = getFavorites();
+        setFavsCount(favs.length);
+        setFavoriteItems(favs);
 
-          const watched = JSON.parse(localStorage.getItem("dramaplay:watch_progress") || "[]");
-          setWatchedCount(watched.length);
-          setHistoryItems(watched);
-        } catch (e) {
-          console.error(e);
-        }
+        const watched = getWatchProgress();
+        setWatchedCount(watched.length);
+        setHistoryItems(watched);
       }
     });
 

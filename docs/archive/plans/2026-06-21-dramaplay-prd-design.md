@@ -553,9 +553,9 @@ Dramaplay MVP memiliki **full admin panel** sebagai project terpisah.
 
 | App | Domain | Stack | Hosting |
 |---|---|---|---|
-| Consumer App | `dramaplay.id` | Vite + React + PWA | Cloudflare Pages |
-| Admin Panel | `admin.dramaplay.id` | Vite + React | Cloudflare Pages |
-| API | `api.dramaplay.id` | Cloudflare Workers | Cloudflare Workers |
+| Consumer App | `dramaplay.my.id` | Vite + React + PWA | Cloudflare Pages |
+| Admin Panel | `admin.dramaplay.my.id` | Vite + React | Cloudflare Pages |
+| API | `api.dramaplay.my.id` | Cloudflare Workers | Cloudflare Workers |
 
 ### Admin Modules
 
@@ -986,7 +986,7 @@ Mitigation: batch sync, cache, external scheduler backup, optimize requests, upg
 
 ## 31. Open Questions
 
-1. Domain final: `dramaplay.id` or alternative?
+1. Domain final: `dramaplay.my.id` or alternative?
 2. Final pricing for VIP weekly/monthly.
 3. Exact Pakasir integration details: webhook signature, status API, payment methods.
 4. Provider API contracts and legal status.

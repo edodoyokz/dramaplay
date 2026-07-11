@@ -7,8 +7,8 @@
    - Set redirect URL: `https://<project>.supabase.co/auth/v1/callback`.
    - Paste Client ID and Client Secret into Supabase.
 4. Authentication → URL Configuration:
-   - Site URL: `http://localhost:5173` (dev) or `https://dramaplay.id` (prod).
+   - Site URL: `http://localhost:5173` (dev) or `https://dramaplay.my.id` (prod).
    - Redirect URLs:
      - `http://localhost:5173/auth/callback`
-     - `https://dramaplay.id/auth/callback`
+     - `https://dramaplay.my.id/auth/callback`
 5. SQL Editor → run `packages/db/supabase/profiles-trigger.sql` to auto-provision `profiles` rows on signup.

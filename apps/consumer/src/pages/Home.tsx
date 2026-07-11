@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
+import { getWatchProgress, type WatchProgressItem } from "../lib/local-engagement";
 import { SeoHead } from "../lib/seo";
 
 interface Drama {
@@ -28,33 +29,12 @@ interface ProviderShelf {
   items: Drama[];
 }
 
-interface WatchProgress {
-  slug: string;
-  title: string;
-  posterUrl: string | null;
-  episodeNumber: number;
-  percent: number;
-}
-
 export default function Home() {
   const navigate = useNavigate();
   const [shelves, setShelves] = useState<ProviderShelf[]>([]);
   const [loadingHome, setLoadingHome] = useState(true);
   const [homeError, setHomeError] = useState(false);
-  const [progressList] = useState<WatchProgress[]>(() => {
-    try {
-      const stored = localStorage.getItem("dramaplay:watch_progress");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return parsed.slice(0, 5);
-        }
-      }
-    } catch (e) {
-      console.error("Failed to parse watch progress", e);
-    }
-    return [];
-  });
+  const [progressList] = useState<WatchProgressItem[]>(() => getWatchProgress().slice(0, 5));
   const [userVip, setUserVip] = useState(false);
 
   useEffect(() => {

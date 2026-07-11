@@ -1,0 +1,8 @@
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/home?channelId=562&page=1&pageSize=12" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/search?q=love" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/book/31001107002" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/chapters/31001107002" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/play/31001107002/13912781?q=720p" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/unlock/31001107002?q=720p" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/segments?url=https%3A%2F%2Facfs1.goodreels.com%2Fets%2Fbooks%2F002%2F31001107002%2F536865%2Fdnbhx4dffv%2F720p%2Fw5gvs4kfgr_720p.m3u8" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
+curl -X GET "https://captain.sapimu.au/goodshort/api/v1/key" -A "Mozilla/5.0" -H "Authorization: Bearer <YOUR_API_KEY>"
