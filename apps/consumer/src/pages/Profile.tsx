@@ -22,29 +22,17 @@ export default function Profile() {
   const [email, setEmail] = useState<string | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [userVip, setUserVip] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  const [favsCount, setFavsCount] = useState(0);
-  const [watchedCount, setWatchedCount] = useState(0);
+  const [likesCount] = useState(() => getLikes().length);
+  const [favsCount] = useState(() => getFavorites().length);
+  const [watchedCount] = useState(() => getWatchProgress().length);
   const [showPricing, setShowPricing] = useState(false);
 
   const [activeTab, setActiveTab] = useState<"history" | "likes" | "favorites" | null>(null);
-  const [historyItems, setHistoryItems] = useState<WatchProgressItem[]>([]);
-  const [likedItems, setLikedItems] = useState<string[]>([]);
-  const [favoriteItems, setFavoriteItems] = useState<string[]>([]);
+  const [historyItems] = useState<WatchProgressItem[]>(() => getWatchProgress());
+  const [likedItems] = useState<string[]>(() => getLikes());
+  const [favoriteItems] = useState<string[]>(() => getFavorites());
 
   useEffect(() => {
-    const likes = getLikes();
-    setLikesCount(likes.length);
-    setLikedItems(likes);
-
-    const favs = getFavorites();
-    setFavsCount(favs.length);
-    setFavoriteItems(favs);
-
-    const watched = getWatchProgress();
-    setWatchedCount(watched.length);
-    setHistoryItems(watched);
-
     supabase.auth.getUser().then(({ data }) => {
       setEmail(data.user?.email ?? null);
     });
