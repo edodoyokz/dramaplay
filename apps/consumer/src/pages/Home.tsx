@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
@@ -30,15 +30,15 @@ interface ProviderShelf {
 }
 
 export default function Home() {
-  const navigate = useNavigate();
   const [shelves, setShelves] = useState<ProviderShelf[]>([]);
   const [loadingHome, setLoadingHome] = useState(true);
   const [homeError, setHomeError] = useState(false);
-  const [progressList] = useState<WatchProgressItem[]>(() => getWatchProgress().slice(0, 5));
+  const [progressList, setProgressList] = useState<WatchProgressItem[]>(() => getWatchProgress().slice(0, 5));
   const [userVip, setUserVip] = useState(false);
 
-  useEffect(() => {
+  function loadHome() {
     setLoadingHome(true);
+    setHomeError(false);
     api<{ providers: ProviderShelf[] }>("/catalog/home")
       .then((r) => {
         setShelves(r.providers);
@@ -49,6 +49,14 @@ export default function Home() {
         setHomeError(true);
       })
       .finally(() => setLoadingHome(false));
+  }
+
+  useEffect(() => {
+    loadHome();
+    setProgressList(getWatchProgress().slice(0, 5));
+
+    const onFocus = () => setProgressList(getWatchProgress().slice(0, 5));
+    window.addEventListener("focus", onFocus);
 
     supabase.auth.getSession().then(({ data }) => {
       const token = data.session?.access_token;
@@ -61,6 +69,8 @@ export default function Home() {
         })
         .catch(() => {});
     });
+
+    return () => window.removeEventListener("focus", onFocus);
   }, []);
 
   return (
@@ -68,12 +78,12 @@ export default function Home() {
       <SeoHead title="Streaming Drama Pendek Indonesia Gratis" description="Nonton dracin, short drama, dan series vertikal terbaik gratis setiap hari. Koleksi lengkap drama China, Korea, dan Indonesia." />
       {/* Immersive Glass Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-black/60 backdrop-blur-md border-b border-zinc-900/60">
-        <div className="flex items-center gap-2" onClick={() => navigate("/")}>
+        <Link to="/" className="flex items-center gap-2">
           <img src="/logo-app.png" alt="Dramaplay Logo" className="w-8 h-8 rounded-lg object-cover shadow-md" />
-          <h1 className="text-xl font-extrabold tracking-tight text-gradient-sunset cursor-pointer">
+          <h1 className="text-xl font-extrabold tracking-tight text-gradient-sunset">
             Dramaplay
           </h1>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-3">
           {userVip ? (
@@ -88,7 +98,11 @@ export default function Home() {
               VIP
             </Link>
           )}
-          <Link to="/search" className="p-1 text-zinc-400 hover:text-white transition-colors">
+          <Link
+            to="/search"
+            aria-label="Cari drama"
+            className="inline-flex h-11 w-11 items-center justify-center text-zinc-400 hover:text-white transition-colors"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -151,15 +165,32 @@ export default function Home() {
 
       {/* Provider Shelves */}
       <div className="mt-8 px-4 space-y-8">
-        {loadingHome ? <p className="text-center text-xs text-zinc-500">Memuat provider...</p> : null}
-        {homeError ? (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
-            Gagal memuat katalog. Coba buka ulang halaman.
+        {loadingHome ? (
+          <div className="grid grid-cols-3 gap-3" aria-busy="true" aria-label="Memuat katalog">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <div className="aspect-[2/3] rounded-xl bg-zinc-900 animate-pulse" />
+                <div className="h-3 w-3/4 rounded bg-zinc-900 animate-pulse" />
+                <div className="h-2 w-1/2 rounded bg-zinc-900 animate-pulse" />
+              </div>
+            ))}
           </div>
         ) : null}
-        {shelves.map((shelf) => (
-          <ProviderSection key={shelf.code} shelf={shelf} />
-        ))}
+        {homeError ? (
+          <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
+            <p>Gagal memuat katalog.</p>
+            <button
+              type="button"
+              onClick={loadHome}
+              className="mt-3 rounded-full bg-rose-500 px-4 py-2 text-xs font-bold text-white"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        ) : null}
+        {!loadingHome && !homeError
+          ? shelves.map((shelf) => <ProviderSection key={shelf.code} shelf={shelf} />)
+          : null}
       </div>
     </div>
   );
@@ -192,7 +223,10 @@ function ProviderSection({ shelf }: { shelf: ProviderShelf }) {
             </p>
           </div>
         </div>
-        <Link to={`/provider/${shelf.code}`} className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">
+        <Link
+          to={`/provider/${shelf.code}`}
+          className="inline-flex min-h-11 items-center px-2 text-[10px] font-bold text-rose-500 uppercase tracking-widest"
+        >
           Lihat Semua
         </Link>
       </div>
@@ -233,20 +267,24 @@ function DramaCard({ drama: d }: { drama: Drama }) {
           ) : null}
         </div>
 
-        <div className="absolute bottom-1.5 left-1.5">
-          <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 backdrop-blur-md text-rose-400 border border-rose-500/20">
-            {d.episodeCount || 10} Eps
-          </span>
-        </div>
+        {d.episodeCount > 0 ? (
+          <div className="absolute bottom-1.5 left-1.5">
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 backdrop-blur-md text-rose-400 border border-rose-500/20">
+              {d.episodeCount} Eps
+            </span>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-2 px-0.5">
         <h4 className="truncate text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors duration-200">
           {d.title}
         </h4>
-        <p className="text-[9px] text-zinc-500 mt-0.5">
-          {d.year || "2026"} • {d.country || "ID"}
-        </p>
+        {d.year || d.country ? (
+          <p className="text-[9px] text-zinc-500 mt-0.5">
+            {[d.year, d.country].filter(Boolean).join(" • ")}
+          </p>
+        ) : null}
       </div>
     </Link>
   );

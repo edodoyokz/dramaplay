@@ -43,6 +43,8 @@ export default function Search() {
   const [results, setResults] = useState<Drama[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     api<{ providers: ProviderChip[] }>("/catalog/home")
@@ -55,12 +57,21 @@ export default function Search() {
     if (query.length < 2) {
       setResults([]);
       setHasMore(false);
+      setBusy(false);
+      setError("");
       return;
     }
 
     let cancelled = false;
+    if (page === 1) {
+      setResults([]);
+      setBusy(true);
+      setError("");
+    }
+
     const timer = setTimeout(() => {
       setBusy(true);
+      setError("");
       const params = new URLSearchParams({ q: query, page: String(page), limit: String(LIMIT) });
       if (provider) params.set("provider", provider);
 
@@ -69,23 +80,24 @@ export default function Search() {
           if (cancelled) return;
           setResults((prev) => (page === 1 ? data.items : [...prev, ...data.items]));
           setHasMore(data.hasMore);
+          setError("");
         })
         .catch(() => {
           if (cancelled) return;
           if (page === 1) setResults([]);
           setHasMore(false);
+          setError("Gagal memuat hasil pencarian.");
         })
         .finally(() => {
           if (!cancelled) setBusy(false);
         });
-
     }, 300);
 
     return () => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [q, provider, page]);
+  }, [q, provider, page, retryTick]);
 
   const setQuery = (value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -132,12 +144,17 @@ export default function Search() {
           </button>
 
           <div className="flex-1 relative">
+            <label htmlFor="search-query" className="sr-only">
+              Cari drama
+            </label>
             <input
-              type="text"
+              id="search-query"
+              type="search"
               placeholder="Cari judul drama atau genre..."
               value={q}
               onChange={(e) => setQuery(e.target.value)}
               autoFocus
+              aria-label="Cari drama"
               className="w-full glass-input rounded-full pl-10 pr-4 py-2.5 text-xs text-white"
             />
             <span className="absolute left-3.5 top-3 text-zinc-500">
@@ -158,7 +175,13 @@ export default function Search() {
         <div className="mt-3 flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
           <ProviderChipButton active={!provider} label="Semua" onClick={() => selectProvider("")} />
           {providers.map((p) => (
-            <ProviderChipButton key={p.code} active={provider === p.code} label={p.name} logoUrl={p.logoUrl} onClick={() => selectProvider(p.code)} />
+            <ProviderChipButton
+              key={p.code}
+              active={provider === p.code}
+              label={p.name}
+              logoUrl={p.logoUrl}
+              onClick={() => selectProvider(p.code)}
+            />
           ))}
         </div>
       </div>
@@ -181,6 +204,18 @@ export default function Search() {
           </div>
         ) : q.trim().length < 2 ? (
           <EmptyMessage title="Minimal 2 karakter" text="Ketik sedikitnya 2 karakter agar pencarian tidak membebani server." />
+        ) : error && results.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-fadeIn">
+            <h3 className="text-sm font-bold text-zinc-300">Gagal memuat hasil</h3>
+            <p className="text-xs text-zinc-500 mt-1 max-w-xs leading-relaxed">{error}</p>
+            <button
+              type="button"
+              onClick={() => setRetryTick((n) => n + 1)}
+              className="mt-4 rounded-full bg-rose-500 px-4 py-2 text-xs font-bold text-white"
+            >
+              Coba Lagi
+            </button>
+          </div>
         ) : busy && results.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
             <div className="w-8 h-8 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin mb-3" />
@@ -214,7 +249,9 @@ export default function Search() {
 function ProviderChipButton({ active, label, logoUrl, onClick }: { active: boolean; label: string; logoUrl?: string | null; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold transition-all ${
         active ? "border-rose-500 bg-rose-500 text-white" : "border-zinc-800 bg-zinc-900/70 text-zinc-400 hover:text-white"
       }`}
@@ -261,15 +298,19 @@ function DramaCard({ drama: d }: { drama: Drama }) {
             ★ {d.rating.toFixed(1)}
           </span>
         ) : null}
-        <div className="absolute bottom-1.5 left-1.5">
-          <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 backdrop-blur-md text-rose-400 border border-rose-500/20">
-            {d.episodeCount || 0} Eps
-          </span>
-        </div>
+        {d.episodeCount && d.episodeCount > 0 ? (
+          <div className="absolute bottom-1.5 left-1.5">
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 backdrop-blur-md text-rose-400 border border-rose-500/20">
+              {d.episodeCount} Eps
+            </span>
+          </div>
+        ) : null}
       </div>
       <div className="mt-2 px-0.5">
         <h4 className="truncate text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors duration-200">{d.title}</h4>
-        <p className="text-[9px] text-zinc-500 mt-0.5">{d.year || "2026"} • {d.country || "ID"}</p>
+        {d.year || d.country ? (
+          <p className="text-[9px] text-zinc-500 mt-0.5">{[d.year, d.country].filter(Boolean).join(" • ")}</p>
+        ) : null}
       </div>
     </Link>
   );

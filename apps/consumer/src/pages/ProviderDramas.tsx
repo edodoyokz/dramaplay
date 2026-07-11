@@ -42,8 +42,15 @@ export default function ProviderDramas() {
       setItems((prev) => (nextPage === 1 ? res.items : [...prev, ...res.items]));
       setPage(res.page);
       setHasMore(res.hasMore);
-    } catch {
-      setError(nextPage === 1 ? "Provider tidak ditemukan." : "Gagal memuat halaman berikutnya.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.startsWith("404")) {
+        setError("Provider tidak ditemukan.");
+      } else if (nextPage === 1) {
+        setError("Gagal memuat provider.");
+      } else {
+        setError("Gagal memuat halaman berikutnya.");
+      }
     } finally {
       setLoading(false);
     }
@@ -78,7 +85,16 @@ export default function ProviderDramas() {
       <main className="px-4 mt-5">
         {error && items.length === 0 ? (
           <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
-            {error}
+            <p>{error}</p>
+            {!error.includes("tidak ditemukan") ? (
+              <button
+                type="button"
+                onClick={() => load(1)}
+                className="mt-3 rounded-full bg-rose-500 px-4 py-2 text-xs font-bold text-white"
+              >
+                Coba Lagi
+              </button>
+            ) : null}
           </div>
         ) : null}
 
@@ -90,14 +106,28 @@ export default function ProviderDramas() {
 
         {loading && <p className="py-6 text-center text-xs text-zinc-500">Memuat...</p>}
 
+        {!loading && !error && items.length === 0 ? (
+          <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-center text-sm text-zinc-400">
+            Belum ada drama di provider ini.
+          </div>
+        ) : null}
+
         {error && items.length > 0 ? (
-          <button onClick={() => load(page + 1)} className="mt-5 w-full rounded-full border border-zinc-800 py-2 text-sm text-zinc-300">
+          <button
+            type="button"
+            onClick={() => load(page + 1)}
+            className="mt-5 w-full rounded-full border border-zinc-800 py-2 text-sm text-zinc-300"
+          >
             Coba lagi
           </button>
         ) : null}
 
         {!loading && hasMore ? (
-          <button onClick={() => load(page + 1)} className="mt-6 w-full rounded-full bg-rose-500 py-2.5 text-sm font-bold text-white">
+          <button
+            type="button"
+            onClick={() => load(page + 1)}
+            className="mt-6 w-full rounded-full bg-rose-500 py-2.5 text-sm font-bold text-white"
+          >
             Muat Lagi
           </button>
         ) : null}
@@ -124,14 +154,18 @@ function DramaCard({ drama: d }: { drama: Drama }) {
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80">
         {d.posterUrl ? <img src={posterSrc(d.posterUrl)} alt={d.title} className="h-full w-full object-cover" loading="lazy" /> : null}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-        <div className="absolute bottom-1.5 left-1.5">
-          <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 text-rose-400 border border-rose-500/20">
-            {d.episodeCount || 0} Eps
-          </span>
-        </div>
+        {d.episodeCount > 0 ? (
+          <div className="absolute bottom-1.5 left-1.5">
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 text-rose-400 border border-rose-500/20">
+              {d.episodeCount} Eps
+            </span>
+          </div>
+        ) : null}
       </div>
       <h4 className="mt-2 truncate text-xs font-semibold text-zinc-300 group-hover:text-white">{d.title}</h4>
-      <p className="text-[9px] text-zinc-500 mt-0.5">{d.year || "2026"} • {d.country || "ID"}</p>
+      {d.year || d.country ? (
+        <p className="text-[9px] text-zinc-500 mt-0.5">{[d.year, d.country].filter(Boolean).join(" • ")}</p>
+      ) : null}
     </Link>
   );
 }
