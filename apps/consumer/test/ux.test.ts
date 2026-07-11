@@ -5,7 +5,13 @@ describe("safeReturnPath", () => {
   it("accepts an internal episode path", () => {
     expect(safeReturnPath("/drama/demo/episode/2")).toBe("/drama/demo/episode/2");
   });
-  it("rejects external and protocol-relative paths", () => {
+  it("accepts /auth and paths with query strings", () => {
+    expect(safeReturnPath("/auth")).toBe("/auth");
+    expect(safeReturnPath("/drama/demo/episode/2?from=search")).toBe("/drama/demo/episode/2?from=search");
+  });
+  it("rejects empty, external, and protocol-relative paths", () => {
+    expect(safeReturnPath(null)).toBe("/");
+    expect(safeReturnPath("")).toBe("/");
     expect(safeReturnPath("https://evil.example")).toBe("/");
     expect(safeReturnPath("//evil.example")).toBe("/");
   });

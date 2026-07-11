@@ -29,9 +29,9 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token ?? getAuthToken();
       if (!token) {
-        alert("Silakan login terlebih dahulu untuk melanjutkan pembayaran.");
         onClose();
-        window.location.assign("/auth");
+        const returnTo = window.location.pathname + window.location.search;
+        window.location.assign(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
         return;
       }
 
@@ -61,9 +61,9 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token ?? getAuthToken();
       if (!token) {
-        alert("Silakan login terlebih dahulu untuk menukar kupon.");
         onClose();
-        window.location.assign("/auth");
+        const returnTo = window.location.pathname + window.location.search;
+        window.location.assign(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
         return;
       }
       const res = await api<{ planName: string; durationDays: number }>("/billing/redeem", {
