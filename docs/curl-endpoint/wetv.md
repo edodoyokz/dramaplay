@@ -1,0 +1,7 @@
+curl -X GET "https://captain.sapimu.au/wetv/api/channels?lang=id&country=ID" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"
+curl -X GET "https://captain.sapimu.au/wetv/api/feed?channel_id=1001&lang=id&country=ID" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"
+curl -X GET "https://captain.sapimu.au/wetv/api/detail?cid=wu7vz4vgfi8ugan&lang=id&country=ID" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"
+curl -X GET "https://captain.sapimu.au/wetv/api/episodes?cid=wu7vz4vgfi8ugan&lang=id&country=ID" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"
+curl -X GET "https://captain.sapimu.au/wetv/api/play?vid=j00467e65u4&cid=wu7vz4vgfi8ugan&defn=hd&lang=id&country=ID" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"
+curl -X GET "https://captain.sapimu.au/wetv/api/search?keyword=love&lang=id&country=ID" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"
+curl -X GET "https://captain.sapimu.au/wetv/api/languages" -A "Mozilla/5.0" -H "Authorization: Bearer 3126e507a4b52b2df50a2e435fc4d6d4d1191815e6419554a379180fb1990291"

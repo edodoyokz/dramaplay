@@ -1,3 +1,6 @@
+export type ContentType = "shortform" | "longform";
+export type MediaType = "movie" | "series";
+
 export interface ProviderDramaSummary {
   providerDramaId: string;
   title: string;
@@ -6,6 +9,8 @@ export interface ProviderDramaSummary {
   genres?: string[];
   country?: string;
   year?: number;
+  contentType?: ContentType;
+  mediaType?: MediaType;
 }
 
 export interface ProviderDramaDetail extends ProviderDramaSummary {

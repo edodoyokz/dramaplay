@@ -17,6 +17,7 @@ describe("buildV2Providers", () => {
       "pinedrama",
       "reelshort",
       "shortmax",
+      "wetv",
     ]);
   });
 
