@@ -69,3 +69,26 @@ Do not treat fixture/unit results as live playback proof.
 
 - User authorized: complete remaining work, run migration, merge to main, redeploy.
 - No dependency / lockfile changes.
+
+## Production deploy + live API smoke (post-merge)
+
+Date (UTC): 2026-07-12T18:58:00Z approx
+
+Deploy:
+- API worker `dramaplay-api` via local wrangler: **OK** (version `2646f49b-a8e7-4ca3-b60d-a1c5890fea53`, route `api.dramaplay.my.id/*`)
+- Consumer Pages `dramaplay-consumer`: **OK** (`https://99bd927e.dramaplay-consumer.pages.dev`)
+- Admin Pages `dramaplay-admin`: **OK** (`https://2a4e7588.dramaplay-admin.pages.dev`)
+- GitHub Actions deploys initially failed: missing `CLOUDFLARE_*` secrets + Node 20 vs Wrangler 4. Fixed: secrets restored; workflows on Node 22 (`7536a9f`). CI **success**. Manual re-deploy used because deploy workflows lack `workflow_dispatch` and only path-filter on app paths.
+
+Live checks (no signed URL leakage):
+- `GET /health` → 200 `db:up`
+- `GET https://dramaplay.my.id/` → 200
+- MovieBox multi-season catalog `GET /catalog/dramas/moviebox-love-island-usa` → 41 eps, seasons `[1,2,4]`
+- Watch S1E1 → 200, `streamType=mp4`, `subtitleLanguage=id`, next `{1,2}`
+- Watch S2E23 → 200, distinct season, next `{2,24}`
+- Subtitle proxy `/stream?u=…srt` → 200 `text/vtt` body starts `WEBVTT`, Indonesian cue text present
+- WeTV sample `wetv-fengmen-village-horror` S1E1 → 200, `streamType=m3u8`, `subtitleLanguage=id`, subtitle proxy OK
+
+Still not verified:
+- Chrome desktop/Android actual `<video>` `readyState`/`playing` screenshots
+- Forced media-error recovery click path in browser
