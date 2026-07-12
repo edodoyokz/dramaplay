@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Outlet, NavLink } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Home from "./pages/Home";
 import DramaDetail from "./pages/DramaDetail";
+import LongformDetail from "./pages/LongformDetail";
+import LongformWatch from "./pages/LongformWatch";
 import Watch from "./pages/Watch";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -111,6 +113,7 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/drama/:slug" element={<DramaDetail />} />
+            <Route path="/title/:slug" element={<LongformDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
             <Route path="/provider/:code" element={<ProviderDramas />} />
@@ -126,6 +129,14 @@ export default function App() {
             element={
               <div className="relative min-h-screen max-w-md mx-auto bg-black shadow-2xl border-x border-zinc-900/60 app-frame">
                 <Watch />
+              </div>
+            }
+          />
+          <Route
+            path="/title/:slug/watch/:n"
+            element={
+              <div className="relative min-h-screen max-w-3xl mx-auto bg-black shadow-2xl border-x border-zinc-900/60 app-frame">
+                <LongformWatch />
               </div>
             }
           />

@@ -6,7 +6,7 @@
 // pass through unchanged.
 export function posterSrc(url: string | null | undefined): string {
   if (!url) return "";
-  if (!/\.heic(\?|$)|tiktokcdn\.com|fizzopic\.org/i.test(url)) return url;
+  if (!/\.heic(\?|$)|tiktokcdn\.com|fizzopic\.org|wetvinfo\.com|aoneroom\.com/i.test(url)) return url;
   // Absolute so it works as both <img src> and og:image (crawlers need absolute).
   return `${window.location.origin}/img?u=${encodeURIComponent(url)}`;
 }

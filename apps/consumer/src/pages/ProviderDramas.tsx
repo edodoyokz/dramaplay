@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { posterSrc } from "../lib/img";
+import { mediaTypeLabel, titlePath } from "../lib/content-route";
 
 type Drama = {
   id: string;
@@ -12,6 +13,8 @@ type Drama = {
   year: number | null;
   rating: number;
   episodeCount: number;
+  contentType?: "shortform" | "longform";
+  mediaType?: "movie" | "series";
   provider?: { code: string; name: string };
 };
 
@@ -149,15 +152,21 @@ function ProviderLogo({ name, logoUrl }: { name: string; logoUrl?: string | null
 }
 
 function DramaCard({ drama: d }: { drama: Drama }) {
+  const label = mediaTypeLabel(d.mediaType);
   return (
-    <Link to={`/drama/${d.slug}`} className="block group">
+    <Link to={titlePath(d.slug, d.contentType)} className="block group">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80">
         {d.posterUrl ? <img src={posterSrc(d.posterUrl)} alt={d.title} className="h-full w-full object-cover" loading="lazy" /> : null}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        {label ? (
+          <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/65 text-sky-300 border border-sky-400/20">
+            {label}
+          </span>
+        ) : null}
         {d.episodeCount > 0 ? (
           <div className="absolute bottom-1.5 left-1.5">
             <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 text-rose-400 border border-rose-500/20">
-              {d.episodeCount} Eps
+              {d.contentType === "longform" && d.mediaType === "movie" ? "Film" : `${d.episodeCount} Eps`}
             </span>
           </div>
         ) : null}

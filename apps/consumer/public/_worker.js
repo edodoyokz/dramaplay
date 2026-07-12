@@ -19,13 +19,15 @@ const ALLOWED_STREAM_DOMAINS = [
   "tiktokcdn.com",
   "inicdn.net",
   "idrama.video",
+  "wetvinfo.com",
+  "hakunaymatata.com",
 ];
 
 // Signed-CDN image hosts whose poster URLs expire (pinedrama: TikTok CDN
 // signatures, melolo: signed HEIC). /img caches the fetched bytes by stable
 // path so a cover fetched once (while its signature is fresh) is served
 // forever after, even once the signed URL expires.
-const ALLOWED_IMG_DOMAINS = ["tiktokcdn.com", "fizzopic.org"];
+const ALLOWED_IMG_DOMAINS = ["tiktokcdn.com", "fizzopic.org", "wetvinfo.com", "aoneroom.com"];
 
 function isAllowedImgTarget(raw) {
   let u;
@@ -64,7 +66,7 @@ const ORIGIN = "https://dramaplay.my.id";
 const API = "https://api.dramaplay.my.id";
 
 // Known SPA routes that should return the shell (not 404).
-const KNOWN_PREFIXES = ["/drama/", "/provider/", "/search", "/auth", "/profile", "/terms", "/privacy", "/refund"];
+const KNOWN_PREFIXES = ["/drama/", "/title/", "/provider/", "/search", "/auth", "/profile", "/terms", "/privacy", "/refund"];
 
 function isKnownRoute(pathname) {
   if (pathname === "/") return true;
@@ -75,7 +77,7 @@ function isKnownRoute(pathname) {
 // server-side (no window.location.origin).
 function ogPoster(url) {
   if (!url) return `${ORIGIN}/og-cover.png`;
-  if (/\.heic(\?|$)|tiktokcdn\.com|fizzopic\.org/i.test(url)) {
+  if (/\.heic(\?|$)|tiktokcdn\.com|fizzopic\.org|wetvinfo\.com|aoneroom\.com/i.test(url)) {
     return `${ORIGIN}/img?u=${encodeURIComponent(url)}`;
   }
   return url;

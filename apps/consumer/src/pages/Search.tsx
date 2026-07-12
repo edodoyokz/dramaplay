@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { posterSrc } from "../lib/img";
+import { mediaTypeLabel, titlePath } from "../lib/content-route";
 import { SeoHead } from "../lib/seo";
 
 interface Drama {
@@ -276,9 +277,10 @@ function EmptyMessage({ title, text }: { title: string; text: string }) {
   );
 }
 
-function DramaCard({ drama: d }: { drama: Drama }) {
+function DramaCard({ drama: d }: { drama: Drama & { contentType?: "shortform" | "longform"; mediaType?: "movie" | "series" } }) {
+  const label = mediaTypeLabel(d.mediaType);
   return (
-    <Link key={d.id} to={`/drama/${d.slug}`} className="block group">
+    <Link key={d.id} to={titlePath(d.slug, d.contentType)} className="block group">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80 shadow-md group-hover:border-rose-500/30 transition-all duration-300">
         {d.posterUrl ? (
           <img src={posterSrc(d.posterUrl)} alt={d.title} className="h-full w-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-500" loading="lazy" />
@@ -291,6 +293,11 @@ function DramaCard({ drama: d }: { drama: Drama }) {
         {d.provider ? (
           <span className="absolute top-1.5 left-1.5 max-w-[80%] truncate px-1.5 py-0.5 rounded-md text-[8px] font-bold bg-black/65 backdrop-blur-md text-rose-300 border border-rose-500/20">
             {d.provider.name}
+          </span>
+        ) : null}
+        {label ? (
+          <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/65 text-sky-300 border border-sky-400/20">
+            {label}
           </span>
         ) : null}
         {d.rating && d.rating > 0 ? (

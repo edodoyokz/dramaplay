@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
 import { getWatchProgress, type WatchProgressItem } from "../lib/local-engagement";
+import { mediaTypeLabel, titlePath } from "../lib/content-route";
 import { SeoHead } from "../lib/seo";
 
 interface Drama {
@@ -17,13 +18,16 @@ interface Drama {
   genres: string[];
   rating: number;
   episodeCount: number;
-  provider?: { code: string; name: string };
+  contentType?: "shortform" | "longform";
+  mediaType?: "movie" | "series";
+  provider?: { code: string; name: string; contentType?: string };
 }
 
 interface ProviderShelf {
   code: string;
   name: string;
   logoUrl?: string | null;
+  contentType?: "shortform" | "longform";
   dramaCount: number;
   episodeCount: number;
   items: Drama[];
@@ -219,7 +223,7 @@ function ProviderSection({ shelf }: { shelf: ProviderShelf }) {
           <div>
             <h3 className="text-md font-bold text-white tracking-wide">{shelf.name}</h3>
             <p className="text-[10px] text-zinc-500">
-              {shelf.dramaCount} drama • {shelf.episodeCount} episode
+              {shelf.contentType === "longform" ? "Film & Serial" : "Drama pendek"} • {shelf.dramaCount} judul • {shelf.episodeCount} episode
             </p>
           </div>
         </div>
@@ -241,8 +245,9 @@ function ProviderSection({ shelf }: { shelf: ProviderShelf }) {
 }
 
 function DramaCard({ drama: d }: { drama: Drama }) {
+  const label = mediaTypeLabel(d.mediaType);
   return (
-    <Link to={`/drama/${d.slug}`} className="block group">
+    <Link to={titlePath(d.slug, d.contentType)} className="block group">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/80 shadow-md group-hover:border-rose-500/30 transition-all duration-300">
         {d.posterUrl ? (
           <img
@@ -260,6 +265,11 @@ function DramaCard({ drama: d }: { drama: Drama }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 transition-opacity" />
 
         <div className="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
+          {label ? (
+            <span className="px-1.5 py-0.5 rounded-md text-[8px] font-bold bg-black/65 text-sky-300 border border-sky-400/20">
+              {label}
+            </span>
+          ) : null}
           {d.rating && d.rating > 0 ? (
             <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-black/60 backdrop-blur-md text-amber-400 flex items-center gap-0.5 border border-amber-400/20">
               ★ {d.rating.toFixed(1)}
@@ -270,7 +280,7 @@ function DramaCard({ drama: d }: { drama: Drama }) {
         {d.episodeCount > 0 ? (
           <div className="absolute bottom-1.5 left-1.5">
             <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-black/60 backdrop-blur-md text-rose-400 border border-rose-500/20">
-              {d.episodeCount} Eps
+              {d.contentType === "longform" && d.mediaType === "movie" ? "Film" : `${d.episodeCount} Eps`}
             </span>
           </div>
         ) : null}
