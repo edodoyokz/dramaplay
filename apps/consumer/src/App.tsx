@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import ProviderDramas from "./pages/ProviderDramas";
+import LongformProvider from "./pages/LongformProvider";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Refund from "./pages/Refund";
@@ -116,6 +117,8 @@ export default function App() {
             <Route path="/title/:slug" element={<LongformDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/provider/wetv" element={<LongformProvider />} />
+            <Route path="/provider/moviebox" element={<LongformProvider />} />
             <Route path="/provider/:code" element={<ProviderDramas />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
