@@ -181,10 +181,29 @@ export class MovieBoxAdapter extends SapimuBaseAdapter {
     );
     const streamUrl = s(data.data?.resourceLink);
     if (!streamUrl) return null;
+    const cap = pickMovieBoxCaption(data.data?.extCaptions);
     return {
       streamUrl,
       streamType: streamUrl.includes(".m3u8") ? "m3u8" : "mp4",
       quality: s(data.data?.resolution),
+      subtitleUrl: cap?.url,
+      subtitleLanguage: cap?.language,
     };
   }
+}
+
+/** MovieBox Indonesian code is `in_id`, not `id`. Prefer that, then id, then en. */
+export function pickMovieBoxCaption(raw: unknown): { url: string; language: string } | undefined {
+  if (!Array.isArray(raw) || !raw.length) return undefined;
+  const rows = raw.filter((x): x is Row => !!x && typeof x === "object");
+  const pref = ["in_id", "id", "en"];
+  for (const code of pref) {
+    const hit = rows.find((r) => String(r.lan ?? r.lang ?? "").toLowerCase() === code);
+    const url = hit ? s(hit.url) : undefined;
+    if (url) return { url, language: code === "en" ? "en" : "id" };
+  }
+  const first = rows.find((r) => s(r.url));
+  const url = first ? s(first.url) : undefined;
+  if (!url) return undefined;
+  return { url, language: "und" };
 }

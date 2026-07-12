@@ -41,6 +41,24 @@ const redirected = await worker.fetch(
 );
 assert.equal(redirected.status, 403);
 
+// SRT captions are converted to WebVTT for <track>.
+globalThis.fetch = async () =>
+  new Response("1\n00:00:01,000 --> 00:00:02,500\nHalo\n", {
+    status: 200,
+    headers: { "content-type": "application/x-subrip" },
+    url: "https://cacdn.hakunaymatata.com/subtitle/id.srt",
+  });
+const srt = await worker.fetch(
+  new Request("https://dramaplay.my.id/stream?u=https%3A%2F%2Fcacdn.hakunaymatata.com%2Fsubtitle%2Fid.srt"),
+  env,
+);
+assert.equal(srt.status, 200);
+assert.equal(srt.headers.get("content-type"), "text/vtt; charset=utf-8");
+const vtt = await srt.text();
+assert.ok(vtt.startsWith("WEBVTT"));
+assert.ok(vtt.includes("00:00:01.000 --> 00:00:02.500"));
+assert.ok(vtt.includes("Halo"));
+
 console.log("worker stream allowlist tests passed");
 
 // ── /img proxy: caches signed/expiring CDN covers by stable path ────────

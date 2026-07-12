@@ -60,7 +60,10 @@ const stream = {
     resourceLink: "https://macdn.hakunaymatata.com/resource/love.mp4",
     resolution: 360,
     duration: 4572,
-    extCaptions: [],
+    extCaptions: [
+      { lan: "en", lanName: "English", url: "https://cacdn.hakunaymatata.com/subtitle/en.srt" },
+      { lan: "in_id", lanName: "Indonesia", url: "https://cacdn.hakunaymatata.com/subtitle/id.srt" },
+    ],
   },
 };
 
@@ -114,6 +117,8 @@ describe("MovieBoxAdapter", () => {
       streamUrl: "https://macdn.hakunaymatata.com/resource/love.mp4",
       streamType: "mp4",
       quality: "360",
+      subtitleUrl: "https://cacdn.hakunaymatata.com/subtitle/id.srt",
+      subtitleLanguage: "id",
     });
   });
 });

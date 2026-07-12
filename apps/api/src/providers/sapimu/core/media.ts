@@ -1,14 +1,21 @@
-// Subtitle format helpers. The browser <track> element only renders WebVTT;
-// SRT must be converted before serving. Sync may store SRT for audit/cache, but
-// watch must not return a raw .srt to <track>.
+// Subtitle format helpers. The browser <track> element only renders WebVTT.
+// SRT is allowed through the API; the consumer /stream proxy converts it to VTT.
 
 export function subtitleFormatFromUrl(url: string): "vtt" | "srt" {
   return /\.vtt(\?|$|#)/i.test(url) ? "vtt" : "srt";
 }
 
-// SRT cannot be rendered by <track>; treat explicit .srt as non-renderable.
-// Anything else (incl. unknown ext) is assumed renderable — providers that
-// serve SRT with a non-.srt URL will be caught by the audit warning later.
+// True when the consumer can show the cue list. .srt is ok because /stream
+// rewrites timestamps and prefixes WEBVTT before <track> loads it.
 export function isRenderableSubtitle(url: string): boolean {
-  return !/\.srt(\?|$|#)/i.test(url);
+  return Boolean(url);
+}
+
+/** Convert SubRip text to WebVTT (browser <track> format). */
+export function srtToVtt(srt: string): string {
+  const body = srt.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
+  const cues = body
+    // SRT uses comma millis; VTT uses dot
+    .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
+  return cues.startsWith("WEBVTT") ? cues : `WEBVTT\n\n${cues}`;
 }

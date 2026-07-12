@@ -192,10 +192,21 @@ export default {
       if (!isAllowedStreamTarget(finalUrl)) return new Response("forbidden redirect", { status: 403 });
       const ct = upstream.headers.get("content-type") ?? "";
       const isManifest = target.includes(".m3u8") || ct.includes("mpegurl");
+      // MovieBox (and others) ship SRT; <track> only renders WebVTT.
+      const isSrt = /\.srt(\?|$|#)/i.test(target) || /\.srt(\?|$|#)/i.test(finalUrl);
 
       const headers = new Headers();
       headers.set("Access-Control-Allow-Origin", "*");
       headers.set("Cache-Control", "no-cache");
+
+      if (isSrt) {
+        const text = await upstream.text();
+        const body = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
+        const cues = body.replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
+        const vtt = cues.startsWith("WEBVTT") ? cues : `WEBVTT\n\n${cues}`;
+        headers.set("content-type", "text/vtt; charset=utf-8");
+        return new Response(vtt, { status: 200, headers });
+      }
 
       if (!isManifest) {
         // Force only MPEG-TS segments: some CDNs (dramaboxdb) serve .ts as
