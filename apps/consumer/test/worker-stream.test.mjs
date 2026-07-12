@@ -59,6 +59,40 @@ assert.ok(vtt.startsWith("WEBVTT"));
 assert.ok(vtt.includes("00:00:01.000 --> 00:00:02.500"));
 assert.ok(vtt.includes("Halo"));
 
+// WeTV subtitle playlists (.vtt.m3u8) are flattened to a single text/vtt body.
+globalThis.fetch = async (input) => {
+  const href = String(input);
+  if (href.includes(".vtt.m3u8")) {
+    return new Response(
+      "#EXTM3U\n#EXT-X-TARGETDURATION:10\n#EXTINF:10,\nid.vtt\n#EXT-X-ENDLIST\n",
+      {
+        status: 200,
+        headers: { "content-type": "application/vnd.apple.mpegurl" },
+        url: href,
+      },
+    );
+  }
+  if (href.endsWith("id.vtt") || href.includes("/id.vtt")) {
+    return new Response("WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHalo WeTV\n", {
+      status: 200,
+      headers: { "content-type": "text/vtt" },
+      url: href,
+    });
+  }
+  return new Response("nope", { status: 404 });
+};
+const wetvSub = await worker.fetch(
+  new Request(
+    "https://dramaplay.my.id/stream?u=https%3A%2F%2Fcffaws.wetvinfo.com%2Fsub%2Fid.vtt.m3u8%3Fver%3D4",
+  ),
+  env,
+);
+assert.equal(wetvSub.status, 200);
+assert.equal(wetvSub.headers.get("content-type"), "text/vtt; charset=utf-8");
+const wetvVtt = await wetvSub.text();
+assert.ok(wetvVtt.startsWith("WEBVTT"));
+assert.ok(wetvVtt.includes("Halo WeTV"));
+
 console.log("worker stream allowlist tests passed");
 
 // ── /img proxy: caches signed/expiring CDN covers by stable path ────────

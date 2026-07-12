@@ -58,6 +58,42 @@ function isAllowedStreamTarget(raw) {
   return ALLOWED_STREAM_DOMAINS.some((d) => host === d || host.endsWith("." + d));
 }
 
+// WeTV serves WebVTT as a one-segment HLS playlist (.vtt.m3u8). <track> cannot
+// load m3u8, so flatten the playlist into a single text/vtt body.
+function isVttPlaylist(target, text) {
+  if (/\.vtt\.m3u8(\?|$|#)/i.test(target)) return true;
+  const media = text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"));
+  return media.length > 0 && media.every((l) => /\.vtt(\?|$|#)/i.test(l));
+}
+
+async function flattenVttPlaylist(text, baseUrl, fetcher = fetch) {
+  const segs = [];
+  for (const line of text.split("\n")) {
+    const t = line.trim();
+    if (!t || t.startsWith("#")) continue;
+    const abs = new URL(t, baseUrl).toString();
+    if (!isAllowedStreamTarget(abs)) continue;
+    const r = await fetcher(abs, { headers: { "User-Agent": "Mozilla/5.0" } });
+    const finalUrl = r.url || abs;
+    if (!r.ok || !isAllowedStreamTarget(finalUrl)) continue;
+    segs.push(await r.text());
+  }
+  let out = "";
+  for (let i = 0; i < segs.length; i++) {
+    let body = segs[i].replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
+    if (i === 0) {
+      if (!body.startsWith("WEBVTT")) body = `WEBVTT\n\n${body}`;
+      out = body;
+    } else {
+      out += `\n\n${body.replace(/^WEBVTT[^\n]*\n+/, "")}`;
+    }
+  }
+  return out || "WEBVTT\n\n";
+}
+
 // ponytail: server-side meta injection for crawlers that don't render JS
 // (WhatsApp, Telegram, Facebook, Twitter, GPTBot, Bingbot preview).
 // Fetch drama meta from API, inject into HTML <head> before serving.
@@ -208,38 +244,47 @@ export default {
         return new Response(vtt, { status: 200, headers });
       }
 
-      if (!isManifest) {
-        // Force only MPEG-TS segments: some CDNs (dramaboxdb) serve .ts as
-        // text/plain + nosniff. Do not relabel MP4 as TS.
-        const isTs = target.includes(".ts") || ct.includes("mp2t");
-        headers.set("content-type", isTs ? "video/mp2t" : ct || "application/octet-stream");
-        // Pass through byte-range support so seeking works on progressive MP4.
-        headers.set("Accept-Ranges", "bytes");
-        for (const h of ["content-range", "content-length"]) {
-          const v = upstream.headers.get(h);
-          if (v) headers.set(h, v);
+      if (isManifest) {
+        const base = new URL(finalUrl);
+        const text = await upstream.text();
+        if (isVttPlaylist(target, text) || isVttPlaylist(finalUrl, text)) {
+          const vtt = await flattenVttPlaylist(text, base.toString());
+          headers.set("content-type", "text/vtt; charset=utf-8");
+          return new Response(vtt, { status: 200, headers });
         }
-        return new Response(upstream.body, { status: upstream.status, headers });
+        const proxy = (ref) => `/stream?u=${encodeURIComponent(new URL(ref, base).toString())}`;
+        const rewritten = text
+          .split("\n")
+          .map((line) => {
+            const t = line.trim();
+            if (!t) return line;
+            if (t.startsWith("#")) {
+              // rewrite URI="..." attributes (EXT-X-KEY, EXT-X-MEDIA, etc.)
+              return line.replace(/URI="([^"]+)"/g, (_, ref) => `URI="${proxy(ref)}"`);
+            }
+            return proxy(t);
+          })
+          .join("\n");
+
+        headers.set("content-type", "application/vnd.apple.mpegurl");
+        return new Response(rewritten, { status: upstream.status, headers });
       }
 
-      const base = new URL(finalUrl);
-      const text = await upstream.text();
-      const proxy = (ref) => `/stream?u=${encodeURIComponent(new URL(ref, base).toString())}`;
-      const rewritten = text
-        .split("\n")
-        .map((line) => {
-          const t = line.trim();
-          if (!t) return line;
-          if (t.startsWith("#")) {
-            // rewrite URI="..." attributes (EXT-X-KEY, EXT-X-MEDIA, etc.)
-            return line.replace(/URI="([^"]+)"/g, (_, ref) => `URI="${proxy(ref)}"`);
-          }
-          return proxy(t);
-        })
-        .join("\n");
-
-      headers.set("content-type", "application/vnd.apple.mpegurl");
-      return new Response(rewritten, { status: upstream.status, headers });
+      // Force only MPEG-TS segments: some CDNs (dramaboxdb) serve .ts as
+      // text/plain + nosniff. Do not relabel MP4 as TS.
+      const isTs = target.includes(".ts") || ct.includes("mp2t");
+      const isVtt = /\.vtt(\?|$|#)/i.test(target) || /\.vtt(\?|$|#)/i.test(finalUrl);
+      headers.set(
+        "content-type",
+        isVtt ? "text/vtt; charset=utf-8" : isTs ? "video/mp2t" : ct || "application/octet-stream",
+      );
+      // Pass through byte-range support so seeking works on progressive MP4.
+      headers.set("Accept-Ranges", "bytes");
+      for (const h of ["content-range", "content-length"]) {
+        const v = upstream.headers.get(h);
+        if (v) headers.set(h, v);
+      }
+      return new Response(upstream.body, { status: upstream.status, headers });
     }
 
     // Image proxy for signed/expiring CDN covers: cache bytes by stable path
