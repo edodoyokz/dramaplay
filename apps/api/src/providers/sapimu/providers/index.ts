@@ -6,6 +6,7 @@ import type { ProviderAdapter } from "@dramaplay/shared";
 import { SapimuPresetAdapter } from "../core/adapter";
 import { GoodShortAdapter } from "../goodshort";
 import { WetvAdapter } from "../wetv";
+import { MovieBoxAdapter } from "../moviebox";
 
 import { dramawave } from "./dramawave";
 import { dramaboxbaru } from "./dramaboxbaru";
@@ -39,6 +40,7 @@ export function buildV2Providers(baseUrl: string, token: string): Record<string,
   // goodshort / wetv: custom adapters (not SapimuPresetAdapter)
   result.goodshort = new GoodShortAdapter("goodshort", baseUrl, token);
   result.wetv = new WetvAdapter(baseUrl, token);
+  result.moviebox = new MovieBoxAdapter(baseUrl, token);
   return result;
 }
 

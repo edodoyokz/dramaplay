@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { createDb, dramas, episodes, dramaProviders, providers } from "@dramaplay/db";
 import { eq, desc, asc, sql, and } from "drizzle-orm";
+import { resolveContentKind } from "@dramaplay/shared";
 import type { Env } from "../env";
 
 export const catalog = new Hono<{ Bindings: Env }>();
@@ -19,11 +20,31 @@ function store(key: string, data: unknown) {
   cache.set(key, { data, ts: Date.now() });
 }
 
-function withBadge<T extends { providerCode: string | null; providerName: string | null }>(r: T) {
+function withBadge<
+  T extends {
+    providerCode: string | null;
+    providerName: string | null;
+    providerMetadata?: Record<string, unknown> | null;
+    providerConfig?: Record<string, unknown> | null;
+    episodeCount?: number | null;
+  },
+>(r: T) {
+  const kind = resolveContentKind({
+    contentType: typeof r.providerMetadata?.contentType === "string" ? r.providerMetadata.contentType : null,
+    mediaType: typeof r.providerMetadata?.mediaType === "string" ? r.providerMetadata.mediaType : null,
+    providerContentType: typeof r.providerConfig?.contentType === "string" ? r.providerConfig.contentType : null,
+    episodeCount: r.episodeCount,
+  });
   return {
     ...r,
+    contentType: kind.contentType,
+    mediaType: kind.mediaType,
     provider: r.providerCode
-      ? { code: r.providerCode, name: r.providerName ?? r.providerCode }
+      ? {
+          code: r.providerCode,
+          name: r.providerName ?? r.providerCode,
+          contentType: kind.contentType,
+        }
       : undefined,
   };
 }
@@ -62,6 +83,8 @@ catalog.get("/home", async (c) => {
         popularityScore: dramas.popularityScore,
         providerCode: providers.code,
         providerName: providers.name,
+        providerMetadata: dramaProviders.metadata,
+        providerConfig: providers.config,
       })
       .from(dramas)
       .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
@@ -105,10 +128,15 @@ catalog.get("/home", async (c) => {
         ),
       );
 
+    const contentType =
+      typeof p.config?.contentType === "string" && p.config.contentType === "longform"
+        ? "longform"
+        : "shortform";
     shelves.push({
       code: p.code,
       name: p.name,
       logoUrl: typeof p.config?.logoUrl === "string" ? p.config.logoUrl : null,
+      contentType,
       dramaCount: count,
       episodeCount: totalEps,
       items: rows.map(withBadge),
@@ -151,6 +179,8 @@ catalog.get("/providers/:code/dramas", async (c) => {
       popularityScore: dramas.popularityScore,
       providerCode: providers.code,
       providerName: providers.name,
+      providerMetadata: dramaProviders.metadata,
+      providerConfig: providers.config,
     })
     .from(dramas)
     .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
@@ -167,11 +197,16 @@ catalog.get("/providers/:code/dramas", async (c) => {
     .limit(limit + 1)
     .offset((page - 1) * limit);
 
+  const contentType =
+    typeof provider.config?.contentType === "string" && provider.config.contentType === "longform"
+      ? "longform"
+      : "shortform";
   const body = {
     provider: {
       code: provider.code,
       name: provider.name,
       logoUrl: typeof provider.config?.logoUrl === "string" ? provider.config.logoUrl : null,
+      contentType,
     },
     items: rows.slice(0, limit).map(withBadge),
     page,
@@ -196,6 +231,8 @@ catalog.get("/trending", async (c) => {
       popularityScore: dramas.popularityScore,
       providerCode: providers.code,
       providerName: providers.name,
+      providerMetadata: dramaProviders.metadata,
+      providerConfig: providers.config,
     })
     .from(dramas)
     .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
@@ -222,6 +259,8 @@ catalog.get("/new", async (c) => {
       createdAt: dramas.createdAt,
       providerCode: providers.code,
       providerName: providers.name,
+      providerMetadata: dramaProviders.metadata,
+      providerConfig: providers.config,
     })
     .from(dramas)
     .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
@@ -244,6 +283,8 @@ catalog.get("/dramas/:slug", async (c) => {
       drama: dramas,
       providerCode: providers.code,
       providerName: providers.name,
+      providerMetadata: dramaProviders.metadata,
+      providerConfig: providers.config,
     })
     .from(dramas)
     .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))
@@ -255,11 +296,23 @@ catalog.get("/dramas/:slug", async (c) => {
     .from(episodes)
     .where(eq(episodes.dramaId, row.drama.id))
     .orderBy(episodes.episodeNumber);
+  const kind = resolveContentKind({
+    contentType: typeof row.providerMetadata?.contentType === "string" ? row.providerMetadata.contentType : null,
+    mediaType: typeof row.providerMetadata?.mediaType === "string" ? row.providerMetadata.mediaType : null,
+    providerContentType: typeof row.providerConfig?.contentType === "string" ? row.providerConfig.contentType : null,
+    episodeCount: row.drama.episodeCount,
+  });
   const body = {
     drama: {
       ...row.drama,
+      contentType: kind.contentType,
+      mediaType: kind.mediaType,
       provider: row.providerCode
-        ? { code: row.providerCode, name: row.providerName ?? row.providerCode }
+        ? {
+            code: row.providerCode,
+            name: row.providerName ?? row.providerCode,
+            contentType: kind.contentType,
+          }
         : undefined,
     },
     episodes: eps,
@@ -312,6 +365,8 @@ catalog.get("/search", async (c) => {
       episodeCount: dramas.episodeCount,
       providerCode: providers.code,
       providerName: providers.name,
+      providerMetadata: dramaProviders.metadata,
+      providerConfig: providers.config,
     })
     .from(dramas)
     .innerJoin(dramaProviders, eq(dramas.id, dramaProviders.dramaId))

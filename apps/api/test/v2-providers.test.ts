@@ -13,6 +13,7 @@ describe("buildV2Providers", () => {
       "goodshort",
       "idrama",
       "melolo",
+      "moviebox",
       "netshort",
       "pinedrama",
       "reelshort",

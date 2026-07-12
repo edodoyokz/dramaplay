@@ -129,6 +129,10 @@ export async function syncProvider(
           result.dramaNew++;
         }
 
+        const providerMeta = {
+          contentType: item.contentType ?? "shortform",
+          mediaType: item.mediaType,
+        };
         await db
           .insert(dramaProviders)
           .values({
@@ -136,8 +140,15 @@ export async function syncProvider(
             providerId: providerRow.id,
             providerDramaId: item.providerDramaId,
             isPrimary: true,
+            metadata: providerMeta,
           })
-          .onConflictDoNothing();
+          .onConflictDoUpdate({
+            target: [dramaProviders.dramaId, dramaProviders.providerId],
+            set: {
+              providerDramaId: item.providerDramaId,
+              metadata: providerMeta,
+            },
+          });
 
         // ponytail: daily fast sync only updates catalog/new dramas.
         // Full episode refresh is slow; run without SYNC_FAST when needed.

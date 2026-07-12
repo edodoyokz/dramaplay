@@ -1,6 +1,26 @@
 export type ContentType = "shortform" | "longform";
 export type MediaType = "movie" | "series";
 
+export function resolveContentKind(input: {
+  contentType?: string | null;
+  mediaType?: string | null;
+  providerContentType?: string | null;
+  episodeCount?: number | null;
+}): { contentType: ContentType; mediaType?: MediaType } {
+  const contentType: ContentType =
+    input.contentType === "longform" || input.providerContentType === "longform"
+      ? "longform"
+      : "shortform";
+  if (contentType !== "longform") return { contentType };
+  if (input.mediaType === "movie" || input.mediaType === "series") {
+    return { contentType, mediaType: input.mediaType };
+  }
+  return {
+    contentType,
+    mediaType: (input.episodeCount ?? 0) > 1 ? "series" : "movie",
+  };
+}
+
 export interface ProviderDramaSummary {
   providerDramaId: string;
   title: string;

@@ -12,6 +12,8 @@ on:
     - cron: "0 2 * * *"  # 09:00 WIB reelshort
     - cron: "0 3 * * *"  # 10:00 WIB shortmax
     - cron: "0 4 * * *"  # 11:00 WIB goodshort
+    - cron: "0 5 * * *"  # 12:00 WIB wetv
+    - cron: "0 6 * * *"  # 13:00 WIB moviebox
   workflow_dispatch:
     inputs:
       provider:
@@ -29,6 +31,8 @@ on:
           - reelshort
           - shortmax
           - goodshort
+          - wetv
+          - moviebox
 
 jobs:
   sync:
@@ -63,6 +67,8 @@ jobs:
               "0 2 * * *") provider="reelshort" ;;
               "0 3 * * *") provider="shortmax" ;;
               "0 4 * * *") provider="goodshort" ;;
+              "0 5 * * *") provider="wetv" ;;
+              "0 6 * * *") provider="moviebox" ;;
               *) echo "Unknown schedule: ${{ github.event.schedule }}"; exit 1 ;;
             esac
           fi

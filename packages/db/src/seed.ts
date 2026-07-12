@@ -98,6 +98,20 @@ async function main() {
         isEnabled: true,
         config: { logoUrl: "/logos/idrama.png" },
       },
+      {
+        code: "wetv",
+        name: "WeTV",
+        priority: 40,
+        isEnabled: true,
+        config: { logoUrl: "/logos/wetv.png", contentType: "longform" },
+      },
+      {
+        code: "moviebox",
+        name: "MovieBox",
+        priority: 41,
+        isEnabled: true,
+        config: { logoUrl: "/logos/moviebox.png", contentType: "longform" },
+      },
     ])
     .onConflictDoUpdate({
       target: providers.code,
