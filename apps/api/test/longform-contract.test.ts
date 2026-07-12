@@ -36,3 +36,34 @@ describe("longform provider contracts", () => {
     expect(multiSeason).toMatchObject({ seasonNumber: 2, episodeNumber: 1 });
   });
 });
+
+describe("provider shelf contracts", () => {
+  it("carries ordered shelf membership on a long-form summary", () => {
+    const shelf: import("@dramaplay/shared").ProviderShelfMembership = {
+      code: "1001",
+      name: "Untukmu",
+      position: 0,
+    };
+    expect(shelf.code).toBe("1001");
+    expect(shelf.name).toBe("Untukmu");
+    expect(shelf.position).toBe(0);
+  });
+
+  it("lets one title belong to multiple ordered shelves without weakening content/media types", () => {
+    const summary: ProviderDramaSummary = {
+      providerDramaId: "wu7vz4vgfi8ugan",
+      title: "Dunia Roh 2",
+      contentType: "longform",
+      mediaType: "series",
+      shelves: [
+        { code: "popular", name: "Popular", position: 0 },
+        { code: "top100", name: "TOP100", position: 4 },
+      ],
+    };
+    expect(summary.contentType).toBe("longform");
+    expect(summary.mediaType).toBe("series");
+    expect(summary.shelves).toHaveLength(2);
+    expect(summary.shelves?.[0].position).toBe(0);
+    expect(summary.shelves?.[1].position).toBe(4);
+  });
+});

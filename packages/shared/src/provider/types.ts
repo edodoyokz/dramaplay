@@ -21,6 +21,20 @@ export function resolveContentKind(input: {
   };
 }
 
+/** Ordered membership of a title in one upstream channel/category. */
+export interface ProviderShelfMembership {
+  code: string;
+  name: string;
+  position: number;
+}
+
+/** One upstream channel/category with its ordered title summaries. */
+export interface ProviderShelfSummary {
+  code: string;
+  name: string;
+  items: ProviderDramaSummary[];
+}
+
 export interface ProviderDramaSummary {
   providerDramaId: string;
   title: string;
@@ -31,6 +45,8 @@ export interface ProviderDramaSummary {
   year?: number;
   contentType?: ContentType;
   mediaType?: MediaType;
+  /** Upstream channel/category memberships, ordered by upstream position. */
+  shelves?: ProviderShelfMembership[];
 }
 
 export interface ProviderDramaDetail extends ProviderDramaSummary {
@@ -63,6 +79,8 @@ export interface ProviderStreamSource {
 export interface ProviderAdapter {
   code: string;
   fetchForYou(cursor?: string): Promise<{ items: ProviderDramaSummary[]; nextCursor?: string }>;
+  /** Upstream-native shelves (channels/categories). Long-form providers only. */
+  fetchShelves?(): Promise<ProviderShelfSummary[]>;
   fetchTrending(): Promise<ProviderDramaSummary[]>;
   fetchLatest(): Promise<ProviderDramaSummary[]>;
   fetchVip(): Promise<ProviderDramaSummary[]>;
