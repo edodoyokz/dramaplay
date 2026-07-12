@@ -45,16 +45,30 @@ type PendingDeepFill = {
   item: ProviderDramaSummary;
 };
 
+async function shelfOrEmpty(
+  label: string,
+  run: () => Promise<ProviderDramaSummary[]>,
+): Promise<ProviderDramaSummary[]> {
+  try {
+    return await run();
+  } catch (e) {
+    // Upstream provider APIs flap (503 maintenance / 500 CDN). One shelf must
+    // not abort the whole provider sync — empty shelf is partial, not fatal.
+    console.error(`[sync] shelf ${label}: ${e}`);
+    return [];
+  }
+}
+
 export async function fetchAllProviderSummaries(
   adapter: ReturnType<typeof buildProviders>[string],
   searchKeywords: string[] = [],
 ): Promise<ProviderDramaSummary[]> {
   const batches = await Promise.all([
-    adapter.fetchForYou().then((r) => r.items),
-    adapter.fetchTrending(),
-    adapter.fetchLatest(),
-    adapter.fetchVip(),
-    ...searchKeywords.map((q) => adapter.search(q)),
+    shelfOrEmpty("forYou", async () => (await adapter.fetchForYou()).items),
+    shelfOrEmpty("trending", () => adapter.fetchTrending()),
+    shelfOrEmpty("latest", () => adapter.fetchLatest()),
+    shelfOrEmpty("vip", () => adapter.fetchVip()),
+    ...searchKeywords.map((q) => shelfOrEmpty(`search:${q}`, () => adapter.search(q))),
   ]);
 
   return [

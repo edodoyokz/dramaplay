@@ -34,6 +34,21 @@ describe("fetchAllProviderSummaries", () => {
     expect(items.map((x) => x.providerDramaId)).toEqual(["search-sistem"]);
   });
 
+  it("soft-fails a broken shelf and keeps the rest", async () => {
+    const items = await fetchAllProviderSummaries({
+      fetchForYou: async () => {
+        throw new Error("goodshort: 503");
+      },
+      fetchTrending: async () => [item("trending")],
+      fetchLatest: async () => {
+        throw new Error("down");
+      },
+      fetchVip: async () => [item("vip")],
+    } as any);
+
+    expect(items.map((x) => x.providerDramaId).sort()).toEqual(["trending", "vip"]);
+  });
+
   it("warms each unique signed poster through the durable image proxy", async () => {
     const calls: string[] = [];
     const result = await warmPosterUrls(
