@@ -10,10 +10,10 @@ const LONGFORM = new Set(["wetv", "moviebox"]);
 export function defaultSyncBudgets(providerCode: string): SyncBudgets {
   if (LONGFORM.has(providerCode)) {
     return {
-      maxItems: 20,
-      maxNewEpisodeDramas: 5,
-      maxEpisodesPerDrama: 80,
-      timeBudgetMs: 720_000,
+      maxItems: 250,
+      maxNewEpisodeDramas: 10,
+      maxEpisodesPerDrama: 200,
+      timeBudgetMs: 300_000,
     };
   }
   return {

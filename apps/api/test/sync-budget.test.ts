@@ -12,12 +12,12 @@ import {
 describe("defaultSyncBudgets", () => {
   it("uses tighter caps for longform providers", () => {
     expect(defaultSyncBudgets("wetv")).toEqual({
-      maxItems: 20,
-      maxNewEpisodeDramas: 5,
-      maxEpisodesPerDrama: 80,
-      timeBudgetMs: 720_000,
+      maxItems: 250,
+      maxNewEpisodeDramas: 10,
+      maxEpisodesPerDrama: 200,
+      timeBudgetMs: 300_000,
     });
-    expect(defaultSyncBudgets("moviebox").maxNewEpisodeDramas).toBe(5);
+    expect(defaultSyncBudgets("moviebox")).toEqual(defaultSyncBudgets("wetv"));
     expect(defaultSyncBudgets("shortmax").maxItems).toBe(80);
   });
 });

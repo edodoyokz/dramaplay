@@ -8,6 +8,7 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "sync:longform:bootstrap": "node --import tsx scripts/bootstrap-longform.ts",
     "smoke:providers": "tsx scripts/smoke-sapimu-providers.ts",
     "smoke:subscription": "tsx scripts/smoke-subscription.ts"
   },
