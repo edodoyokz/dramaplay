@@ -20,12 +20,19 @@ describe("longform provider contracts", () => {
     };
     const episode: ProviderEpisodeSummary = {
       providerEpisodeId: "wu7vz4vgfi8ugan:j00467e65u4",
+      seasonNumber: 1,
       episodeNumber: 1,
       durationSeconds: 1285,
+    };
+    const multiSeason: ProviderEpisodeSummary = {
+      providerEpisodeId: "785:2:1",
+      seasonNumber: 2,
+      episodeNumber: 1,
     };
 
     expect(summary.contentType).toBe("longform");
     expect(detail.mediaType).toBe("series");
-    expect(episode.providerEpisodeId).toContain(":");
+    expect(episode).toMatchObject({ seasonNumber: 1, episodeNumber: 1 });
+    expect(multiSeason).toMatchObject({ seasonNumber: 2, episodeNumber: 1 });
   });
 });

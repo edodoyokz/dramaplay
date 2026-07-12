@@ -69,21 +69,29 @@ function isVttPlaylist(target, text) {
   return media.length > 0 && media.every((l) => /\.vtt(\?|$|#)/i.test(l));
 }
 
+function hasSubtitleCue(text) {
+  return /(?:^|\n)\d{2}:\d{2}:\d{2}[.,]\d{3}\s+-->\s+\d{2}:\d{2}:\d{2}[.,]\d{3}/m.test(text);
+}
+
 async function flattenVttPlaylist(text, baseUrl, fetcher = fetch) {
   const segs = [];
   for (const line of text.split("\n")) {
     const t = line.trim();
     if (!t || t.startsWith("#")) continue;
     const abs = new URL(t, baseUrl).toString();
-    if (!isAllowedStreamTarget(abs)) continue;
+    if (!isAllowedStreamTarget(abs)) throw new Error("forbidden subtitle segment");
     const r = await fetcher(abs, { headers: { "User-Agent": "Mozilla/5.0" } });
     const finalUrl = r.url || abs;
-    if (!r.ok || !isAllowedStreamTarget(finalUrl)) continue;
-    segs.push(await r.text());
+    if (!r.ok) throw new Error("subtitle segment failed");
+    if (!isAllowedStreamTarget(finalUrl)) throw new Error("forbidden subtitle redirect");
+    const body = (await r.text()).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
+    if (!hasSubtitleCue(body)) throw new Error("invalid subtitle segment");
+    segs.push(body);
   }
+  if (!segs.length) throw new Error("empty subtitle playlist");
   let out = "";
   for (let i = 0; i < segs.length; i++) {
-    let body = segs[i].replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
+    let body = segs[i];
     if (i === 0) {
       if (!body.startsWith("WEBVTT")) body = `WEBVTT\n\n${body}`;
       out = body;
@@ -91,7 +99,7 @@ async function flattenVttPlaylist(text, baseUrl, fetcher = fetch) {
       out += `\n\n${body.replace(/^WEBVTT[^\n]*\n+/, "")}`;
     }
   }
-  return out || "WEBVTT\n\n";
+  return out;
 }
 
 // ponytail: server-side meta injection for crawlers that don't render JS
@@ -230,15 +238,23 @@ export default {
       const isManifest = target.includes(".m3u8") || ct.includes("mpegurl");
       // MovieBox (and others) ship SRT; <track> only renders WebVTT.
       const isSrt = /\.srt(\?|$|#)/i.test(target) || /\.srt(\?|$|#)/i.test(finalUrl);
+      const isVtt = /\.vtt(\?|$|#)/i.test(target) || /\.vtt(\?|$|#)/i.test(finalUrl);
 
       const headers = new Headers();
       headers.set("Access-Control-Allow-Origin", "*");
       headers.set("Cache-Control", "no-cache");
 
+      if (isSrt || isVtt || isManifest) {
+        if (!upstream.ok || !upstream.body) {
+          return new Response("upstream error", { status: 502 });
+        }
+      }
+
       if (isSrt) {
         const text = await upstream.text();
         const body = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
         const cues = body.replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
+        if (!hasSubtitleCue(cues)) return new Response("invalid subtitle", { status: 502 });
         const vtt = cues.startsWith("WEBVTT") ? cues : `WEBVTT\n\n${cues}`;
         headers.set("content-type", "text/vtt; charset=utf-8");
         return new Response(vtt, { status: 200, headers });
@@ -248,9 +264,13 @@ export default {
         const base = new URL(finalUrl);
         const text = await upstream.text();
         if (isVttPlaylist(target, text) || isVttPlaylist(finalUrl, text)) {
-          const vtt = await flattenVttPlaylist(text, base.toString());
-          headers.set("content-type", "text/vtt; charset=utf-8");
-          return new Response(vtt, { status: 200, headers });
+          try {
+            const vtt = await flattenVttPlaylist(text, base.toString());
+            headers.set("content-type", "text/vtt; charset=utf-8");
+            return new Response(vtt, { status: 200, headers });
+          } catch {
+            return new Response("invalid subtitle playlist", { status: 502 });
+          }
         }
         const proxy = (ref) => `/stream?u=${encodeURIComponent(new URL(ref, base).toString())}`;
         const rewritten = text
@@ -273,10 +293,19 @@ export default {
       // Force only MPEG-TS segments: some CDNs (dramaboxdb) serve .ts as
       // text/plain + nosniff. Do not relabel MP4 as TS.
       const isTs = target.includes(".ts") || ct.includes("mp2t");
-      const isVtt = /\.vtt(\?|$|#)/i.test(target) || /\.vtt(\?|$|#)/i.test(finalUrl);
+      if (isVtt) {
+        const text = await upstream.text();
+        const body = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
+        if (!hasSubtitleCue(body)) return new Response("invalid subtitle", { status: 502 });
+        headers.set("content-type", "text/vtt; charset=utf-8");
+        return new Response(body.startsWith("WEBVTT") ? body : `WEBVTT\n\n${body}`, {
+          status: 200,
+          headers,
+        });
+      }
       headers.set(
         "content-type",
-        isVtt ? "text/vtt; charset=utf-8" : isTs ? "video/mp2t" : ct || "application/octet-stream",
+        isTs ? "video/mp2t" : ct || "application/octet-stream",
       );
       // Pass through byte-range support so seeking works on progressive MP4.
       headers.set("Accept-Ranges", "bytes");

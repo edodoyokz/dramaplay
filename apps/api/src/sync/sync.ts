@@ -15,10 +15,13 @@ import {
   classifyDeepFillKind,
   isTimeBudgetExhausted,
   resolveSyncBudgets,
-  selectDeepFillCandidates,
-  takeEpisodeInsertBatch,
   type DeepFillKind,
 } from "./budget";
+import {
+  episodeKey,
+  selectEpisodeRefreshCandidates,
+  takeMissingEpisodes,
+} from "./episodes";
 
 /**
  * Slugify a title and prefix it with the provider code so the same title
@@ -227,7 +230,12 @@ export async function syncProvider(
       }
     }
 
-    const selectedDeep = selectDeepFillCandidates(pending, budgets.maxNewEpisodeDramas);
+    const selectedDeep = selectEpisodeRefreshCandidates(
+      pending,
+      budgets.maxNewEpisodeDramas,
+      providerCode,
+      Boolean(options.fast),
+    );
     const byId = new Map(pending.map((p) => [p.providerDramaId, p]));
     const startedMs = startedAt.getTime();
 
@@ -246,36 +254,45 @@ export async function syncProvider(
         }
 
         const existingEps = await db
-          .select({ n: episodes.episodeNumber })
+          .select({
+            seasonNumber: episodes.seasonNumber,
+            episodeNumber: episodes.episodeNumber,
+          })
           .from(episodes)
           .where(eq(episodes.dramaId, work.dramaId));
-        const have = new Set(existingEps.map((e) => e.n));
-        const batchNums = takeEpisodeInsertBatch(
-          eps.map((e) => e.episodeNumber),
-          have,
+        const have = new Set(existingEps.map(episodeKey));
+        const toInsert = takeMissingEpisodes(
+          eps,
+          existingEps,
           budgets.maxEpisodesPerDrama,
         );
-        const batchSet = new Set(batchNums);
-        const toInsert = eps.filter((e) => batchSet.has(e.episodeNumber));
-        const missingTotal = eps.filter((e) => !have.has(e.episodeNumber)).length;
+        const missingTotal = eps.filter((episode) => !have.has(episodeKey(episode))).length;
         if (missingTotal > toInsert.length) {
           result.episodesCapped = (result.episodesCapped ?? 0) + 1;
         }
 
-        let inserted: { id: string; episodeNumber: number }[] = [];
+        let inserted: { id: string; seasonNumber: number; episodeNumber: number }[] = [];
         if (toInsert.length) {
+          const incomingByKey = new Map(
+            toInsert.map((episode) => [episodeKey(episode), episode]),
+          );
           inserted = await db
             .insert(episodes)
             .values(
               toInsert.map((ep) => ({
                 dramaId: work.dramaId,
+                seasonNumber: ep.seasonNumber,
                 episodeNumber: ep.episodeNumber,
                 title: ep.title,
                 thumbnailUrl: ep.thumbnailUrl,
                 durationSeconds: ep.durationSeconds,
               })),
             )
-            .returning({ id: episodes.id, episodeNumber: episodes.episodeNumber });
+            .returning({
+              id: episodes.id,
+              seasonNumber: episodes.seasonNumber,
+              episodeNumber: episodes.episodeNumber,
+            });
           result.episodeNew += inserted.length;
           await db
             .insert(episodeProviders)
@@ -284,8 +301,8 @@ export async function syncProvider(
                 episodeId: row.id,
                 providerId: providerRow.id,
                 providerEpisodeId:
-                  eps.find((e) => e.episodeNumber === row.episodeNumber)?.providerEpisodeId ??
-                  `${work.item.providerDramaId}:${row.episodeNumber}`,
+                  incomingByKey.get(episodeKey(row))?.providerEpisodeId ??
+                  `${work.item.providerDramaId}:${row.seasonNumber}:${row.episodeNumber}`,
                 isPrimary: true,
               })),
             )
@@ -302,18 +319,24 @@ export async function syncProvider(
           .where(eq(dramas.id, work.dramaId));
 
         const threshold = Math.max(2, Math.ceil(knownTotal * 0.1));
-        await db
-          .update(episodes)
-          .set({ accessType: "free" })
-          .where(
-            and(eq(episodes.dramaId, work.dramaId), sql`${episodes.episodeNumber} <= ${threshold}`),
-          );
-        await db
-          .update(episodes)
-          .set({ accessType: "vip" })
-          .where(
-            and(eq(episodes.dramaId, work.dramaId), sql`${episodes.episodeNumber} > ${threshold}`),
-          );
+        await db.execute(sql`
+          WITH ordered AS (
+            SELECT
+              id,
+              row_number() OVER (
+                ORDER BY ${episodes.seasonNumber}, ${episodes.episodeNumber}
+              ) AS position
+            FROM ${episodes}
+            WHERE ${episodes.dramaId} = ${work.dramaId}
+          )
+          UPDATE ${episodes}
+          SET access_type = CASE
+            WHEN ordered.position <= ${threshold} THEN 'free'
+            ELSE 'vip'
+          END
+          FROM ordered
+          WHERE ${episodes.id} = ordered.id
+        `);
 
         // Subtitles: watch write-through only (no resolveStream in daily sync).
         result.deepFilled = (result.deepFilled ?? 0) + 1;

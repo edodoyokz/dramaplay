@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { providerPreflight } from "../src/providers/preflight";
 
 const item = { providerDramaId: "d1", title: "Drama 1" };
-const ep = { providerEpisodeId: "d1:e1", episodeNumber: 1 };
+const ep = { providerEpisodeId: "d1:e1", seasonNumber: 1, episodeNumber: 1 };
 
 describe("providerPreflight", () => {
   it("checks list, detail, episodes, and stream using one sample", async () => {

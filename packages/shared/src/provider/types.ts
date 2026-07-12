@@ -44,6 +44,7 @@ export interface ProviderDramaDetail extends ProviderDramaSummary {
 
 export interface ProviderEpisodeSummary {
   providerEpisodeId: string;
+  seasonNumber: number;
   episodeNumber: number;
   title?: string;
   thumbnailUrl?: string;

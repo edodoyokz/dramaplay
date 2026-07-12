@@ -150,6 +150,7 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
         const playParam = pickString(e, this.def.episodePlayField ?? []) ?? String(num);
         return {
           providerEpisodeId: `${id}:${playParam}`,
+          seasonNumber: 1,
           episodeNumber: num,
           title: pickString(e, f.title) ?? `Episode ${num}`,
         };
@@ -160,6 +161,7 @@ export class SapimuPresetAdapter extends SapimuBaseAdapter implements ProviderAd
     const total = pickNumber(row, COUNT_FIELDS) ?? 0;
     return Array.from({ length: total }, (_, i) => ({
       providerEpisodeId: `${id}:${i + 1}`,
+      seasonNumber: 1,
       episodeNumber: i + 1,
       title: `Episode ${i + 1}`,
     }));

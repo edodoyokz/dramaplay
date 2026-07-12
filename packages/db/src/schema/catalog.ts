@@ -8,7 +8,10 @@ import {
   jsonb,
   real,
   primaryKey,
+  uniqueIndex,
+  check,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const providers = pgTable("providers", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -69,21 +72,34 @@ export const dramaProviders = pgTable(
   (t) => [primaryKey({ columns: [t.dramaId, t.providerId] })]
 );
 
-export const episodes = pgTable("episodes", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  dramaId: uuid("drama_id")
-    .notNull()
-    .references(() => dramas.id, { onDelete: "cascade" }),
-  episodeNumber: integer("episode_number").notNull(),
-  title: text("title"),
-  thumbnailUrl: text("thumbnail_url"),
-  durationSeconds: integer("duration_seconds"),
-  accessType: text("access_type", { enum: ["free", "vip"] }).notNull().default("free"),
-  isBroken: boolean("is_broken").notNull().default(false),
-  isPublished: boolean("is_published").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+export const episodes = pgTable(
+  "episodes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    dramaId: uuid("drama_id")
+      .notNull()
+      .references(() => dramas.id, { onDelete: "cascade" }),
+    seasonNumber: integer("season_number").notNull().default(1),
+    episodeNumber: integer("episode_number").notNull(),
+    title: text("title"),
+    thumbnailUrl: text("thumbnail_url"),
+    durationSeconds: integer("duration_seconds"),
+    accessType: text("access_type", { enum: ["free", "vip"] }).notNull().default("free"),
+    isBroken: boolean("is_broken").notNull().default(false),
+    isPublished: boolean("is_published").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("episodes_drama_season_episode_uq").on(
+      t.dramaId,
+      t.seasonNumber,
+      t.episodeNumber,
+    ),
+    check("episodes_season_nonnegative_ck", sql`${t.seasonNumber} >= 0`),
+    check("episodes_episode_positive_ck", sql`${t.episodeNumber} > 0`),
+  ],
+);
 
 export const episodeProviders = pgTable(
   "episode_providers",

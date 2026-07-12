@@ -8,6 +8,7 @@ import { SeoHead } from "../lib/seo";
 
 interface Episode {
   id: string;
+  seasonNumber: number;
   episodeNumber: number;
   title: string | null;
   accessType: "free" | "vip";
@@ -41,7 +42,7 @@ export default function LongformDetail() {
   const [data, setData] = useState<DetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [lastWatchedEp, setLastWatchedEp] = useState<number | null>(null);
+  const [lastWatched, setLastWatched] = useState<{ seasonNumber: number; episodeNumber: number } | null>(null);
 
   function goBack() {
     if (window.history.length > 1) navigate(-1);
@@ -56,7 +57,12 @@ export default function LongformDetail() {
       .then((res) => {
         setData(res);
         const match = getProgressForSlug(slug);
-        if (match) setLastWatchedEp(match.episodeNumber);
+        if (match) {
+          setLastWatched({
+            seasonNumber: match.seasonNumber ?? 1,
+            episodeNumber: match.episodeNumber,
+          });
+        }
       })
       .catch(() => {
         setData(null);
@@ -97,7 +103,18 @@ export default function LongformDetail() {
 
   const { drama, episodes } = data;
   const label = mediaTypeLabel(drama.mediaType) ?? "Film & Serial";
-  const startEpisode = lastWatchedEp || episodes[0]?.episodeNumber;
+  const startEpisode =
+    episodes.find(
+      (episode) =>
+        episode.seasonNumber === (lastWatched?.seasonNumber ?? 1) &&
+        episode.episodeNumber === lastWatched?.episodeNumber,
+    ) ?? episodes[0];
+  const seasons = episodes.reduce((groups, episode) => {
+    const group = groups.get(episode.seasonNumber) ?? [];
+    group.push(episode);
+    groups.set(episode.seasonNumber, group);
+    return groups;
+  }, new Map<number, Episode[]>());
   const hero = drama.backdropUrl || drama.posterUrl;
 
   return (
@@ -155,7 +172,12 @@ export default function LongformDetail() {
           </div>
         ) : (
           <Link
-            to={watchPath(drama.slug, startEpisode, "longform")}
+            to={watchPath(
+              drama.slug,
+              startEpisode.episodeNumber,
+              "longform",
+              startEpisode.seasonNumber,
+            )}
             className="w-full py-3 rounded-full bg-gradient-sunset text-white text-center font-bold text-sm tracking-wide shadow-lg shadow-rose-500/15 flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -163,8 +185,8 @@ export default function LongformDetail() {
             </svg>
             {drama.mediaType === "movie"
               ? "Tonton Film"
-              : lastWatchedEp
-                ? `Lanjut Episode ${lastWatchedEp}`
+              : lastWatched
+                ? `Lanjut S${lastWatched.seasonNumber} E${lastWatched.episodeNumber}`
                 : "Mulai Nonton"}
           </Link>
         )}
@@ -188,23 +210,29 @@ export default function LongformDetail() {
       ) : null}
 
       {drama.mediaType !== "movie" ? (
-        <div className="px-4 mt-6">
-          <h2 className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-3">Episode</h2>
-          <div className="grid grid-cols-4 gap-2">
-            {episodes.map((ep) => (
-              <Link
-                key={ep.id}
-                to={watchPath(drama.slug, ep.episodeNumber, "longform")}
-                className={`rounded-xl border px-2 py-3 text-center text-xs font-bold ${
-                  ep.accessType === "vip"
-                    ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
-                    : "border-zinc-800 bg-zinc-900 text-zinc-200"
-                }`}
-              >
-                {ep.episodeNumber}
-              </Link>
-            ))}
-          </div>
+        <div className="px-4 mt-6 space-y-4">
+          {[...seasons.entries()].map(([seasonNumber, seasonEpisodes]) => (
+            <section key={seasonNumber}>
+              <h2 className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-3">
+                Season {seasonNumber}
+              </h2>
+              <div className="grid grid-cols-4 gap-2">
+                {seasonEpisodes.map((ep) => (
+                  <Link
+                    key={ep.id}
+                    to={watchPath(drama.slug, ep.episodeNumber, "longform", ep.seasonNumber)}
+                    className={`rounded-xl border px-2 py-3 text-center text-xs font-bold ${
+                      ep.accessType === "vip"
+                        ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                        : "border-zinc-800 bg-zinc-900 text-zinc-200"
+                    }`}
+                  >
+                    {ep.episodeNumber}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       ) : null}
     </div>

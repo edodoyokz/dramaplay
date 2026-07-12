@@ -8,6 +8,7 @@ export type WatchProgressItem = {
   slug: string;
   title?: string;
   posterUrl?: string | null;
+  seasonNumber?: number;
   episodeNumber: number;
   percent?: number;
 };

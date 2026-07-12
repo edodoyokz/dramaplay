@@ -89,6 +89,87 @@ describe("WetvAdapter", () => {
     expect(get.mock.calls[0][0]).toContain("/wetv/api/channels");
   });
 
+  it.each([
+    { lang: "id" },
+    { lang: "ID" },
+    { lang: "id-ID" },
+    { lang: "id_ID" },
+    { name: "Indonesia" },
+    { name: "Bahasa Indonesia" },
+  ])("selects Indonesian caption $lang$name", async (caption) => {
+    const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
+    // @ts-expect-error test double
+    adapter.get = vi.fn().mockResolvedValue({
+      data: {
+        playUrl: "https://cdn/play.m3u8",
+        subtitles: [{ ...caption, url: "https://cdn/id.vtt" }],
+      },
+    });
+    expect(await adapter.resolveStream("cid:vid")).toMatchObject({
+      subtitleUrl: "https://cdn/id.vtt",
+      subtitleLanguage: "id",
+    });
+  });
+
+  it("skips an empty Indonesian caption for a later valid one", async () => {
+    const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
+    // @ts-expect-error test double
+    adapter.get = vi.fn().mockResolvedValue({
+      data: {
+        playUrl: "https://cdn/play.m3u8",
+        subtitles: [
+          { lang: "id", url: "" },
+          { lang: "id", url: "https://cdn/id.vtt" },
+        ],
+      },
+    });
+    expect(await adapter.resolveStream("cid:vid")).toMatchObject({
+      subtitleUrl: "https://cdn/id.vtt",
+      subtitleLanguage: "id",
+    });
+  });
+
+  it.each([
+    [{ lang: "en", url: "https://cdn/en.vtt" }],
+    [{ lang: "xx", url: "https://cdn/first.vtt" }],
+    [
+      { lang: "en", url: "https://cdn/en.vtt" },
+      { lang: "id", url: "" },
+    ],
+  ])("omits unrecognized or unusable captions %#", async (...subtitles) => {
+    const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
+    // @ts-expect-error test double
+    adapter.get = vi.fn().mockResolvedValue({
+      data: { playUrl: "https://cdn/play.m3u8", subtitles },
+    });
+    expect(await adapter.resolveStream("cid:vid")).toEqual({
+      streamUrl: "https://cdn/play.m3u8",
+      streamType: "m3u8",
+    });
+  });
+
+  it("uses Indonesian locale for every endpoint", async () => {
+    const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
+    const get = vi.fn()
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce(feed)
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce(detail)
+      .mockResolvedValueOnce(episodes)
+      .mockResolvedValueOnce(play);
+    // @ts-expect-error test double
+    adapter.get = get;
+    await adapter.fetchForYou();
+    await adapter.search("film");
+    await adapter.fetchDetail("cid");
+    await adapter.fetchEpisodes("cid");
+    await adapter.resolveStream("cid:vid");
+    for (const [url] of get.mock.calls) {
+      expect(url).toContain("lang=id");
+      expect(url).toContain("country=ID");
+    }
+  });
+
   it("maps feed/detail/episodes/play into long-form provider shapes", async () => {
     const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
     const get = vi
@@ -124,6 +205,7 @@ describe("WetvAdapter", () => {
     expect(eps).toEqual([
       {
         providerEpisodeId: "wu7vz4vgfi8ugan:j00467e65u4",
+        seasonNumber: 1,
         episodeNumber: 1,
         title: "EP01",
         thumbnailUrl: "https://newpic.wetvinfo.com/ep1.jpg",

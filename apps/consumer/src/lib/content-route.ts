@@ -8,9 +8,10 @@ export function watchPath(
   slug: string,
   episodeNumber: number,
   contentType?: ContentType | string | null,
+  seasonNumber = 1,
 ): string {
   return contentType === "longform"
-    ? `/title/${slug}/watch/${episodeNumber}`
+    ? `/title/${slug}/watch/${seasonNumber}/${episodeNumber}`
     : `/watch/${slug}/${episodeNumber}`;
 }
 

@@ -115,6 +115,7 @@ export class GoodShortAdapter extends BaseProviderAdapter {
     }>(`/goodshort/api/v1/chapters/${encodeURIComponent(providerDramaId)}`);
     return (data.data?.list ?? []).map((ch: Row, i: number) => ({
       providerEpisodeId: `${providerDramaId}:${s(ch.id) ?? ""}`,
+      seasonNumber: 1,
       episodeNumber: parseEps(s(ch.chapterName) ?? "") || i + 1,
       title: s(ch.chapterName),
       thumbnailUrl: s(ch.image),

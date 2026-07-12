@@ -93,6 +93,76 @@ const wetvVtt = await wetvSub.text();
 assert.ok(wetvVtt.startsWith("WEBVTT"));
 assert.ok(wetvVtt.includes("Halo WeTV"));
 
+// Failed SRT upstream must remain failure.
+globalThis.fetch = async () => new Response("not found", { status: 404 });
+const failedSrt = await worker.fetch(
+  new Request("https://dramaplay.my.id/stream?u=https%3A%2F%2Fcacdn.hakunaymatata.com%2Fsubtitle%2Fid.srt"),
+  env,
+);
+assert.equal(failedSrt.status, 502);
+
+// Empty SRT must not become WEBVTT 200.
+globalThis.fetch = async () => new Response("", { status: 200 });
+const emptySrt = await worker.fetch(
+  new Request("https://dramaplay.my.id/stream?u=https%3A%2F%2Fcacdn.hakunaymatata.com%2Fsubtitle%2Fid.srt"),
+  env,
+);
+assert.equal(emptySrt.status, 502);
+
+// Invalid SRT body.
+globalThis.fetch = async () => new Response("not a subtitle", { status: 200 });
+const invalidSrt = await worker.fetch(
+  new Request("https://dramaplay.my.id/stream?u=https%3A%2F%2Fcacdn.hakunaymatata.com%2Fsubtitle%2Fid.srt"),
+  env,
+);
+assert.equal(invalidSrt.status, 502);
+
+// Missing required VTT segment.
+globalThis.fetch = async (input) =>
+  String(input).includes(".m3u8")
+    ? new Response("#EXTM3U\n#EXTINF:10,\nmissing.vtt\n", {
+        status: 200,
+        url: "https://cffaws.wetvinfo.com/sub/id.vtt.m3u8",
+      })
+    : new Response("missing", { status: 404 });
+const missingVttSegment = await worker.fetch(
+  new Request(
+    "https://dramaplay.my.id/stream?u=https%3A%2F%2Fcffaws.wetvinfo.com%2Fsub%2Fid.vtt.m3u8",
+  ),
+  env,
+);
+assert.equal(missingVttSegment.status, 502);
+
+// Empty playlist.
+globalThis.fetch = async () =>
+  new Response("#EXTM3U\n#EXT-X-ENDLIST\n", {
+    status: 200,
+    url: "https://cffaws.wetvinfo.com/sub/id.vtt.m3u8",
+  });
+const emptyVttPlaylist = await worker.fetch(
+  new Request(
+    "https://dramaplay.my.id/stream?u=https%3A%2F%2Fcffaws.wetvinfo.com%2Fsub%2Fid.vtt.m3u8",
+  ),
+  env,
+);
+assert.equal(emptyVttPlaylist.status, 502);
+
+// Invalid segment body.
+globalThis.fetch = async (input) =>
+  String(input).includes(".m3u8")
+    ? new Response("#EXTM3U\n#EXTINF:10,\nid.vtt\n", {
+        status: 200,
+        url: "https://cffaws.wetvinfo.com/sub/id.vtt.m3u8",
+      })
+    : new Response("garbage", { status: 200, url: String(input) });
+const invalidVttSegment = await worker.fetch(
+  new Request(
+    "https://dramaplay.my.id/stream?u=https%3A%2F%2Fcffaws.wetvinfo.com%2Fsub%2Fid.vtt.m3u8",
+  ),
+  env,
+);
+assert.equal(invalidVttSegment.status, 502);
+
 console.log("worker stream allowlist tests passed");
 
 // ── /img proxy: caches signed/expiring CDN covers by stable path ────────

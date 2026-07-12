@@ -20,6 +20,15 @@ function q(v: string) {
   return encodeURIComponent(v);
 }
 
+function isIndonesianCaption(row: Row) {
+  const code = String(row.lang ?? row.language ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, "-");
+  const name = String(row.name ?? row.langName ?? row.lanName ?? "").trim();
+  return code === "id" || code === "id-id" || /^(bahasa indonesia|indonesia)$/i.test(name);
+}
+
 export class WetvAdapter extends SapimuBaseAdapter {
   constructor(baseUrl: string, token: string) {
     super("wetv", baseUrl, token);
@@ -142,6 +151,7 @@ export class WetvAdapter extends SapimuBaseAdapter {
         const num = n(row.episode) ?? n(row.manEpisode) ?? i + 1;
         return {
           providerEpisodeId: `${providerDramaId}:${vid}`,
+          seasonNumber: 1,
           episodeNumber: num,
           title: s(row.title),
           thumbnailUrl: s(row.cover),
@@ -160,15 +170,11 @@ export class WetvAdapter extends SapimuBaseAdapter {
     const streamUrl = s(row?.playUrl);
     if (!streamUrl) return null;
     const subs = Array.isArray(row?.subtitles) ? (row.subtitles as Row[]) : [];
-    const idSub =
-      subs.find((x) => String(x.lang ?? "").toLowerCase() === "id") ??
-      subs.find((x) => /indonesia/i.test(String(x.name ?? ""))) ??
-      subs[0];
+    const subtitleUrl = s(subs.find((caption) => isIndonesianCaption(caption) && s(caption.url))?.url);
     return {
       streamUrl,
       streamType: streamUrl.includes(".m3u8") ? "m3u8" : "mp4",
-      subtitleUrl: s(idSub?.url),
-      subtitleLanguage: idSub ? "id" : undefined,
+      ...(subtitleUrl ? { subtitleUrl, subtitleLanguage: "id" as const } : {}),
     };
   }
 }

@@ -133,6 +133,14 @@ export default function App() {
             }
           />
           <Route
+            path="/title/:slug/watch/:season/:episode"
+            element={
+              <div className="relative min-h-screen max-w-3xl mx-auto bg-black shadow-2xl border-x border-zinc-900/60 app-frame">
+                <LongformWatch />
+              </div>
+            }
+          />
+          <Route
             path="/title/:slug/watch/:n"
             element={
               <div className="relative min-h-screen max-w-3xl mx-auto bg-black shadow-2xl border-x border-zinc-900/60 app-frame">

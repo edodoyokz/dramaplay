@@ -1,28 +1,33 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Hls from "hls.js";
 import { api } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { posterSrc } from "../lib/img";
-import { playableUrl, subtitleProxyUrl } from "../lib/playable";
+import { subtitleProxyUrl } from "../lib/playable";
+import { attachLongformPlayback } from "../lib/longform-playback";
 import { upsertWatchProgress } from "../lib/local-engagement";
 import { progressPercent } from "../lib/ux";
+import { watchPath } from "../lib/content-route";
 import PricingModal from "../components/PricingModal";
 
 interface StreamResponse {
   streamUrl: string;
   streamType: "mp4" | "m3u8" | "other";
   subtitleUrl?: string;
+  subtitleLanguage?: "id";
   posterUrl?: string;
   dramaTitle: string;
   dramaSlug: string;
+  seasonNumber: number;
   episodeNumber: number;
   accessType: "free" | "vip";
-  nextEpisode: number | null;
+  nextEpisode: { seasonNumber: number; episodeNumber: number } | null;
 }
 
 export default function LongformWatch() {
-  const { slug, n } = useParams();
+  const { slug, season, episode, n } = useParams();
+  const seasonNumber = Number(season ?? 1);
+  const episodeNumber = Number(episode ?? n);
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastProgressSave = useRef(0);
@@ -35,14 +40,17 @@ export default function LongformWatch() {
   useEffect(() => {
     let active = true;
     (async () => {
-      if (!slug || !n) return;
+      if (!slug || !Number.isInteger(episodeNumber) || episodeNumber < 1) return;
       setBlocked(false);
       setFailed(false);
       setData(null);
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
       try {
-        const res = await api<StreamResponse>(`/watch/${slug}/${n}`, {
+        const path = Number.isInteger(seasonNumber)
+          ? `/watch/${slug}/${seasonNumber}/${episodeNumber}`
+          : `/watch/${slug}/${episodeNumber}`;
+        const res = await api<StreamResponse>(path, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (!active) return;
@@ -56,6 +64,7 @@ export default function LongformWatch() {
           slug: res.dramaSlug,
           title: res.dramaTitle,
           posterUrl: res.posterUrl || null,
+          seasonNumber: res.seasonNumber,
           episodeNumber: res.episodeNumber,
           percent: 5,
         });
@@ -68,25 +77,12 @@ export default function LongformWatch() {
     return () => {
       active = false;
     };
-  }, [slug, n, retryTick]);
+  }, [slug, seasonNumber, episodeNumber, retryTick]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !data?.streamUrl) return;
-    const src = playableUrl(data);
-    let hls: Hls | null = null;
-    if (data.streamType === "m3u8" && Hls.isSupported()) {
-      hls = new Hls();
-      hls.loadSource(src);
-      hls.attachMedia(video);
-    } else {
-      video.src = src;
-    }
-    return () => {
-      hls?.destroy();
-      video.removeAttribute("src");
-      video.load();
-    };
+    return attachLongformPlayback(video, data, () => setFailed(true));
   }, [data]);
 
   if (blocked) {
@@ -130,6 +126,11 @@ export default function LongformWatch() {
     );
   }
 
+  const episodeLabel =
+    data.seasonNumber > 0
+      ? `S${data.seasonNumber} E${data.episodeNumber}`
+      : `Episode ${data.episodeNumber}`;
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <div className="flex items-center gap-3 px-3 py-3 border-b border-zinc-900">
@@ -145,7 +146,7 @@ export default function LongformWatch() {
         </button>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-sm font-bold">{data.dramaTitle}</h1>
-          <p className="text-[11px] text-zinc-400">Episode {data.episodeNumber}</p>
+          <p className="text-[11px] text-zinc-400">{episodeLabel}</p>
         </div>
       </div>
 
@@ -161,11 +162,20 @@ export default function LongformWatch() {
               slug: data.dramaSlug,
               title: data.dramaTitle,
               posterUrl: data.posterUrl || null,
+              seasonNumber: data.seasonNumber,
               episodeNumber: data.episodeNumber,
               percent: 100,
             });
-            if (data.nextEpisode != null) navigate(`/title/${data.dramaSlug}/watch/${data.nextEpisode}`);
-            else navigate(`/title/${data.dramaSlug}`);
+            if (data.nextEpisode) {
+              navigate(
+                watchPath(
+                  data.dramaSlug,
+                  data.nextEpisode.episodeNumber,
+                  "longform",
+                  data.nextEpisode.seasonNumber,
+                ),
+              );
+            } else navigate(`/title/${data.dramaSlug}`);
           }}
           onTimeUpdate={(e) => {
             const video = e.currentTarget;
@@ -177,13 +187,20 @@ export default function LongformWatch() {
               slug: data.dramaSlug,
               title: data.dramaTitle,
               posterUrl: data.posterUrl || null,
+              seasonNumber: data.seasonNumber,
               episodeNumber: data.episodeNumber,
               percent: pct === 0 ? 5 : Math.min(pct, 98),
             });
           }}
         >
-          {data.subtitleUrl ? (
-            <track kind="subtitles" srcLang="id" label="Indonesia" src={subtitleProxyUrl(data.subtitleUrl)} default />
+          {data.subtitleLanguage === "id" && data.subtitleUrl ? (
+            <track
+              kind="subtitles"
+              srcLang="id"
+              label="Indonesia"
+              src={subtitleProxyUrl(data.subtitleUrl)}
+              default
+            />
           ) : null}
         </video>
       </div>
@@ -192,9 +209,14 @@ export default function LongformWatch() {
         <Link to={`/title/${data.dramaSlug}`} className="rounded-full border border-zinc-800 px-4 py-2 text-xs font-bold text-zinc-300">
           Detail
         </Link>
-        {data.nextEpisode != null ? (
+        {data.nextEpisode ? (
           <Link
-            to={`/title/${data.dramaSlug}/watch/${data.nextEpisode}`}
+            to={watchPath(
+              data.dramaSlug,
+              data.nextEpisode.episodeNumber,
+              "longform",
+              data.nextEpisode.seasonNumber,
+            )}
             className="rounded-full bg-rose-500 px-4 py-2 text-xs font-bold text-white"
           >
             Episode Berikutnya

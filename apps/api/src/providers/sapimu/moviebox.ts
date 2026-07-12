@@ -87,7 +87,7 @@ export class MovieBoxAdapter extends SapimuBaseAdapter {
 
   async search(query: string): Promise<ProviderDramaSummary[]> {
     const data = await this.getJson<{ data?: Row[] | { items?: Row[] } }>(
-      `/moviebox/api/subject/search?keyword=${q(query)}&page=1&perPage=20`,
+      `/moviebox/api/subject/search?keyword=${q(query)}&page=1&perPage=20&lang=id`,
       {
         method: "POST",
         headers: {
@@ -147,22 +147,31 @@ export class MovieBoxAdapter extends SapimuBaseAdapter {
     if (!episodes.length) {
       return [
         {
-          providerEpisodeId: `${providerDramaId}:1:1`,
+          providerEpisodeId: `${providerDramaId}:0:0`,
+          seasonNumber: 0,
           episodeNumber: 1,
           title: s(data.data?.title) ?? "Episode 1",
         },
       ];
     }
-    return episodes.map((ep, i) => {
-      const se = n(ep.se) ?? 0;
-      const num = n(ep.episode) ?? 0;
-      return {
-        providerEpisodeId: `${providerDramaId}:${se}:${num}`,
-        episodeNumber: num > 0 ? num : i + 1,
-        title: s(ep.title),
-        durationSeconds: n(ep.duration),
-      };
-    });
+    return episodes
+      .map((ep) => {
+        const seasonNumber = n(ep.se);
+        const providerEpisodeNumber = n(ep.episode);
+        if (seasonNumber == null || providerEpisodeNumber == null) return null;
+        if (!Number.isInteger(seasonNumber) || !Number.isInteger(providerEpisodeNumber)) return null;
+        if (seasonNumber < 0 || providerEpisodeNumber < 0) return null;
+        const isMovieEntry = seasonNumber === 0 && providerEpisodeNumber === 0;
+        if (!isMovieEntry && (seasonNumber < 1 || providerEpisodeNumber < 1)) return null;
+        return {
+          providerEpisodeId: `${providerDramaId}:${seasonNumber}:${providerEpisodeNumber}`,
+          seasonNumber,
+          episodeNumber: isMovieEntry ? 1 : providerEpisodeNumber,
+          title: s(ep.title),
+          durationSeconds: n(ep.duration),
+        };
+      })
+      .filter((ep): ep is NonNullable<typeof ep> => ep != null);
   }
 
   async resolveStream(providerEpisodeId: string): Promise<ProviderStreamSource | null> {
@@ -186,24 +195,22 @@ export class MovieBoxAdapter extends SapimuBaseAdapter {
       streamUrl,
       streamType: streamUrl.includes(".m3u8") ? "m3u8" : "mp4",
       quality: s(data.data?.resolution),
-      subtitleUrl: cap?.url,
-      subtitleLanguage: cap?.language,
+      ...(cap && { subtitleUrl: cap.url, subtitleLanguage: cap.language }),
     };
   }
 }
 
-/** MovieBox Indonesian code is `in_id`, not `id`. Prefer that, then id, then en. */
-export function pickMovieBoxCaption(raw: unknown): { url: string; language: string } | undefined {
-  if (!Array.isArray(raw) || !raw.length) return undefined;
-  const rows = raw.filter((x): x is Row => !!x && typeof x === "object");
-  const pref = ["in_id", "id", "en"];
-  for (const code of pref) {
-    const hit = rows.find((r) => String(r.lan ?? r.lang ?? "").toLowerCase() === code);
-    const url = hit ? s(hit.url) : undefined;
-    if (url) return { url, language: code === "en" ? "en" : "id" };
-  }
-  const first = rows.find((r) => s(r.url));
-  const url = first ? s(first.url) : undefined;
-  if (!url) return undefined;
-  return { url, language: "und" };
+export function pickMovieBoxCaption(raw: unknown): { url: string; language: "id" } | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const hit = raw
+    .filter((x): x is Row => !!x && typeof x === "object")
+    .find((row) => {
+      const code = String(row.lan ?? row.lang ?? row.language ?? "").toLowerCase().replace(/_/g, "-");
+      const name = String(row.lanName ?? row.langName ?? row.name ?? "").trim();
+      return (
+        !!s(row.url) &&
+        (["in-id", "id", "id-id"].includes(code) || /^(bahasa indonesia|indonesia)$/i.test(name))
+      );
+    });
+  return hit ? { url: s(hit.url)!, language: "id" } : undefined;
 }

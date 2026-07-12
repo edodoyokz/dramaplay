@@ -295,7 +295,7 @@ catalog.get("/dramas/:slug", async (c) => {
     .select()
     .from(episodes)
     .where(eq(episodes.dramaId, row.drama.id))
-    .orderBy(episodes.episodeNumber);
+    .orderBy(asc(episodes.seasonNumber), asc(episodes.episodeNumber));
   const kind = resolveContentKind({
     contentType: typeof row.providerMetadata?.contentType === "string" ? row.providerMetadata.contentType : null,
     mediaType: typeof row.providerMetadata?.mediaType === "string" ? row.providerMetadata.mediaType : null,
