@@ -25,7 +25,18 @@ export class WetvAdapter extends SapimuBaseAdapter {
     super("wetv", baseUrl, token);
   }
 
-  private async feedItems(channelId = "1001"): Promise<ProviderDramaSummary[]> {
+  private mapFeedRow(row: Row): ProviderDramaSummary | null {
+    const id = s(row.cid);
+    if (!id) return null;
+    return {
+      providerDramaId: id,
+      title: s(row.title) ?? "Untitled",
+      posterUrl: s(row.cover),
+      contentType: "longform",
+    };
+  }
+
+  private async feedItems(channelId: string): Promise<ProviderDramaSummary[]> {
     const data = await this.get<{ data?: Row[] }>(
       `/wetv/api/feed?channel_id=${q(channelId)}&lang=id&country=ID`,
     );
@@ -33,34 +44,52 @@ export class WetvAdapter extends SapimuBaseAdapter {
     const items: ProviderDramaSummary[] = [];
     for (const section of data.data ?? []) {
       for (const row of (section.items as Row[] | undefined) ?? []) {
-        const id = s(row.cid);
-        if (!id || seen.has(id)) continue;
-        seen.add(id);
-        items.push({
-          providerDramaId: id,
-          title: s(row.title) ?? "Untitled",
-          posterUrl: s(row.cover),
-          contentType: "longform",
-        });
+        const item = this.mapFeedRow(row);
+        if (!item || seen.has(item.providerDramaId)) continue;
+        seen.add(item.providerDramaId);
+        items.push(item);
       }
     }
     return items;
   }
 
+  /** Pull every WeTV channel feed once and dedupe by cid. */
+  private async allChannelItems(): Promise<ProviderDramaSummary[]> {
+    const channels = await this.get<{ data?: Row[] }>(`/wetv/api/channels?lang=id&country=ID`);
+    const ids = (channels.data ?? [])
+      .map((c) => s(c.id))
+      .filter((id): id is string => Boolean(id));
+    // Fallback to the default "Untukmu" channel if channels list is empty.
+    const channelIds = ids.length ? ids : ["1001"];
+    const batches = await Promise.all(
+      channelIds.map(async (id) => {
+        try {
+          return await this.feedItems(id);
+        } catch (e) {
+          console.error(`[wetv] feed ${id}: ${e}`);
+          return [] as ProviderDramaSummary[];
+        }
+      }),
+    );
+    return [
+      ...new Map(batches.flat().map((x) => [x.providerDramaId, x])).values(),
+    ];
+  }
+
   async fetchForYou() {
-    return { items: await this.feedItems() };
+    return { items: await this.allChannelItems() };
   }
 
   async fetchTrending() {
-    return this.feedItems();
+    return this.feedItems("1001");
   }
 
   async fetchLatest() {
-    return this.feedItems();
+    return this.feedItems("10234");
   }
 
   async fetchVip() {
-    return this.feedItems();
+    return this.feedItems("10483");
   }
 
   async search(query: string): Promise<ProviderDramaSummary[]> {

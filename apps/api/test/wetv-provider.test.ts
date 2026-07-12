@@ -69,6 +69,26 @@ const play = {
 };
 
 describe("WetvAdapter", () => {
+  it("merges all channel feeds for forYou catalog coverage", async () => {
+    const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
+    const get = vi
+      .fn()
+      .mockResolvedValueOnce({ data: [{ id: "1001" }, { id: "10234" }] })
+      .mockResolvedValueOnce(feed)
+      .mockResolvedValueOnce({
+        data: [
+          {
+            items: [{ cid: "film1", title: "Film Satu", cover: "https://x/a.jpg" }],
+          },
+        ],
+      });
+    // @ts-expect-error test double
+    adapter.get = get;
+    const items = await adapter.fetchForYou();
+    expect(items.items.map((x) => x.providerDramaId).sort()).toEqual(["film1", "le1lbx64do19qal"]);
+    expect(get.mock.calls[0][0]).toContain("/wetv/api/channels");
+  });
+
   it("maps feed/detail/episodes/play into long-form provider shapes", async () => {
     const adapter = new WetvAdapter("https://captain.sapimu.au", "tok");
     const get = vi
