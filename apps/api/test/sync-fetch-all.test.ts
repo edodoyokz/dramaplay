@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fetchAllProviderSummaries } from "../src/sync/sync";
+import { fetchAllProviderSummaries, warmPosterUrls } from "../src/sync/sync";
 
 const item = (providerDramaId: string, title = providerDramaId) => ({ providerDramaId, title });
 
@@ -32,5 +32,22 @@ describe("fetchAllProviderSummaries", () => {
     } as any, ["sistem"]);
 
     expect(items.map((x) => x.providerDramaId)).toEqual(["search-sistem"]);
+  });
+
+  it("warms each unique signed poster through the durable image proxy", async () => {
+    const calls: string[] = [];
+    const result = await warmPosterUrls(
+      "https://dramaplay.my.id",
+      [{ posterUrl: "https://p16.tiktokcdn.com/a.jpg?x=1" }, { posterUrl: "https://p16.tiktokcdn.com/a.jpg?x=1" }, {}],
+      async (url) => {
+        calls.push(String(url));
+        return new Response(null, { status: 200 });
+      },
+    );
+
+    expect(calls).toEqual([
+      "https://dramaplay.my.id/img?u=https%3A%2F%2Fp16.tiktokcdn.com%2Fa.jpg%3Fx%3D1",
+    ]);
+    expect(result).toEqual({ warmed: 1, failed: 0 });
   });
 });

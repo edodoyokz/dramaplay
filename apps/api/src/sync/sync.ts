@@ -51,12 +51,32 @@ export async function fetchAllProviderSummaries(
   ];
 }
 
+export async function warmPosterUrls(
+  consumerUrl: string,
+  items: Pick<ProviderDramaSummary, "posterUrl">[],
+  fetcher: typeof fetch = fetch,
+): Promise<{ warmed: number; failed: number }> {
+  const urls = [...new Set(items.map((item) => item.posterUrl).filter((url): url is string => Boolean(url)))];
+  let warmed = 0;
+  let failed = 0;
+  for (const url of urls) {
+    try {
+      const response = await fetcher(`${consumerUrl.replace(/\/$/, "")}/img?u=${encodeURIComponent(url)}`);
+      if (response.ok) warmed++;
+      else failed++;
+    } catch {
+      failed++;
+    }
+  }
+  return { warmed, failed };
+}
+
 export async function syncProvider(
   dbUrl: string,
   providerCode: string,
   providerBaseUrl: string,
   providerToken?: string,
-  options: { fast?: boolean; searchKeywords?: string[]; maxItems?: number } = {},
+  options: { fast?: boolean; searchKeywords?: string[]; maxItems?: number; consumerUrl?: string } = {},
 ): Promise<SyncResult> {
   const db = createDb(dbUrl);
   const adapters = buildProviders(providerBaseUrl, providerToken);
@@ -71,7 +91,13 @@ export async function syncProvider(
 
   try {
     const items: ProviderDramaSummary[] = await fetchAllProviderSummaries(adapter, options.searchKeywords);
-    for (const item of options.maxItems ? items.slice(0, options.maxItems) : items) {
+    const selectedItems = options.maxItems ? items.slice(0, options.maxItems) : items;
+    if (options.consumerUrl) {
+      const posters = await warmPosterUrls(options.consumerUrl, selectedItems);
+      console.log(` posters: ${posters.warmed} cached, ${posters.failed} failed`);
+      result.errorCount += posters.failed;
+    }
+    for (const item of selectedItems) {
       try {
         const slug = providerSlug(providerCode, item.title);
         const existing = await db.select().from(dramas).where(eq(dramas.slug, slug)).limit(1);

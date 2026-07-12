@@ -5,7 +5,7 @@ on:
     # Staggered daily sync, UTC. WIB = UTC + 7.
     - cron: "0 20 * * *" # 03:00 WIB dramanova
     - cron: "0 21 * * *" # 04:00 WIB netshort
-    - cron: "0 22 * * *" # 05:00 WIB pinedrama
+    - cron: "0 10,22 * * *" # 05:00 & 17:00 WIB pinedrama (signed posters expire)
     - cron: "0 23 * * *" # 06:00 WIB dramaboxbaru
     - cron: "0 0 * * *"  # 07:00 WIB dramawave
     - cron: "0 1 * * *"  # 08:00 WIB melolo
@@ -56,7 +56,7 @@ jobs:
             case "${{ github.event.schedule }}" in
               "0 20 * * *") provider="dramanova" ;;
               "0 21 * * *") provider="netshort" ;;
-              "0 22 * * *") provider="pinedrama" ;;
+              "0 10,22 * * *") provider="pinedrama" ;;
               "0 23 * * *") provider="dramaboxbaru" ;;
               "0 0 * * *") provider="dramawave" ;;
               "0 1 * * *") provider="melolo" ;;
@@ -74,8 +74,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PROVIDER_BASE_URL: ${{ secrets.PROVIDER_BASE_URL }}
           PROVIDER_API_TOKEN: ${{ secrets.PROVIDER_API_TOKEN }}
+          CONSUMER_URL: "https://dramaplay.my.id"
           SYNC_FAST: "1"
         run: |
           set -e
           cd apps/api
           pnpm exec tsx scripts/sync-providers.ts "${{ steps.pick.outputs.provider }}"
+          if [ "${{ steps.pick.outputs.provider }}" = "pinedrama" ]; then
+            pnpm exec tsx scripts/backfill-pinedrama-posters.ts
+          fi

@@ -63,6 +63,7 @@ async function main() {
         fast: process.env.SYNC_FAST !== "0",
         searchKeywords,
         maxItems,
+        consumerUrl: code === "pinedrama" ? process.env.CONSUMER_URL : undefined,
       });
       console.log(
         ` done: +${r.dramaNew} dramas (${r.dramaUpdated} upd), +${r.episodeNew} eps, ${r.errorCount} errs`
