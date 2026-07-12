@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, NavLink, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Home from "./pages/Home";
 import DramaDetail from "./pages/DramaDetail";
@@ -14,6 +14,13 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Refund from "./pages/Refund";
 import NotFound from "./pages/NotFound";
+import { isLongformProviderCode } from "./lib/longform-provider";
+
+/** Static `/provider/wetv` routes have no `:code` param — use one dynamic route. */
+function ProviderPage() {
+  const { code = "" } = useParams();
+  return isLongformProviderCode(code) ? <LongformProvider /> : <ProviderDramas />;
+}
 
 const qc = new QueryClient();
 
@@ -117,9 +124,7 @@ export default function App() {
             <Route path="/title/:slug" element={<LongformDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/provider/wetv" element={<LongformProvider />} />
-            <Route path="/provider/moviebox" element={<LongformProvider />} />
-            <Route path="/provider/:code" element={<ProviderDramas />} />
+            <Route path="/provider/:code" element={<ProviderPage />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/refund" element={<Refund />} />

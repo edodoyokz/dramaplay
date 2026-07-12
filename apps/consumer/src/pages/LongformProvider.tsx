@@ -75,10 +75,8 @@ export default function LongformProvider() {
   }
 
   useEffect(() => {
-    if (!isLongformProviderCode(code)) {
-      navigate(`/provider/${code}`, { replace: true });
-      return;
-    }
+    // Parent route always supplies :code; empty code is a programming error.
+    if (!code || !isLongformProviderCode(code)) return;
     setItems([]);
     setPage(1);
     setFilter("all");

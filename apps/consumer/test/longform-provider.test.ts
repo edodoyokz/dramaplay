@@ -12,6 +12,8 @@ describe("longform-provider helpers", () => {
     expect(isLongformProviderCode("wetv")).toBe(true);
     expect(isLongformProviderCode("MovieBox")).toBe(true);
     expect(isLongformProviderCode("shortmax")).toBe(false);
+    expect(isLongformProviderCode("")).toBe(false);
+    expect(isLongformProviderCode(undefined)).toBe(false);
   });
 
   it("infers media type from episode count when marker missing", () => {
