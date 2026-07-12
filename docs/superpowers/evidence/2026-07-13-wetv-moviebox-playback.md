@@ -34,25 +34,38 @@ Worktree: `.worktrees/wetv-moviebox-indonesian`
 | Recovery/retry | `apps/consumer/src/lib/longform-playback.ts` | one bounded `startLoad`/`recoverMediaError` then fail; cleanup idempotent |
 | Android + desktop target | — | **not verified live** (no local stack + browser smoke this run) |
 
-## Migration preflight (production DB, read-only)
+## Migration (production)
 
-- `season_number` **absent** before migrate (journal has migrations 0–3 only).
-- Pre-existing MovieBox identity collisions after planned backfill: **619 groups / 2301 rows / 78 dramas** (same `provider_episode_id` inserted many times with distinct titles).
-- Dedupe impact: keep oldest row per `(drama_id, season_number, episode_number)` → **delete ~1682**, keep **181799**.
-- Migration `0004_season_episode_identity.sql` updated to: add column → MovieBox season backfill → **dedupe DELETE** → duplicate guard → checks → unique index.
-- FKs on `episodes` all `ON DELETE CASCADE` (episode_providers, stream_resolve_cache, subtitles, episode_likes, watch_progress).
+Command: `DATABASE_URL=… pnpm --filter @dramaplay/db db:migrate`  
+Result: **PASS** (journal id 5 / tag `0004_season_episode_identity`)
+
+Preflight:
+- `season_number` absent; migrations 0–3 present.
+- MovieBox identity collisions after planned backfill: **619 groups / ~2301 rows / 78 dramas**.
+- Reelshort `episode_number=0` rows: **86** (all had episode 1 already).
+- FKs on `episodes` all `ON DELETE CASCADE`.
+
+Migration SQL final order: add column → MovieBox season backfill → delete `episode_number <= 0` → dedupe keep oldest → duplicate guard → checks → unique index.
+
+Post-migrate verify:
+- column `season_number` NOT NULL default 1
+- unique index `episodes_drama_season_episode_uq` present
+- checks `episodes_season_nonnegative_ck`, `episodes_episode_positive_ck` present
+- duplicate groups: **0**
+- episode count: **181713** (was 183481)
+- multi-season MovieBox samples remain (e.g. love-island-usa seasons 3 / 41 eps)
+- probe insert S1E1 + S2E1 succeeded then rolled back via drama delete
 
 ## Live browser smoke (Task 12)
 
 **Not verified** in this session:
 
-- No disposable/staging DB container available (`docker`/`psql` missing).
-- Production migration not yet applied at evidence write time.
-- Chrome desktop/Android playback screenshots and `readyState`/`playing` measurements not collected.
+- No disposable/staging stack for Playwright Chrome desktop/Android.
+- No `readyState`/`playing` measurements or screenshots collected.
 
 Do not treat fixture/unit results as live playback proof.
 
 ## Notes
 
-- User later authorized: complete remaining work, run migration, merge to main, redeploy.
+- User authorized: complete remaining work, run migration, merge to main, redeploy.
 - No dependency / lockfile changes.
