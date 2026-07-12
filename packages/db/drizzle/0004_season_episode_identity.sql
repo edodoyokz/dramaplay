@@ -8,6 +8,10 @@ WHERE ep.episode_id = e.id
   AND p.code = 'moviebox'
   AND ep.provider_episode_id ~ '^[^:]+:[0-9]+:[0-9]+$';
 --> statement-breakpoint
+-- Reelshort stores trailer/preview rows as episode_number=0 while episode 1 exists.
+-- Positive-episode check requires removing them (cascade cleans provider links).
+DELETE FROM "episodes" WHERE "episode_number" <= 0;
+--> statement-breakpoint
 -- Production MovieBox syncs created duplicate (drama, season, episode) rows that
 -- all share the same provider_episode_id. Keep the oldest row; cascade removes
 -- episode_providers / stream cache / progress for the discarded rows.
