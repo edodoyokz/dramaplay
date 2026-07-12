@@ -64,6 +64,7 @@ async function main() {
         searchKeywords,
         maxItems,
         consumerUrl: code === "pinedrama" ? process.env.CONSUMER_URL : undefined,
+        env: process.env as Record<string, string | undefined>,
       });
       console.log(
         ` done: +${r.dramaNew} dramas (${r.dramaUpdated} upd), +${r.episodeNew} eps, ${r.errorCount} errs`

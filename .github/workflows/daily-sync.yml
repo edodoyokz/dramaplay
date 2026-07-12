@@ -82,6 +82,9 @@ jobs:
           PROVIDER_API_TOKEN: ${{ secrets.PROVIDER_API_TOKEN }}
           CONSUMER_URL: "https://dramaplay.my.id"
           SYNC_FAST: "1"
+          # Soft stop before Actions hard timeout. Item caps default in code
+          # (shortform 80/10/120, longform 20/5/80) via apps/api/src/sync/budget.ts.
+          SYNC_TIME_BUDGET_MS: "720000"
         run: |
           set -e
           cd apps/api
