@@ -2,6 +2,7 @@ import type {
   ProviderDramaDetail,
   ProviderDramaSummary,
   ProviderEpisodeSummary,
+  ProviderShelfSummary,
   ProviderStreamSource,
 } from "@dramaplay/shared";
 import { SapimuBaseAdapter } from "./base";
@@ -87,6 +88,34 @@ export class WetvAdapter extends SapimuBaseAdapter {
 
   async fetchForYou() {
     return { items: await this.allChannelItems() };
+  }
+
+  /** One shelf per upstream channel, items tagged with channel membership. */
+  async fetchShelves(): Promise<ProviderShelfSummary[]> {
+    const channels = await this.get<{ data?: Row[] }>(`/wetv/api/channels?lang=id&country=ID`);
+    const channelRows = (channels.data ?? [])
+      .map((c) => ({ id: s(c.id), name: s(c.name) ?? s(c.id) }))
+      .filter((c): c is { id: string; name: string } => Boolean(c.id));
+    // Fallback to the default "Untukmu" channel if channels list is empty.
+    const list = channelRows.length ? channelRows : [{ id: "1001", name: "Untukmu" }];
+    const shelves: ProviderShelfSummary[] = [];
+    for (const ch of list) {
+      try {
+        const items = await this.feedItems(ch.id);
+        if (!items.length) continue;
+        shelves.push({
+          code: ch.id,
+          name: ch.name,
+          items: items.map((item, position) => ({
+            ...item,
+            shelves: [{ code: ch.id, name: ch.name, position }],
+          })),
+        });
+      } catch (e) {
+        console.error(`[wetv] shelf ${ch.id}: ${e}`);
+      }
+    }
+    return shelves;
   }
 
   async fetchTrending() {
