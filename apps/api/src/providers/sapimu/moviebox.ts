@@ -2,6 +2,7 @@ import type {
   ProviderDramaDetail,
   ProviderDramaSummary,
   ProviderEpisodeSummary,
+  ProviderShelfSummary,
   ProviderStreamSource,
 } from "@dramaplay/shared";
 import { SapimuBaseAdapter } from "./base";
@@ -71,6 +72,58 @@ export class MovieBoxAdapter extends SapimuBaseAdapter {
 
   async fetchForYou() {
     return { items: await this.home() };
+  }
+
+  private authHeaders() {
+    return {
+      Authorization: `Bearer ${this.token}`,
+      "User-Agent": "Mozilla/5.0",
+    };
+  }
+
+  /** Upstream-native category shelves: Popular and TOP100 first, then upstream
+   *  order, deduped by type, capped at eight non-empty categories. */
+  async fetchShelves(): Promise<ProviderShelfSummary[]> {
+    const cats = await this.getJson<{ data?: Row[] }>(
+      `/moviebox/api/tabs/categories?lang=id`,
+      { headers: this.authHeaders() },
+    );
+    const ranked = (name: string) => (name === "Popular" ? 0 : name === "TOP100" ? 1 : 2);
+    // Stable sort: Popular/TOP100 first, rest in upstream order.
+    const queue = [...(cats.data ?? [])]
+      .map((c) => ({ name: s(c.name) ?? s(c.type) ?? "", type: s(c.type) ?? "" }))
+      .filter((c) => c.type)
+      .sort((a, b) => ranked(a.name) - ranked(b.name));
+
+    const MAX = 8;
+    const seen = new Set<string>();
+    const shelves: ProviderShelfSummary[] = [];
+    for (const c of queue) {
+      if (seen.has(c.type)) continue;
+      seen.add(c.type);
+      if (shelves.length >= MAX) break;
+      try {
+        const data = await this.getJson<{ data?: Row[] }>(
+          `/moviebox/api/tabs/category-content?type=${q(c.type)}&lang=id`,
+          { headers: this.authHeaders() },
+        );
+        const items = (data.data ?? [])
+          .map((row) => this.mapSummary(row))
+          .filter((x): x is ProviderDramaSummary => Boolean(x));
+        if (!items.length) continue;
+        shelves.push({
+          code: c.type,
+          name: c.name,
+          items: items.map((item, position) => ({
+            ...item,
+            shelves: [{ code: c.type, name: c.name, position }],
+          })),
+        });
+      } catch (e) {
+        console.error(`[moviebox] shelf ${c.type}: ${e}`);
+      }
+    }
+    return shelves;
   }
 
   async fetchTrending() {
