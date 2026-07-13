@@ -3,10 +3,12 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { StaticRouter } from "react-router-dom/server";
 import {
+  categoryApiPath,
   categoryPath,
   categoryUrl,
   filterLongformItems,
   isLongformProviderCode,
+  landingApiPath,
   partitionLongformItems,
   pickFeaturedItems,
   resolveItemMediaType,
@@ -67,6 +69,18 @@ describe("category path + url helpers", () => {
 
   it("invalid filter falls back to all (no query)", () => {
     expect(categoryUrl("wetv", "x", "anime" as never)).toBe("/provider/wetv/category/x");
+  });
+
+  it("landingApiPath targets the landing endpoint", () => {
+    expect(landingApiPath("wetv")).toBe("/catalog/providers/wetv/landing");
+    expect(landingApiPath("moviebox")).toBe("/catalog/providers/moviebox/landing");
+  });
+
+  it("categoryApiPath encodes page and only movie|series type", () => {
+    expect(categoryApiPath("wetv", "10483", 1)).toBe("/catalog/providers/wetv/categories/10483?page=1&limit=48");
+    expect(categoryApiPath("moviebox", "1", 2, "series")).toContain("type=series");
+    expect(categoryApiPath("moviebox", "1", 2, "series")).toContain("page=2");
+    expect(categoryApiPath("moviebox", "1", 2, "all")).not.toContain("type=");
   });
 });
 

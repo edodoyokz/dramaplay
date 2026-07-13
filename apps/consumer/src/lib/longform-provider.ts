@@ -89,3 +89,21 @@ export function categoryUrl(
   if (filter === "movie" || filter === "series") return `${base}?type=${filter}`;
   return base;
 }
+
+/** API path for the provider landing endpoint. */
+export function landingApiPath(providerCode: string): string {
+  return `/catalog/providers/${providerCode}/landing`;
+}
+
+/** API path for a category page with page + optional media filter. */
+export function categoryApiPath(
+  providerCode: string,
+  categoryCode: string,
+  page: number,
+  filter: LongformFilter = "all",
+  limit = 48,
+): string {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (filter === "movie" || filter === "series") params.set("type", filter);
+  return `/catalog/providers/${providerCode}/categories/${categoryCode}?${params}`;
+}
