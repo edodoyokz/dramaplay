@@ -110,7 +110,7 @@ const ORIGIN = "https://dramaplay.my.id";
 const API = "https://api.dramaplay.my.id";
 
 // Known SPA routes that should return the shell (not 404).
-const KNOWN_PREFIXES = ["/drama/", "/title/", "/provider/", "/search", "/auth", "/profile", "/terms", "/privacy", "/refund"];
+const KNOWN_PREFIXES = ["/drama/", "/title/", "/provider/", "/search", "/auth", "/profile", "/terms", "/privacy", "/refund", "/promo"];
 
 function isKnownRoute(pathname) {
   if (pathname === "/") return true;
