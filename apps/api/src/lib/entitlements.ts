@@ -1,6 +1,8 @@
 import { createDb, subscriptions, type Database } from "@dramaplay/db";
 import { and, desc, eq, gt } from "drizzle-orm";
 
+type DatabaseTransaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
+
 export async function isUserVip(dbOrUrl: string | Database, userId: string): Promise<boolean> {
   const db = typeof dbOrUrl === "string" ? createDb(dbOrUrl) : dbOrUrl;
   const [sub] = await db
@@ -31,7 +33,7 @@ export function nextExpiry(now: Date, durationDays: number, existingExpiresAt?: 
  * Call only after payment/coupon is already committed.
  */
 export async function grantOrExtendSubscription(
-  db: Database,
+  db: Database | DatabaseTransaction,
   args: { userId: string; planId: string; durationDays: number },
 ): Promise<{ id: string; expiresAt: Date }> {
   const now = new Date();

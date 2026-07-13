@@ -1,10 +1,26 @@
 import { Hono } from "hono";
-import { createDb, plans, payments, coupons, couponRedemptions } from "@dramaplay/db";
+import {
+  createDb,
+  plans,
+  payments,
+  coupons,
+  couponRedemptions,
+  paidCampaignReservations,
+  paidCampaigns,
+} from "@dramaplay/db";
 import { and, asc, eq, sql } from "drizzle-orm";
 import type { Env } from "../env";
 import { authMiddleware, ensureProfile } from "../middleware/auth";
 import { grantOrExtendSubscription } from "../lib/entitlements";
 import { verifyTransaction } from "../lib/pakasir";
+import {
+  campaignCheckoutError,
+  normalizeCampaignCode,
+  parseCampaignCheckoutBody,
+  publicCampaignStatus,
+} from "../lib/paid-campaign";
+import { createCampaignCheckout } from "../services/paid-campaign-checkout";
+import { completeVerifiedPayment } from "../services/payment-fulfillment";
 
 export const billing = new Hono<{ Bindings: Env }>();
 
@@ -18,13 +34,64 @@ billing.get("/plans", async (c) => {
   return c.json({ items: rows });
 });
 
+billing.get("/campaigns/:code", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const code = normalizeCampaignCode(c.req.param("code"));
+  const [campaign] = await db
+    .select({
+      id: paidCampaigns.id,
+      code: paidCampaigns.code,
+      amountIdr: paidCampaigns.amountIdr,
+      capacity: paidCampaigns.capacity,
+      isEnabled: paidCampaigns.isEnabled,
+      durationDays: plans.durationDays,
+    })
+    .from(paidCampaigns)
+    .innerJoin(plans, eq(plans.id, paidCampaigns.planId))
+    .where(eq(paidCampaigns.code, code));
+  if (!campaign) return c.json({ error: "campaign_not_found" }, 404);
+  const [count] = await db
+    .select({ occupied: sql<number>`count(*)::int` })
+    .from(paidCampaignReservations)
+    .where(
+      and(
+        eq(paidCampaignReservations.campaignId, campaign.id),
+        sql`${paidCampaignReservations.status} = 'paid' OR (${paidCampaignReservations.status} = 'reserved' AND ${paidCampaignReservations.expiresAt} > now())`,
+      ),
+    );
+  return c.json(publicCampaignStatus(campaign, count?.occupied ?? 0));
+});
+
+billing.post("/campaign-checkout", authMiddleware, async (c) => {
+  const user = c.get("user");
+  await ensureProfile(c.env, user);
+  const body = parseCampaignCheckoutBody(await c.req.json<unknown>());
+  if (!body?.code) return c.json({ error: "code_required" }, 400);
+  const result = await createCampaignCheckout(createDb(c.env.DATABASE_URL), {
+    code: body.code,
+    userId: user.id,
+    now: new Date(),
+    attribution: body.attribution,
+  });
+  if (result.kind !== "checkout") {
+    const error = campaignCheckoutError(result.kind);
+    return c.json({ error: error.error }, error.status);
+  }
+  const checkoutUrl = new URL(`https://app.pakasir.com/pay/${c.env.PAKASIR_PROJECT_SLUG}/${result.amountIdr}`);
+  checkoutUrl.searchParams.set("order_id", result.reference);
+  return c.json({ paymentId: result.paymentId, checkoutUrl: checkoutUrl.toString() });
+});
+
 billing.post("/checkout", authMiddleware, async (c) => {
   const user = c.get("user");
   await ensureProfile(c.env, user);
   const { planCode } = await c.req.json<{ planCode: string }>();
 
   const db = createDb(c.env.DATABASE_URL);
-  const [plan] = await db.select().from(plans).where(eq(plans.code, planCode));
+  const [plan] = await db
+    .select()
+    .from(plans)
+    .where(and(eq(plans.code, planCode), eq(plans.isEnabled, true)));
   if (!plan) return c.json({ error: "plan_not_found" }, 404);
 
   const [payment] = await db
@@ -135,23 +202,10 @@ async function reconcilePendingPayments(env: Env, userId: string) {
     const completed = await verifyTransaction(env, payment.pakasirReference, payment.amountIdr);
     if (!completed) continue;
 
-    const [paidPayment] = await db
-      .update(payments)
-      .set({
-        status: "paid",
-        pakasirTransactionId: payment.pakasirReference,
-        paidAt: new Date(),
-      })
-      .where(and(eq(payments.id, payment.id), eq(payments.status, "pending")))
-      .returning();
-    if (!paidPayment) continue;
-
-    const [plan] = await db.select().from(plans).where(eq(plans.id, paidPayment.planId));
-    if (!plan) continue;
-    await grantOrExtendSubscription(db, {
-      userId,
-      planId: plan.id,
-      durationDays: plan.durationDays,
+    await completeVerifiedPayment(db, {
+      paymentId: payment.id,
+      transactionId: payment.pakasirReference,
+      paidAt: new Date(),
     });
   }
 }

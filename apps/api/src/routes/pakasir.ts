@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { createDb, payments, plans } from "@dramaplay/db";
-import { and, eq } from "drizzle-orm";
+import { createDb, payments } from "@dramaplay/db";
+import { eq } from "drizzle-orm";
 import type { Env } from "../env";
-import { grantOrExtendSubscription } from "../lib/entitlements";
 import { verifyTransaction } from "../lib/pakasir";
+import { completeVerifiedPayment } from "../services/payment-fulfillment";
 
 export const pakasir = new Hono<{ Bindings: Env }>();
 
@@ -31,28 +31,12 @@ pakasir.post("/webhook", async (c) => {
   const verified = await verifyTransaction(c.env, body.order_id, body.amount);
   if (!verified) return c.json({ error: "transaction_not_completed" }, 400);
 
-  const [paidPayment] = await db
-    .update(payments)
-    .set({
-      status: "paid",
-      pakasirTransactionId: body.order_id,
-      payload: JSON.stringify(body),
-      paidAt: body.completed_at ? new Date(body.completed_at) : new Date(),
-    })
-    .where(and(eq(payments.id, payment.id), eq(payments.status, "pending")))
-    .returning();
-
-  // Lost race with another webhook/reconcile — payment already paid.
-  if (!paidPayment) return c.json({ ok: true });
-
-  const [plan] = await db.select().from(plans).where(eq(plans.id, paidPayment.planId));
-  if (plan) {
-    await grantOrExtendSubscription(db, {
-      userId: paidPayment.userId,
-      planId: plan.id,
-      durationDays: plan.durationDays,
-    });
-  }
+  await completeVerifiedPayment(db, {
+    paymentId: payment.id,
+    transactionId: body.order_id,
+    payload: JSON.stringify(body),
+    paidAt: body.completed_at ? new Date(body.completed_at) : new Date(),
+  });
 
   return c.json({ ok: true });
 });

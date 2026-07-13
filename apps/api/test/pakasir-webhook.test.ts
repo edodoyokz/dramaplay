@@ -18,14 +18,16 @@ function chain(rows: any[]) {
 }
 
 function makeDb() {
-  return {
+  const db = {
     select: () => {
       selectCount++;
       // 1: payment by order_id
-      // 2: plan by id
-      // 3: active subscription lookup inside grantOrExtendSubscription
+      // 2: pending payment precondition inside completeVerifiedPayment
+      // 3: plan by id
+      // 4: active subscription lookup inside grantOrExtendSubscription
       if (selectCount === 1) return chain([payment]);
-      if (selectCount === 2) return chain([{ id: "plan1", durationDays: 7 }]);
+      if (selectCount === 2) return chain([{ planId: "plan1" }]);
+      if (selectCount === 3) return chain([{ id: "plan1", durationDays: 7 }]);
       return chain(activeSub ? [activeSub] : []);
     },
     update: (table: any) => ({
@@ -54,6 +56,7 @@ function makeDb() {
       },
     }),
   };
+  return { ...db, transaction: (run: (tx: typeof db) => Promise<unknown>) => run(db) };
 }
 
 vi.mock("@dramaplay/db", () => ({
@@ -63,6 +66,10 @@ vi.mock("@dramaplay/db", () => ({
     status: "payment.status",
     pakasirReference: "payment.ref",
     __name: "payments",
+  },
+  paidCampaignReservations: {
+    paymentId: "reservation.payment_id",
+    __name: "paid_campaign_reservations",
   },
   subscriptions: {
     id: "subscriptions.id",
