@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import ProviderDramas from "./pages/ProviderDramas";
 import LongformProvider from "./pages/LongformProvider";
+import LongformCategory from "./pages/LongformCategory";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Refund from "./pages/Refund";
@@ -125,6 +126,7 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
             <Route path="/provider/:code" element={<ProviderPage />} />
+            <Route path="/provider/:code/category/:categoryCode" element={<LongformCategory />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/refund" element={<Refund />} />

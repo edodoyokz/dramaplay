@@ -72,3 +72,20 @@ export function pickFeaturedItems<T extends LongformCatalogItem>(items: T[], lim
     .sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || (b.episodeCount ?? 0) - (a.episodeCount ?? 0))
     .slice(0, limit);
 }
+
+/** Route to a provider category page. */
+export function categoryPath(providerCode: string, categoryCode: string): string {
+  return `/provider/${providerCode}/category/${categoryCode}`;
+}
+
+/** Category route with optional media filter. `all` (or invalid) omits the
+ *  query so the API never receives an unsupported `type` value. */
+export function categoryUrl(
+  providerCode: string,
+  categoryCode: string,
+  filter: LongformFilter = "all",
+): string {
+  const base = categoryPath(providerCode, categoryCode);
+  if (filter === "movie" || filter === "series") return `${base}?type=${filter}`;
+  return base;
+}
