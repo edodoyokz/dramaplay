@@ -82,14 +82,15 @@ export function buildProviderMeta(
 export async function fetchAllProviderSummaries(
   adapter: ReturnType<typeof buildProviders>[string],
   searchKeywords: string[] = [],
+  shelfSummaries: ProviderShelfSummary[] | null = null,
 ): Promise<ProviderDramaSummary[]> {
   // ponytail: fetchShelves duplicates the forYou fetch for WeTV (same channels).
   // Acceptable for a periodic sync; merge handles the overlap. Avoid only if the
   // double call count becomes a budget problem.
-  const shelfSummaries: ProviderShelfSummary[] = adapter.fetchShelves
-    ? await shelfOrEmpty("shelves", () => adapter.fetchShelves!())
-    : [];
-  const shelfItems = shelfSummaries.flatMap((s) => s.items);
+  const shelves =
+    shelfSummaries ??
+    (adapter.fetchShelves ? await shelfOrEmpty("shelves", () => adapter.fetchShelves!()) : []);
+  const shelfItems = shelves.flatMap((s) => s.items);
 
   const batches = await Promise.all([
     shelfOrEmpty("forYou", async () => (await adapter.fetchForYou()).items),
@@ -185,8 +186,31 @@ export async function syncProvider(
   if (!providerRow) throw new Error("provider not registered");
 
   try {
-    const items: ProviderDramaSummary[] = await fetchAllProviderSummaries(adapter, options.searchKeywords);
+    // Fetch upstream shelves once; reused for item merge and provider config.
+    const shelfSummaries: ProviderShelfSummary[] = adapter.fetchShelves
+      ? await shelfOrEmpty("shelves", () => adapter.fetchShelves!())
+      : [];
+    const items: ProviderDramaSummary[] = await fetchAllProviderSummaries(
+      adapter,
+      options.searchKeywords,
+      shelfSummaries,
+    );
     const selectedItems = items.slice(0, budgets.maxItems);
+
+    // Persist ordered shelf list into providers.config.shelves so the landing
+    // query can render shelves in upstream order. Idempotent; preserves logoUrl
+    // and contentType. Safe to re-run; repopulated on every sync.
+    if (shelfSummaries.length) {
+      const shelfOrder = shelfSummaries.map((s) => ({ code: s.code, name: s.name }));
+      try {
+        await db
+          .update(providers)
+          .set({ config: { ...(providerRow.config ?? {}), shelves: shelfOrder } })
+          .where(eq(providers.id, providerRow.id));
+      } catch (e) {
+        console.error(`[sync] config.shelves ${providerCode}: ${e}`);
+      }
+    }
     if (options.consumerUrl) {
       const posters = await warmPosterUrls(options.consumerUrl, selectedItems);
       console.log(` posters: ${posters.warmed} cached, ${posters.failed} failed`);
