@@ -10,7 +10,12 @@ import {
 import { and, eq, sql } from "drizzle-orm";
 import { buildProviders } from "../providers/registry";
 import { slugifyTitle } from "../lib/slug";
-import type { ProviderDramaSummary, ProviderEpisodeSummary } from "@dramaplay/shared";
+import type {
+  ProviderDramaSummary,
+  ProviderEpisodeSummary,
+  ProviderShelfMembership,
+  ProviderShelfSummary,
+} from "@dramaplay/shared";
 import {
   classifyDeepFillKind,
   isTimeBudgetExhausted,
@@ -48,10 +53,10 @@ type PendingDeepFill = {
   item: ProviderDramaSummary;
 };
 
-async function shelfOrEmpty(
+async function shelfOrEmpty<T>(
   label: string,
-  run: () => Promise<ProviderDramaSummary[]>,
-): Promise<ProviderDramaSummary[]> {
+  run: () => Promise<T[]>,
+): Promise<T[]> {
   try {
     return await run();
   } catch (e) {
@@ -62,10 +67,30 @@ async function shelfOrEmpty(
   }
 }
 
+/** Metadata persisted to `drama_providers.metadata`. Additive: `shelves` is only
+ *  present when the upstream adapter reported channel/category membership. */
+export function buildProviderMeta(
+  item: ProviderDramaSummary,
+): Record<string, unknown> {
+  return {
+    contentType: item.contentType ?? "shortform",
+    mediaType: item.mediaType,
+    ...(item.shelves?.length ? { shelves: item.shelves } : {}),
+  };
+}
+
 export async function fetchAllProviderSummaries(
   adapter: ReturnType<typeof buildProviders>[string],
   searchKeywords: string[] = [],
 ): Promise<ProviderDramaSummary[]> {
+  // ponytail: fetchShelves duplicates the forYou fetch for WeTV (same channels).
+  // Acceptable for a periodic sync; merge handles the overlap. Avoid only if the
+  // double call count becomes a budget problem.
+  const shelfSummaries: ProviderShelfSummary[] = adapter.fetchShelves
+    ? await shelfOrEmpty("shelves", () => adapter.fetchShelves!())
+    : [];
+  const shelfItems = shelfSummaries.flatMap((s) => s.items);
+
   const batches = await Promise.all([
     shelfOrEmpty("forYou", async () => (await adapter.fetchForYou()).items),
     shelfOrEmpty("trending", () => adapter.fetchTrending()),
@@ -74,14 +99,27 @@ export async function fetchAllProviderSummaries(
     ...searchKeywords.map((q) => shelfOrEmpty(`search:${q}`, () => adapter.search(q))),
   ]);
 
-  return [
-    ...new Map(
-      batches
-        .flat()
-        .filter((x) => x.providerDramaId)
-        .map((x) => [x.providerDramaId, x]),
-    ).values(),
-  ];
+  // Dedupe by providerDramaId: last wins for scalar fields, but shelf
+  // memberships are merged by code so a title in two shelves keeps both.
+  const byId = new Map<string, ProviderDramaSummary>();
+  for (const item of [...shelfItems, ...batches.flat()]) {
+    if (!item.providerDramaId) continue;
+    const prev = byId.get(item.providerDramaId);
+    if (!prev) {
+      byId.set(item.providerDramaId, item);
+      continue;
+    }
+    const seen = new Set((prev.shelves ?? []).map((s) => s.code));
+    const merged: ProviderShelfMembership[] = [
+      ...(prev.shelves ?? []),
+      ...(item.shelves ?? []).filter((s) => !seen.has(s.code)),
+    ];
+    byId.set(item.providerDramaId, {
+      ...item,
+      shelves: merged.length ? merged : prev.shelves ?? item.shelves,
+    });
+  }
+  return [...byId.values()];
 }
 
 export async function warmPosterUrls(
@@ -191,10 +229,7 @@ export async function syncProvider(
           result.dramaNew++;
         }
 
-        const providerMeta = {
-          contentType: item.contentType ?? "shortform",
-          mediaType: item.mediaType,
-        };
+        const providerMeta = buildProviderMeta(item);
         await db
           .insert(dramaProviders)
           .values({
