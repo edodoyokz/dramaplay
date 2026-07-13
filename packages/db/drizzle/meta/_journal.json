@@ -36,6 +36,13 @@
       "when": 1784300000000,
       "tag": "0004_season_episode_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783913185577,
+      "tag": "0005_paid_campaigns",
+      "breakpoints": true
     }
   ]
 }

@@ -47,6 +47,51 @@ export const payments = pgTable("payments", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const paidCampaigns = pgTable("paid_campaigns", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  code: text("code").notNull().unique(),
+  planId: uuid("plan_id")
+    .notNull()
+    .references(() => plans.id),
+  amountIdr: integer("amount_idr").notNull(),
+  capacity: integer("capacity").notNull(),
+  reservationHours: integer("reservation_hours").notNull(),
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const paidCampaignReservations = pgTable(
+  "paid_campaign_reservations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    campaignId: uuid("campaign_id")
+      .notNull()
+      .references(() => paidCampaigns.id),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    paymentId: uuid("payment_id")
+      .notNull()
+      .references(() => payments.id),
+    status: text("status", { enum: ["reserved", "paid", "expired"] })
+      .notNull()
+      .default("reserved"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    utmSource: text("utm_source"),
+    utmMedium: text("utm_medium"),
+    utmCampaign: text("utm_campaign"),
+    utmContent: text("utm_content"),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    uniqCampaignUser: unique().on(table.campaignId, table.userId),
+    uniqPayment: unique().on(table.paymentId),
+  }),
+);
+
 // Launch trial coupons: redeeming grants a free subscription for the linked
 // plan's duration. Free-only by design (no Pakasir discount path) — a 100%
 // discount on the daily plan is just a free day.
