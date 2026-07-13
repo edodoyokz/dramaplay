@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../lib/api";
-import { supabase, getAuthToken } from "../lib/supabase";
+import { isPricingModalCloseBlocked } from "../lib/paid-campaign";
+import { getAuthToken, supabase } from "../lib/supabase";
+import CouponCodeEntry from "./CouponCodeEntry";
 
 interface Plan {
   id: string;
@@ -16,9 +18,12 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
   const [plansLoading, setPlansLoading] = useState(true);
   const [plansError, setPlansError] = useState(false);
   const [loadingCode, setLoadingCode] = useState<string | null>(null);
-  const [coupon, setCoupon] = useState("");
-  const [redeeming, setRedeeming] = useState(false);
+  const [couponBusy, setCouponBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
+  const loadingCodeRef = useRef(loadingCode);
+  const couponBusyRef = useRef(couponBusy);
+  loadingCodeRef.current = loadingCode;
+  couponBusyRef.current = couponBusy;
 
   function loadPlans() {
     setPlansLoading(true);
@@ -42,7 +47,7 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
     if (!el.open) el.showModal();
     const onCancel = (e: Event) => {
       e.preventDefault();
-      if (loadingCode) return;
+      if (isPricingModalCloseBlocked(loadingCodeRef.current, couponBusyRef.current)) return;
       onClose();
     };
     el.addEventListener("cancel", onCancel);
@@ -80,46 +85,8 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
     }
   }
 
-  async function redeemCoupon() {
-    const value = coupon.trim();
-    if (!value) return;
-    setFeedback(null);
-    setRedeeming(true);
-    try {
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token ?? getAuthToken();
-      if (!token) {
-        const returnTo = window.location.pathname + window.location.search;
-        window.location.assign(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
-        return;
-      }
-      const res = await api<{ planName: string; durationDays: number }>("/billing/redeem", {
-        method: "POST",
-        body: JSON.stringify({ code: value }),
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFeedback({
-        ok: true,
-        text: `Kupon aktif! ${res.planName} (${res.durationDays} hari) telah ditambahkan.`,
-      });
-      setTimeout(() => window.location.reload(), 1500);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
-      const text = msg.includes("already_redeemed")
-        ? "Kupon ini sudah pernah kamu pakai."
-        : msg.includes("coupon_exhausted")
-          ? "Kuota kupon sudah habis."
-          : msg.includes("coupon_expired")
-            ? "Kupon sudah kedaluwarsa."
-            : "Kupon tidak valid.";
-      setFeedback({ ok: false, text });
-    } finally {
-      setRedeeming(false);
-    }
-  }
-
   function handleBackdropClick(e: React.MouseEvent<HTMLDialogElement>) {
-    if (loadingCode || redeeming) return;
+    if (isPricingModalCloseBlocked(loadingCode, couponBusy)) return;
     if (e.target === dialogRef.current) onClose();
   }
 
@@ -229,43 +196,22 @@ export default function PricingModal({ onClose }: { onClose: () => void }) {
             : null}
         </div>
 
-        <div className="mt-5 pt-5 border-t border-zinc-900">
-          <label htmlFor="coupon-code" className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 block">
-            Punya kode kupon?
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="coupon-code"
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              placeholder="Masukkan kode kupon"
-              autoCapitalize="characters"
-              className="flex-1 rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-amber-500/50 focus:outline-none uppercase"
-            />
-            <button
-              type="button"
-              onClick={redeemCoupon}
-              disabled={redeeming || !coupon.trim() || loadingCode !== null}
-              className="rounded-xl bg-amber-500/90 px-4 py-2.5 text-sm font-extrabold text-zinc-950 disabled:opacity-40 active:scale-95 duration-100"
-            >
-              {redeeming ? "..." : "Tukar"}
-            </button>
-          </div>
-          {feedback ? (
-            <p
-              role="status"
-              aria-live="polite"
-              className={`mt-2 text-[11px] font-semibold ${feedback.ok ? "text-emerald-400" : "text-rose-400"}`}
-            >
-              {feedback.text}
-            </p>
-          ) : null}
-        </div>
+        <CouponCodeEntry disabled={loadingCode !== null} onBusyChange={setCouponBusy} />
+
+        {feedback ? (
+          <p
+            role="status"
+            aria-live="polite"
+            className={`mt-2 text-[11px] font-semibold ${feedback.ok ? "text-emerald-400" : "text-rose-400"}`}
+          >
+            {feedback.text}
+          </p>
+        ) : null}
 
         <button
           type="button"
           onClick={onClose}
-          disabled={loadingCode !== null}
+          disabled={isPricingModalCloseBlocked(loadingCode, couponBusy)}
           aria-label="Tutup paket VIP"
           className="mt-6 w-full text-center text-xs font-semibold text-zinc-500 hover:text-zinc-300 py-2 disabled:opacity-40"
         >

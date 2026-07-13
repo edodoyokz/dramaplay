@@ -14,6 +14,7 @@ import LongformCategory from "./pages/LongformCategory";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Refund from "./pages/Refund";
+import Promo from "./pages/Promo";
 import NotFound from "./pages/NotFound";
 import { isLongformProviderCode } from "./lib/longform-provider";
 
@@ -130,6 +131,7 @@ export default function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/refund" element={<Refund />} />
+            <Route path="/promo/:code" element={<Promo />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 
